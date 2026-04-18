@@ -1,24 +1,25 @@
+import Link from "next/link";
 import LogoMark from "./LogoMark";
 import { NAV_LINKS } from "@/lib/content";
 
 export default function Nav() {
   return (
     <header className="nav">
-      <a className="nav__brand" href="#top" aria-label="CodeLogs home">
+      <Link className="nav__brand" href="/" aria-label="CodeLogs home">
         <span className="nav__mark">
           <LogoMark fill="#0373fe" />
         </span>
         <span className="nav__word">CodeLogs</span>
-      </a>
+      </Link>
       <nav className="nav__links">
         {NAV_LINKS.map((l) => (
-          <a key={l.idx} href={l.href}>
+          <Link key={l.idx} href={l.href}>
             <span className="idx">{l.idx}</span>
             {l.label}
-          </a>
+          </Link>
         ))}
       </nav>
-      <a href="#contact" className="nav__cta">
+      <Link href="/#contact" className="nav__cta">
         <span>Get started</span>
         <svg
           width="14"
@@ -30,7 +31,7 @@ export default function Nav() {
         >
           <path d="M1 7h12M7 1l6 6-6 6" />
         </svg>
-      </a>
+      </Link>
     </header>
   );
 }

@@ -1,8 +1,9 @@
 export const NAV_LINKS = [
-  { idx: "01", label: "Services", href: "#services" },
-  { idx: "02", label: "Products", href: "#work" },
-  { idx: "03", label: "Process", href: "#process" },
-  { idx: "04", label: "Contact", href: "#contact" },
+  { idx: "01", label: "Services", href: "/#services" },
+  { idx: "02", label: "Products", href: "/#work" },
+  { idx: "03", label: "Process", href: "/#process" },
+  { idx: "04", label: "Stack", href: "/#tech" },
+  { idx: "05", label: "Contact", href: "/#contact" },
 ];
 
 export const HERO_STATS = [
@@ -121,12 +122,12 @@ export const FLAGSHIP: FlagshipProduct = {
     "Jewel",
   ],
   stats: [
-    { n: "400", suffix: "+", label: "Branches live" },
-    { n: "30", suffix: "%", label: "Opex saved" },
-    { n: "24/7", label: "Uptime" },
+    { n: "200", suffix: "+", label: "Clients" },
+    { n: "450", suffix: "+", label: "Branches" },
+    { n: "∞", label: "Features" },
   ],
   ctaLabel: "Explore ProBank",
-  href: "https://www.codelogstech.com/probank-2",
+  href: "/probank",
   image: { src: "/assets/probank.avif", alt: "ProBank dashboard" },
   liveLabel: "LIVE \u00B7 ProBank 4.0",
 };
@@ -166,10 +167,88 @@ export const SECONDARY: SecondaryProduct[] = [
     chips: ["Live tracking", "Multi-stop routing", "Fleet ops"],
     href: "https://www.codelogstech.com/logistics",
     image: {
-      src: "/assets/logistics-app.avif",
-      alt: "Logistics app showing truck booking",
+      src: "/assets/transport.png",
+      alt: "Logistics app showing truck booking flow with route, container sizes and capacity",
     },
     variant: "lg",
+  },
+];
+
+export type FeatureProduct = {
+  idx: string;
+  badge: string;
+  title: string;
+  tagline: string;
+  body: string;
+  chips: string[];
+  stats: { n: string; suffix?: string; label: string }[];
+  liveLabel: string;
+};
+
+// US healthcare app — patient blood-test booking + AI biomarker analysis +
+// doctor portal, Stripe-integrated. Placeholder name; replace with real.
+export const BIOREPORT: FeatureProduct = {
+  idx: "04",
+  badge: "USA · Healthcare",
+  title: "BioReport",
+  tagline:
+    "AI-powered blood-test analysis for patients and doctors \u2014 built for the US market.",
+  body: "A consumer health platform we built for a US client. Patients book blood tests in-app, receive personalised reports with AI analysis across 10,000+ biomarkers, and share findings with their care providers. Doctors get a unified view of every report linked to their patient roster \u2014 all settled through Stripe.",
+  chips: [
+    "Patient booking",
+    "AI biomarker analysis",
+    "Doctor portal",
+    "Stripe payments",
+    "iOS · Android",
+  ],
+  stats: [
+    { n: "10,000", suffix: "+", label: "Biomarkers analysed" },
+    { n: "AI", label: "Powered insights" },
+    { n: "USA", label: "Market" },
+  ],
+  liveLabel: "LIVE · USA",
+};
+
+export type TechCategory = { name: string; items: string[] };
+
+export const TECH_STACK: TechCategory[] = [
+  {
+    name: "Frontend",
+    items: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
+  },
+  {
+    name: "Backend",
+    items: ["Node.js", "Python", "Java", "Spring Boot"],
+  },
+  {
+    name: "Mobile",
+    items: ["Swift", "Kotlin", "React Native", "Flutter"],
+  },
+  {
+    name: "Database",
+    items: ["PostgreSQL", "MongoDB", "MS SQL Server", "Redis", "MySQL"],
+  },
+  {
+    name: "Cloud & Infra",
+    items: ["AWS", "Docker", "Kubernetes", "Jenkins"],
+  },
+  {
+    name: "AI / ML",
+    items: [
+      "OpenAI",
+      "Anthropic",
+      "Gemini",
+      "Mistral",
+      "Ollama",
+      "Llama",
+      "LangChain",
+      "TensorFlow",
+      "scikit-learn",
+    ],
+  },
+  {
+    name: "Payments",
+    items: ["Stripe", "Razorpay", "UPI", "NEFT", "RTGS", "IMPS", "NACH"],
   },
 ];
 

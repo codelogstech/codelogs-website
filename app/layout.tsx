@@ -1,5 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import AmbientStarfield from "@/components/AmbientStarfield";
+import CustomCursor from "@/components/CustomCursor";
+import Footer from "@/components/Footer";
+import Nav from "@/components/Nav";
+import RevealObserver from "@/components/RevealObserver";
+import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
   title: "CodeLogs Technologies — Design. Develop. Deliver.",
@@ -35,7 +41,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AmbientStarfield />
+        <div className="grain" aria-hidden="true" />
+
+        <Nav />
+        {children}
+        <Footer />
+
+        <CustomCursor />
+        <RevealObserver />
+        <SmoothScroll />
+      </body>
     </html>
   );
 }

@@ -25,7 +25,7 @@ export default function Contact() {
         />
       </div>
       <header className="sec-head alt">
-        <span className="tag">04 / Contact</span>
+        <span className="tag">05 / Contact</span>
         <h2 className="sec-title big">
           Ready for your
           <br />
