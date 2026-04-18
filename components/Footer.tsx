@@ -7,7 +7,7 @@ export default function Footer() {
         <span className="foot__mark">
           <LogoMark fill="#0373fe" />
         </span>
-        <span className="foot__word">CodeLogs Technologies LLP</span>
+        <span className="foot__word">CodeLogs</span>
       </div>
       <div className="foot__bot">
         <span>© 2019–2026 CodeLogs Technologies LLP</span>

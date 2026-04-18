@@ -89,71 +89,133 @@ export const SERVICES: Service[] = [
   },
 ];
 
-export type WorkItem = {
+export type FlagshipProduct = {
   idx: string;
+  badge: string;
   title: string;
-  kind: string;
-  year: string;
-  href?: string;
+  tagline: string;
+  body: string;
+  chips: string[];
+  stats: { n: string; suffix?: string; label: string }[];
+  ctaLabel: string;
+  href: string;
+  image: { src: string; alt: string };
+  liveLabel: string;
 };
 
-export const WORK: WorkItem[] = [
-  {
-    idx: "01",
-    title: "ProBank",
-    kind: "Core banking for co-operative societies & banks",
-    year: "CBS",
-    href: "https://www.codelogstech.com/probank-2",
-  },
+export const FLAGSHIP: FlagshipProduct = {
+  idx: "01 / 09",
+  badge: "Flagship \u00B7 Since 2019",
+  title: "ProBank",
+  tagline:
+    "Core banking software, reimagined for co-operative societies and banks.",
+  body: "Our scalable, agile Core Banking Software leverages cloud and multichannel integration \u2014 ensuring unparalleled efficiency and customer satisfaction. Trusted by 200+ institutions to form the backbone of their operations.",
+  chips: [
+    "Creation",
+    "Transactions",
+    "Reports",
+    "Payroll",
+    "GST",
+    "TDS",
+    "NEFT / RTGS / IMPS",
+    "Jewel",
+  ],
+  stats: [
+    { n: "400", suffix: "+", label: "Branches live" },
+    { n: "30", suffix: "%", label: "Opex saved" },
+    { n: "24/7", label: "Uptime" },
+  ],
+  ctaLabel: "Explore ProBank",
+  href: "https://www.codelogstech.com/probank-2",
+  image: { src: "/assets/probank.avif", alt: "ProBank dashboard" },
+  liveLabel: "LIVE \u00B7 ProBank 4.0",
+};
+
+export type SecondaryProduct = {
+  idx: string;
+  title: string;
+  tagline: string;
+  platforms: string[];
+  chips: string[];
+  href: string;
+  image: { src: string; alt: string };
+  variant: "mb" | "lg";
+};
+
+export const SECONDARY: SecondaryProduct[] = [
   {
     idx: "02",
     title: "Mobile Banking",
-    kind: "White-labelled solutions for co-operative banks",
-    year: "iOS / Android",
+    tagline:
+      "White-labelled iOS & Android apps for co-operative banks \u2014 send, receive, reconcile.",
+    platforms: ["iOS", "Android"],
+    chips: ["UPI", "NEFT / RTGS / IMPS", "Reconciliation"],
     href: "https://www.codelogstech.com/mobilebanking-2",
+    image: {
+      src: "/assets/mobile-banking.avif",
+      alt: "Mobile banking app screen showing received payments",
+    },
+    variant: "mb",
   },
   {
     idx: "03",
     title: "Logistics App",
-    kind: "Book trucks, track shipments, manage orders",
-    year: "Platform",
+    tagline:
+      "Book trucks, track shipments, manage orders \u2014 live on Play Store & App Store.",
+    platforms: ["iOS", "Android"],
+    chips: ["Live tracking", "Multi-stop routing", "Fleet ops"],
     href: "https://www.codelogstech.com/logistics",
+    image: {
+      src: "/assets/logistics-app.avif",
+      alt: "Logistics app showing truck booking",
+    },
+    variant: "lg",
   },
+];
+
+export type ProductTile = {
+  idx: string;
+  title: string;
+  tagline: string;
+  kind: string;
+};
+
+export const TILES: ProductTile[] = [
   {
     idx: "04",
     title: "Sangrahak",
-    kind: "Digitising pigmy collection for financial inclusion",
-    year: "Fintech",
+    tagline: "Digitising pigmy collection for financial inclusion.",
+    kind: "Fintech",
   },
   {
     idx: "05",
     title: "Gram Suvidha",
-    kind: "Local governance ops with OCR-driven billing",
-    year: "GovTech",
+    tagline: "Local governance ops with OCR-driven billing.",
+    kind: "GovTech",
   },
   {
     idx: "06",
     title: "Recoverease",
-    kind: "Appification of loan recovery operations",
-    year: "Fintech",
+    tagline: "Appification of loan recovery operations.",
+    kind: "Fintech",
   },
   {
     idx: "07",
     title: "E-NACH",
-    kind: "Automation of recurring inter-bank transactions",
-    year: "Payments",
+    tagline: "Automation of recurring inter-bank transactions.",
+    kind: "Payments",
   },
   {
     idx: "08",
     title: "Internet Banking",
-    kind: "Online transactions for tier 2/3 India",
-    year: "Banking",
+    tagline: "Online transactions for tier 2/3 India.",
+    kind: "Banking",
   },
   {
     idx: "09",
     title: "Access Control",
-    kind: "IoT-driven solutions for smart office spaces",
-    year: "IoT",
+    tagline: "IoT-driven solutions for smart office spaces.",
+    kind: "IoT",
   },
 ];
 

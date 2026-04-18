@@ -6,13 +6,26 @@ export const metadata: Metadata = {
   description:
     "CodeLogs Technologies LLP — transforming business with technology. Agentic AI, core banking, enterprise software, web & mobile, data & analytics, cloud.",
   icons: {
-    icon: "/assets/codelogs-symbol.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-16.png", type: "image/png", sizes: "16x16" },
+      { url: "/icon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/icon-48.png", type: "image/png", sizes: "48x48" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    shortcut: "/favicon.ico",
+    other: [
+      { rel: "mask-icon", url: "/mask-icon.svg", color: "#0373fe" },
+    ],
   },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#0373fe",
 };
 
 export default function RootLayout({

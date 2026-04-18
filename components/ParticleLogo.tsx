@@ -75,6 +75,44 @@ export default function ParticleLogo(props: Props) {
     let my = -9999;
     let ps: Particle[] = [];
 
+    // Glow sprites: one offscreen canvas per (bucketed radius, glowColor).
+    // Built lazily on first use, reused every frame. Cleared when glowColor changes.
+    const stampCache = new Map<number, HTMLCanvasElement>();
+    let cachedGlowColor: string | null = null;
+
+    function getGlowStamp(outerR: number, glowColor: string): HTMLCanvasElement | null {
+      if (glowColor !== cachedGlowColor) {
+        stampCache.clear();
+        cachedGlowColor = glowColor;
+      }
+      const bucket = Math.max(1, Math.ceil(outerR));
+      const cached = stampCache.get(bucket);
+      if (cached) return cached;
+
+      const cssSize = bucket * 2;
+      const pxSize = Math.max(1, Math.ceil(cssSize * dpr));
+      const c = document.createElement("canvas");
+      c.width = pxSize;
+      c.height = pxSize;
+      const sctx = c.getContext("2d");
+      if (!sctx) return null;
+      sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const grad = sctx.createRadialGradient(
+        bucket,
+        bucket,
+        0,
+        bucket,
+        bucket,
+        bucket
+      );
+      grad.addColorStop(0, glowColor);
+      grad.addColorStop(1, "rgba(255,255,255,0)");
+      sctx.fillStyle = grad;
+      sctx.fillRect(0, 0, cssSize, cssSize);
+      stampCache.set(bucket, c);
+      return c;
+    }
+
     function getEffectiveParticleCount() {
       const requested = optsRef.current.particles ?? 600;
       return prefersReduced ? Math.min(240, requested) : requested;
@@ -209,13 +247,11 @@ export default function ParticleLogo(props: Props) {
         ctx.globalCompositeOperation = "multiply";
         for (const p of ps) {
           const r = p.r * 3.2;
-          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
-          grad.addColorStop(0, glowColor);
-          grad.addColorStop(1, "rgba(255,255,255,0)");
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-          ctx.fill();
+          const stamp = getGlowStamp(r, glowColor);
+          if (!stamp) continue;
+          const bucket = Math.max(1, Math.ceil(r));
+          const size = bucket * 2;
+          ctx.drawImage(stamp, p.x - bucket, p.y - bucket, size, size);
         }
         ctx.globalCompositeOperation = "source-over";
       }
