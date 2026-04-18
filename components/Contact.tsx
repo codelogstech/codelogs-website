@@ -1,4 +1,5 @@
 import ParticleLogo from "./ParticleLogo";
+import Typewriter from "./Typewriter";
 
 export default function Contact() {
   return (
@@ -26,10 +27,18 @@ export default function Contact() {
       </div>
       <header className="sec-head alt">
         <span className="tag">05 / Contact</span>
-        <h2 className="sec-title big">
-          Ready for your
-          <br />
-          next <b className="em">project?</b>
+        <h2
+          className="sec-title big"
+          aria-label="Ready for your next project?"
+        >
+          <Typewriter
+            tokens={[
+              { kind: "text", text: "Ready for your" },
+              { kind: "br" },
+              { kind: "text", text: "next " },
+              { kind: "text", text: "project?", className: "em" },
+            ]}
+          />
         </h2>
       </header>
       <div className="contact__grid">
