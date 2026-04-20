@@ -92,9 +92,9 @@ export default function Hero() {
         </Link>
       </div>
 
-      <div className="hero__bar">
+      <div className="hero__bar" data-reveal-stagger="">
         {HERO_STATS.map((s) => (
-          <div key={s.label} className="bar__item">
+          <div key={s.label} className="bar__item" data-reveal="rise">
             <span className="num">
               <StatNumber target={s.num} />
               <i>{s.suffix}</i>

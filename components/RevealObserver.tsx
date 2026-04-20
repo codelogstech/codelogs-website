@@ -4,6 +4,18 @@ import { useEffect } from "react";
 
 export default function RevealObserver() {
   useEffect(() => {
+    const staggers = document.querySelectorAll<HTMLElement>(
+      "[data-reveal-stagger]"
+    );
+    staggers.forEach((parent) => {
+      const children = parent.querySelectorAll<HTMLElement>("[data-reveal]");
+      children.forEach((child, i) => {
+        if (!child.style.getPropertyValue("--i")) {
+          child.style.setProperty("--i", String(i));
+        }
+      });
+    });
+
     const targets = document.querySelectorAll<HTMLElement>("[data-reveal]");
     if (!targets.length) return;
 
@@ -16,7 +28,7 @@ export default function RevealObserver() {
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
     );
 
     targets.forEach((el) => io.observe(el));

@@ -13,9 +13,13 @@ export default function Technologies() {
         </h2>
       </header>
 
-      <div className="tech-grid">
+      <div className="tech-grid" data-reveal-stagger="">
         {TECH_STACK.map((cat, i) => (
-          <div key={cat.name} className="tech-row" data-reveal="">
+          <div
+            key={cat.name}
+            className="tech-row"
+            data-reveal={i % 2 === 0 ? "left" : "right"}
+          >
             <span className="tech-row__cat">
               <span className="tech-row__num">
                 {String(i + 1).padStart(2, "0")}

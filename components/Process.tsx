@@ -13,9 +13,9 @@ export default function Process() {
         </h2>
       </header>
 
-      <ol className="proc">
+      <ol className="proc" data-reveal-stagger="">
         {PROCESS.map((step) => (
-          <li key={step.idx} data-reveal="">
+          <li key={step.idx} data-reveal="left">
             <div className="proc__num">
               <svg viewBox="-1 -1 2 2">
                 <g

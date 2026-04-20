@@ -28,7 +28,7 @@ export default function Work() {
       </header>
 
       {/* ProBank — hero feature */}
-      <article className="feat feat--hero">
+      <article className="feat feat--hero" data-reveal="rise">
         <div className="feat__copy">
           <div className="feat__meta">
             <span className="feat__badge">{FLAGSHIP.badge}</span>
@@ -76,7 +76,11 @@ export default function Work() {
           </a>
         </div>
         <div className="feat__media">
-          <div className="feat__frame">
+          <div
+            className="feat__frame parallax"
+            data-parallax=""
+            data-parallax-speed="0.08"
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={FLAGSHIP.image.src}
@@ -92,12 +96,12 @@ export default function Work() {
       </article>
 
       {/* Secondary features: Mobile Banking + Logistics */}
-      <div className="feat-grid">
-        {SECONDARY.map((p) => (
+      <div className="feat-grid" data-reveal-stagger="">
+        {SECONDARY.map((p, i) => (
           <article
             key={p.idx}
             className={`feat feat--card feat--${p.variant}`}
-            data-reveal=""
+            data-reveal={i % 2 === 0 ? "left" : "right"}
           >
             {p.variant === "lg" ? <LogisticsScrollScene /> : null}
             <div className="feat__head">
@@ -130,7 +134,7 @@ export default function Work() {
       </div>
 
       {/* US healthcare app — illustrative feature card */}
-      <article className="feat feat--hero feat--bio">
+      <article className="feat feat--hero feat--bio" data-reveal="scale">
         <div className="feat__copy">
           <div className="feat__meta">
             <span className="feat__badge">{BIOREPORT.badge}</span>
@@ -204,9 +208,9 @@ export default function Work() {
       </article>
 
       {/* Compact tiles for the rest */}
-      <div className="prod-tiles">
+      <div className="prod-tiles" data-reveal-stagger="">
         {TILES.map((t) => (
-          <a key={t.idx} className="prod" data-reveal="">
+          <a key={t.idx} className="prod" data-reveal="rise">
             <span className="prod__idx">{t.idx}</span>
             <h4>{t.title}</h4>
             <p>{t.tagline}</p>

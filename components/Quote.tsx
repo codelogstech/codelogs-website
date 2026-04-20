@@ -1,7 +1,7 @@
 export default function Quote() {
   return (
     <section className="quote">
-      <figure data-reveal="">
+      <figure data-reveal="scale">
         <blockquote>
           <span className="qm">“</span>
           ProBank has transformed our operations by automating critical processes,

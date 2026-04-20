@@ -12,9 +12,9 @@ export default function Services() {
         </h2>
       </header>
 
-      <div className="svc-grid">
+      <div className="svc-grid" data-reveal-stagger="">
         {SERVICES.map((s) => (
-          <article key={s.num} className="svc" data-reveal="">
+          <article key={s.num} className="svc" data-reveal="rise">
             <div className="svc__num">{s.num}</div>
             <h3>{s.title}</h3>
             <p>{s.description}</p>

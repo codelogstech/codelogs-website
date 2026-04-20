@@ -41,20 +41,20 @@ export default function Contact() {
           />
         </h2>
       </header>
-      <div className="contact__grid">
-        <div>
+      <div className="contact__grid" data-reveal-stagger="">
+        <div data-reveal="rise">
           <span className="k">Write</span>
           <a href="mailto:enquire@codelogstech.com" className="contact__email">
             enquire@codelogstech.com
           </a>
         </div>
-        <div>
+        <div data-reveal="rise">
           <span className="k">Call</span>
           <a href="tel:+919731777495" className="contact__email">
             +91 97317 77495
           </a>
         </div>
-        <div>
+        <div data-reveal="rise">
           <span className="k">Visit</span>
           <p>
             2nd Floor, Christha Jyothi Complex
@@ -64,7 +64,7 @@ export default function Contact() {
             Karnataka 576101, India
           </p>
         </div>
-        <div>
+        <div data-reveal="rise">
           <span className="k">Follow</span>
           <ul className="social">
             <li>

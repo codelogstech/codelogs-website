@@ -5,6 +5,7 @@ import CustomCursor from "@/components/CustomCursor";
 import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import RevealObserver from "@/components/RevealObserver";
+import ScrollFX from "@/components/ScrollFX";
 import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
@@ -51,6 +52,7 @@ export default function RootLayout({
 
         <CustomCursor />
         <RevealObserver />
+        <ScrollFX />
         <SmoothScroll />
       </body>
     </html>
