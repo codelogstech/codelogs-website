@@ -661,9 +661,30 @@ em, i, cite, address { font-style: normal; }
   50% { transform: translate(-10px, 8px) scale(1.2); }
 }
 
+/* "Learn more" affordance that appears on hover since each card is now
+   a Link. Sits above the bullet list so it doesn't crowd the copy. */
+.svc__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .3s, transform .3s, color .3s;
+}
+.svc__more svg { transition: transform .25s; }
+.svc:hover .svc__more { opacity: 1; transform: translateY(0); color: inherit; }
+.svc:hover .svc__more svg { transform: translateX(3px); }
+
 @media (max-width: 900px) {
   .svc-grid { grid-template-columns: 1fr; }
   .svc { padding: 28px; min-height: 300px; }
+  /* On touch devices hover is unreliable — always show the affordance. */
+  .svc__more { opacity: 1; transform: none; }
 }
 
 /* Products — dark navy section */
@@ -1623,7 +1644,8 @@ section[id] { scroll-margin-top: 80px; }
   font-size: 12px;
   color: var(--ink-3);
   letter-spacing: 0.05em;
-  margin-bottom: 32px;
+  margin-right: 24px;
+  margin-bottom: 56px;
   transition: color .2s;
 }
 .pb-back:hover { color: var(--primary); }
@@ -2110,4 +2132,148 @@ section[id] { scroll-margin-top: 80px; }
   .pb-mod-grid { grid-template-columns: 1fr; }
   .pb-stats { grid-template-columns: 1fr; }
   .pb-stats__item:not(:first-child) { border-left: 0; padding-left: 0; padding-top: 16px; border-top: 1px solid var(--line); }
+}
+
+/* =========================================================
+   Service detail pages — reuses the pb-* layout primitives,
+   plus a couple of service-specific sections (hero glyph,
+   use cases, tech chips) and an accent tint per service.
+   ========================================================= */
+.svc-page {
+  --svc-accent: var(--blue);
+  --svc-accent-soft: rgba(3,115,254,0.08);
+}
+.svc-page--blue       { --svc-accent: var(--blue);       --svc-accent-soft: rgba(3,115,254,0.08); }
+.svc-page--orange     { --svc-accent: var(--orange);     --svc-accent-soft: rgba(240,88,40,0.08); }
+.svc-page--cyan       { --svc-accent: var(--cyan);       --svc-accent-soft: rgba(49,209,254,0.10); }
+.svc-page--periwinkle { --svc-accent: var(--periwinkle); --svc-accent-soft: rgba(163,168,244,0.12); }
+.svc-page--navy       { --svc-accent: var(--navy);       --svc-accent-soft: rgba(22,32,91,0.10); }
+
+.svc-page .pb-tag { color: var(--svc-accent); }
+.svc-page .pb-tag::before { background: var(--svc-accent); }
+.svc-page .pb-section-head .em { color: var(--svc-accent); }
+
+/* Hero — typographic, no photo. The media column shows a soft accent
+   orb and a giant service number. Keeps file size tiny and lets each
+   service feel distinct through the accent variable alone. */
+.svc-hero__media {
+  position: relative;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.svc-hero__orb {
+  position: absolute;
+  inset: 10% 10%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--svc-accent), transparent 65%);
+  filter: blur(60px);
+  opacity: 0.55;
+  animation: orbit 12s ease-in-out infinite;
+}
+.svc-hero__glyph {
+  position: relative;
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: clamp(120px, 18vw, 260px);
+  letter-spacing: -0.03em;
+  color: var(--svc-accent);
+  opacity: 0.85;
+  line-height: 1;
+  mix-blend-mode: normal;
+}
+
+/* Dark approach section — reuses .pb-values shell. Swap the cyan
+   accent to the per-service accent so each page feels coherent. */
+.svc-approach .pb-tag { color: var(--svc-accent); }
+.svc-approach .pb-tag::before { background: var(--svc-accent); }
+.svc-approach .pb-section-head h2 { color: #fff; }
+.svc-approach .pb-section-head .em { color: var(--svc-accent); }
+.svc-approach .pb-value__idx { color: var(--svc-accent); }
+
+/* Use cases — three editorial cards on a tinted surface. Section head
+   is padded horizontally while the grid stays edge-to-edge for the
+   border-top line treatment. */
+.svc-usecases {
+  position: relative;
+  z-index: 1;
+  padding: 140px 0 80px;
+  background: var(--bg-2);
+}
+.svc-usecases .pb-section-head { padding: 0 var(--pad); }
+.svc-usecases__grid {
+  padding: 0 var(--pad);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+.svc-usecase {
+  padding: 36px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  min-height: 260px;
+  display: flex; flex-direction: column; gap: 14px;
+  background: var(--bg);
+  transition: background .35s;
+}
+.svc-usecase:hover { background: var(--svc-accent-soft); }
+.svc-usecase__industry {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--svc-accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.svc-usecase h3 {
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.svc-usecase p {
+  color: var(--ink-2);
+  line-height: 1.55;
+  font-size: 15px;
+}
+
+/* Stack chips — compact, horizontally flowing. */
+.svc-stack {
+  position: relative;
+  z-index: 1;
+  padding: 140px 0 80px;
+}
+.svc-stack .pb-section-head { padding: 0 var(--pad); }
+.svc-stack__chips {
+  list-style: none;
+  padding: 0 var(--pad);
+  display: flex; flex-wrap: wrap;
+  gap: 10px;
+}
+.svc-stack__chips li {
+  display: inline-flex; align-items: center;
+  padding: 10px 18px;
+  font-family: var(--f-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+  border-radius: 8px;
+  transition: background .25s, color .25s, border-color .25s, transform .25s;
+}
+.svc-stack__chips li:hover {
+  background: var(--svc-accent);
+  color: #fff;
+  border-color: var(--svc-accent);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 960px) {
+  .svc-usecases__grid { grid-template-columns: 1fr; }
+  .svc-hero__media { min-height: 240px; }
+  .svc-hero__glyph { font-size: clamp(80px, 24vw, 160px); }
 }

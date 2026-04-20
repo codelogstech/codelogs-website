@@ -24,6 +24,7 @@ export const MARQUEE_WORDS = [
 
 export type Service = {
   num: string;
+  slug: string;
   title: string;
   description: string;
   bullets: string[];
@@ -32,6 +33,7 @@ export type Service = {
 export const SERVICES: Service[] = [
   {
     num: "S\u00B701",
+    slug: "agentic-ai",
     title: "Agentic AI",
     description:
       "Autonomous, goal-oriented AI agents that perceive, reason, and act \u2014 integrating with your stack to automate workflows and cut operational cost.",
@@ -43,6 +45,7 @@ export const SERVICES: Service[] = [
   },
   {
     num: "S\u00B702",
+    slug: "enterprise-software",
     title: "Enterprise Software",
     description:
       "Tailor-made enterprise solutions. Robust, scalable software that streamlines operations and drives growth across your organisation.",
@@ -54,6 +57,7 @@ export const SERVICES: Service[] = [
   },
   {
     num: "S\u00B703",
+    slug: "web-mobile-apps",
     title: "Web & Mobile Apps",
     description:
       "Responsive web and mobile applications that keep your brand connected with users on the go \u2014 seamless, high-performance, cross-device.",
@@ -65,6 +69,7 @@ export const SERVICES: Service[] = [
   },
   {
     num: "S\u00B704",
+    slug: "data-analytics",
     title: "Data & Analytics",
     description:
       "Gather, process, and visualise complex information. Unlock insights that enable data-driven decision-making across your business.",
@@ -76,6 +81,7 @@ export const SERVICES: Service[] = [
   },
   {
     num: "S\u00B705",
+    slug: "cloud-solutions",
     title: "Cloud Solutions",
     description:
       "Secure, flexible, cost-effective cloud infrastructure that enhances collaboration and scales seamlessly with your growing business needs.",
@@ -83,6 +89,7 @@ export const SERVICES: Service[] = [
   },
   {
     num: "S\u00B706",
+    slug: "payments-collections",
     title: "Payments & Collections",
     description:
       "Integrated payment and fund-collection rails for co-operative banks and societies \u2014 directly integrated with leading payment partners.",
