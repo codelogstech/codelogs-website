@@ -1,8 +1,10 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 export default function CustomCursor() {
+  const pathname = usePathname();
   useEffect(() => {
     if (matchMedia("(max-width: 900px)").matches) return;
 
@@ -54,7 +56,7 @@ export default function CustomCursor() {
       ring.remove();
       dot.remove();
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }

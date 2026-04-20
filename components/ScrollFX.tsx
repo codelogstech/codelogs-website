@@ -1,12 +1,14 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 // Scroll-linked effects for mobile + desktop: a top progress bar and
-// lightweight parallax on [data-parallax] elements. All work is batched
-// into a single rAF loop using transforms only, so it stays cheap on touch
-// devices where cursor-driven effects are absent.
+// lightweight parallax on [data-parallax] elements. Re-collects parallax
+// nodes on route change so SPA navigation back to a page with parallax
+// doesn't leave stale refs.
 export default function ScrollFX() {
+  const pathname = usePathname();
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -65,7 +67,7 @@ export default function ScrollFX() {
       window.removeEventListener("resize", onScroll);
       bar.remove();
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }

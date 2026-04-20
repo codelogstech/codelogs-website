@@ -1,8 +1,10 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 export default function RevealObserver() {
+  const pathname = usePathname();
   useEffect(() => {
     const staggers = document.querySelectorAll<HTMLElement>(
       "[data-reveal-stagger]"
@@ -34,7 +36,7 @@ export default function RevealObserver() {
     targets.forEach((el) => io.observe(el));
 
     return () => io.disconnect();
-  }, []);
+  }, [pathname]);
 
   return null;
 }

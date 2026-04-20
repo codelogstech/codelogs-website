@@ -1,8 +1,10 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 export default function SmoothScroll() {
+  const pathname = usePathname();
   useEffect(() => {
     const links = Array.from(
       document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')
@@ -22,7 +24,7 @@ export default function SmoothScroll() {
 
     links.forEach((a) => a.addEventListener("click", onClick));
     return () => links.forEach((a) => a.removeEventListener("click", onClick));
-  }, []);
+  }, [pathname]);
 
   return null;
 }

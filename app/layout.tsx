@@ -41,7 +41,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Pre-hydration theme setter: reads stored preference or system
+            setting and applies it before paint to avoid a flash of the
+            wrong theme. Kept tiny and inlined for fastest execution. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('theme');if(t!=='dark'&&t!=='light'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();",
+          }}
+        />
+      </head>
       <body>
         <AmbientStarfield />
         <div className="grain" aria-hidden="true" />
