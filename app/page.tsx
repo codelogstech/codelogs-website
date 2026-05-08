@@ -4,6 +4,7 @@ import Marquee from "@/components/Marquee";
 import Process from "@/components/Process";
 import Quote from "@/components/Quote";
 import Services from "@/components/Services";
+import SiliconBeach from "@/components/SiliconBeach";
 import Technologies from "@/components/Technologies";
 import Work from "@/components/Work";
 
@@ -17,6 +18,7 @@ export default function HomePage() {
       <Process />
       <Technologies />
       <Quote />
+      <SiliconBeach />
       <Contact />
     </>
   );
