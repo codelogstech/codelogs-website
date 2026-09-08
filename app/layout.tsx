@@ -4,14 +4,15 @@ import AmbientStarfield from "@/components/AmbientStarfield";
 import CustomCursor from "@/components/CustomCursor";
 import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
+import PointerFX from "@/components/PointerFX";
 import RevealObserver from "@/components/RevealObserver";
 import ScrollFX from "@/components/ScrollFX";
 import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
-  title: "CodeLogs Technologies — Design. Develop. Deliver.",
+  title: "CodeLogs Technologies — AI-Enabled Software, Built to Scale",
   description:
-    "CodeLogs Technologies LLP — transforming business with technology. Agentic AI, core banking, enterprise software, web & mobile, data & analytics, cloud.",
+    "CodeLogs Technologies LLP is a software services company building AI-enabled applications and enterprise SaaS that runs at scale — agentic AI, custom platforms, web & mobile, data & cloud. Home of ProBank, the core banking platform trusted by 200+ institutions.",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -62,6 +63,7 @@ export default function RootLayout({
         <Footer />
 
         <CustomCursor />
+        <PointerFX />
         <RevealObserver />
         <ScrollFX />
         <SmoothScroll />

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Clock from "./Clock";
 import ParticleLogo from "./ParticleLogo";
 import StatNumber from "./StatNumber";
 import { HERO_STATS } from "@/lib/content";
@@ -21,18 +20,11 @@ function splitChars(text: string, baseDelay: number) {
 export default function Hero() {
   return (
     <section id="top" className="hero">
-      <div className="hero__meta left">
-        <span className="kbd">EST · UDUPI, IN</span>
-        <span className="kbd">20+ YRS EXPERIENCE</span>
+      <div className="hero__aurora" aria-hidden="true">
+        <i />
+        <i />
+        <i />
       </div>
-      <div className="hero__meta right">
-        <span className="kbd live">
-          <i />
-          ONLINE
-        </span>
-        <Clock />
-      </div>
-
       <div className="hero__stage">
         <ParticleLogo
           id="logoCanvas"
@@ -49,6 +41,10 @@ export default function Hero() {
       </div>
 
       <div className="hero__title">
+        <p className="hero__eyebrow">
+          Software services <i>·</i> AI-enabled applications <i>·</i>{" "}
+          Enterprise SaaS
+        </p>
         <h1 className="display">
           <span className="line">
             <b className="em">{splitChars("Design.", 0.15)}</b>
@@ -64,9 +60,8 @@ export default function Hero() {
 
       <div className="hero__sub">
         <p>
-          Transforming business with technology. CodeLogs automates workflows and
-          integrates intelligent solutions — designed by experts for co-operative
-          banks, enterprises, and ambitious teams across India.
+          Applications that thrive at scale. Software that&rsquo;s built to
+          last. A team that you can rely on.
         </p>
       </div>
 
@@ -74,6 +69,7 @@ export default function Hero() {
         <a
           className="hero__cta hero__cta--primary"
           href="mailto:enquire@codelogstech.com?subject=Discovery%20call"
+          data-magnetic="0.2"
         >
           <span>Book a discovery call</span>
           <svg
@@ -87,7 +83,11 @@ export default function Hero() {
             <path d="M1 7h12M7 1l6 6-6 6" />
           </svg>
         </a>
-        <Link href="/#work" className="hero__cta hero__cta--ghost">
+        <Link
+          href="/#work"
+          className="hero__cta hero__cta--ghost"
+          data-magnetic="0.2"
+        >
           <span>Explore our work</span>
         </Link>
       </div>

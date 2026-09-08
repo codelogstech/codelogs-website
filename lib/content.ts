@@ -14,12 +14,13 @@ export const HERO_STATS = [
 ];
 
 export const MARQUEE_WORDS = [
-  "core banking",
+  "AI-enabled applications",
+  "enterprise SaaS",
   "agentic AI",
-  "enterprise software",
   "web & mobile",
   "data & analytics",
   "cloud solutions",
+  "core banking",
 ];
 
 export type Service = {
@@ -46,12 +47,12 @@ export const SERVICES: Service[] = [
   {
     num: "S\u00B702",
     slug: "enterprise-software",
-    title: "Enterprise Software",
+    title: "Enterprise SaaS",
     description:
-      "Tailor-made enterprise solutions. Robust, scalable software that streamlines operations and drives growth across your organisation.",
+      "Multi-tenant SaaS platforms and tailor-made enterprise systems \u2014 robust, scalable software that runs entire organisations, engineered to perform at scale.",
     bullets: [
-      "Core banking systems",
-      "ERP & process automation",
+      "Multi-tenant SaaS platforms",
+      "Core banking & ERP systems",
       "Legacy modernisation",
     ],
   },
@@ -113,11 +114,11 @@ export type FlagshipProduct = {
 
 export const FLAGSHIP: FlagshipProduct = {
   idx: "01 / 09",
-  badge: "Flagship \u00B7 Since 2019",
+  badge: "Flagship SaaS \u00B7 Since 2019",
   title: "ProBank",
   tagline:
     "Core banking software, reimagined for co-operative societies and banks.",
-  body: "Our scalable, agile Core Banking Software leverages cloud and multichannel integration \u2014 ensuring unparalleled efficiency and customer satisfaction. Trusted by 200+ institutions to form the backbone of their operations.",
+  body: "Cloud-native core banking SaaS with multichannel integration \u2014 and the clearest proof of what we build for clients: enterprise software trusted by 200+ institutions as the backbone of their daily operations.",
   chips: [
     "Creation",
     "Transactions",

@@ -16,19 +16,23 @@ export default function Work() {
   return (
     <section id="work" className="work">
       <header className="sec-head">
-        <span className="tag">02 / Flagship Products</span>
+        <span className="tag" data-scramble="">
+          02 / Flagship Work
+        </span>
         <h2 className="sec-title">
-          Built precisely
+          Enterprise SaaS,
           <br />
-          <b className="em">for your needs.</b>
+          <b className="em">running at scale.</b>
         </h2>
         <p className="sec-lede">
-          Nine shipped products. Powering 400+ branches across India.
+          Nine shipped products across fintech, healthcare, logistics, and
+          govtech — led by ProBank, the core banking platform 200+ institutions
+          run on.
         </p>
       </header>
 
       {/* ProBank — hero feature */}
-      <article className="feat feat--hero" data-reveal="rise">
+      <article className="feat feat--hero" data-reveal="rise" data-tilt="2">
         <div className="feat__copy">
           <div className="feat__meta">
             <span className="feat__badge">{FLAGSHIP.badge}</span>
@@ -102,6 +106,7 @@ export default function Work() {
             key={p.idx}
             className={`feat feat--card feat--${p.variant}`}
             data-reveal={i % 2 === 0 ? "left" : "right"}
+            data-tilt="4"
           >
             {p.variant === "lg" ? <LogisticsScrollScene /> : null}
             <div className="feat__head">

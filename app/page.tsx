@@ -1,4 +1,5 @@
 import Contact from "@/components/Contact";
+import EdgePanels from "@/components/EdgePanels";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
 import Process from "@/components/Process";
@@ -16,6 +17,7 @@ export default function HomePage() {
       <Services />
       <Work />
       <Process />
+      <EdgePanels />
       <Technologies />
       <Quote />
       <SiliconBeach />

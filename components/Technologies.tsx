@@ -5,7 +5,9 @@ export default function Technologies() {
   return (
     <section id="tech" className="tech">
       <header className="sec-head">
-        <span className="tag">04 / Technology Stack</span>
+        <span className="tag" data-scramble="">
+          04 / Technology Stack
+        </span>
         <h2 className="sec-title">
           The toolkit.
           <br />

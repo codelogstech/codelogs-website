@@ -22,7 +22,7 @@ export default function Nav() {
       </nav>
       <div className="nav__end">
         <ThemeToggle />
-        <Link href="/#contact" className="nav__cta">
+        <Link href="/#contact" className="nav__cta" data-magnetic="0.3">
           <span>Get started</span>
           <svg
             width="14"

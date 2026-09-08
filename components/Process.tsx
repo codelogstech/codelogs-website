@@ -5,7 +5,9 @@ export default function Process() {
   return (
     <section id="process" className="process">
       <header className="sec-head">
-        <span className="tag">03 / How We Work</span>
+        <span className="tag" data-scramble="">
+          03 / How We Work
+        </span>
         <h2 className="sec-title">
           Design. Develop.
           <br />

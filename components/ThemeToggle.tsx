@@ -14,13 +14,52 @@ export default function ThemeToggle() {
     setTheme(current);
   }, []);
 
-  function toggle() {
+  function toggle(e: React.MouseEvent<HTMLButtonElement>) {
     const next: Theme = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
-    try {
-      localStorage.setItem("theme", next);
-    } catch {}
+    const apply = () => {
+      setTheme(next);
+      document.documentElement.setAttribute("data-theme", next);
+      try {
+        localStorage.setItem("theme", next);
+      } catch {}
+    };
+
+    // Circular reveal via the View Transitions API — the new theme expands
+    // from the toggle button. Falls back to an instant switch elsewhere.
+    const doc = document as Document & {
+      startViewTransition?: (cb: () => void) => { ready: Promise<void> };
+    };
+    if (
+      !doc.startViewTransition ||
+      matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      apply();
+      return;
+    }
+
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = r.left + r.width / 2;
+    const y = r.top + r.height / 2;
+    const radius = Math.hypot(
+      Math.max(x, innerWidth - x),
+      Math.max(y, innerHeight - y)
+    );
+
+    doc.startViewTransition(apply).ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${radius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 550,
+          easing: "cubic-bezier(.2,.7,.2,1)",
+          pseudoElement: "::view-transition-new(root)",
+        }
+      );
+    });
   }
 
   const isDark = theme === "dark";
@@ -31,6 +70,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       className="theme-toggle"
+      data-magnetic="0.35"
       aria-label={label}
       title={label}
       suppressHydrationWarning

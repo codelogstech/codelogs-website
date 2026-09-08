@@ -5,12 +5,19 @@ export default function Services() {
   return (
     <section id="services" className="services">
       <header className="sec-head">
-        <span className="tag">01 / Our Services</span>
+        <span className="tag" data-scramble="">
+          01 / Software Services
+        </span>
         <h2 className="sec-title">
-          Comprehensive solutions,
+          AI-enabled software,
           <br />
-          <b className="em">tailor-made for you.</b>
+          <b className="em">engineered end-to-end.</b>
         </h2>
+        <p className="sec-lede">
+          Full-lifecycle software services — strategy, design, engineering,
+          deployment, and support. Intelligence built in where it earns its
+          keep.
+        </p>
       </header>
 
       <div className="svc-grid" data-reveal-stagger="">

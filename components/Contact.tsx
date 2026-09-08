@@ -26,7 +26,9 @@ export default function Contact() {
         />
       </div>
       <header className="sec-head alt">
-        <span className="tag">05 / Contact</span>
+        <span className="tag" data-scramble="">
+          05 / Contact
+        </span>
         <h2
           className="sec-title big"
           aria-label="Ready for your next project?"
