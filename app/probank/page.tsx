@@ -1,12 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { FLAGSHIP } from "@/lib/content";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "ProBank — Core banking for co-operative societies | CodeLogs",
   description:
     "ProBank is a cloud-native, multi-channel core banking platform built for co-operative societies and banks. Powering 400+ branches across India.",
-};
+  path: "/probank",
+});
 
 type Module = {
   name: string;

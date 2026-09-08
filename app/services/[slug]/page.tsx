@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { SERVICES } from "@/lib/content";
 import { SERVICE_DETAILS } from "@/lib/servicesContent";
+import { pageMetadata } from "@/lib/seo";
 
 type Params = { slug: string };
 
@@ -19,10 +20,11 @@ export async function generateMetadata({
   const service = SERVICES.find((s) => s.slug === slug);
   const detail = SERVICE_DETAILS[slug];
   if (!service || !detail) return { title: "Service — CodeLogs" };
-  return {
+  return pageMetadata({
     title: `${service.title} — ${detail.badge} | CodeLogs`,
     description: detail.lede,
-  };
+    path: `/services/${slug}`,
+  });
 }
 
 export default async function ServicePage({

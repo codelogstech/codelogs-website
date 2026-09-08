@@ -8,11 +8,34 @@ import PointerFX from "@/components/PointerFX";
 import RevealObserver from "@/components/RevealObserver";
 import ScrollFX from "@/components/ScrollFX";
 import SmoothScroll from "@/components/SmoothScroll";
+import {
+  DEFAULT_DESCRIPTION,
+  DEFAULT_TITLE,
+  ORGANIZATION_JSON_LD,
+  SITE_NAME,
+  SITE_URL,
+  pageMetadata,
+} from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "CodeLogs Technologies — AI-Enabled Software, Built to Scale",
-  description:
-    "CodeLogs Technologies LLP is a software services company building AI-enabled applications and enterprise SaaS that runs at scale — agentic AI, custom platforms, web & mobile, data & cloud. Home of ProBank, the core banking platform trusted by 200+ institutions.",
+  metadataBase: new URL(SITE_URL),
+  applicationName: SITE_NAME,
+  ...pageMetadata({
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    path: "/",
+  }),
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -51,6 +74,13 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html:
               "(function(){try{var t=localStorage.getItem('theme');if(t!=='dark'&&t!=='light'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();",
+          }}
+        />
+        {/* Organization + WebSite structured data for search engines. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(ORGANIZATION_JSON_LD),
           }}
         />
       </head>
