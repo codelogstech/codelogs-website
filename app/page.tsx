@@ -1,5 +1,6 @@
 import Contact from "@/components/Contact";
 import EdgePanels from "@/components/EdgePanels";
+import GlobalReach from "@/components/GlobalReach";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
 import Process from "@/components/Process";
@@ -20,6 +21,7 @@ export default function HomePage() {
       <EdgePanels />
       <Technologies />
       <Quote />
+      <GlobalReach />
       <SiliconBeach />
       <Contact />
     </>

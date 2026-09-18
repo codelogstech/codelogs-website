@@ -1410,7 +1410,7 @@ em, i, cite, address { font-style: normal; }
 .contact {
   position: relative;
   z-index: 1;
-  padding: 140px var(--pad) 80px;
+  padding: 100px var(--pad) 40px;
   overflow: hidden;
   background: var(--black);
   color: #fff;
@@ -1446,8 +1446,6 @@ em, i, cite, address { font-style: normal; }
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 40px;
-  padding-top: 40px;
-  border-top: 1px solid rgba(255,255,255,0.14);
 }
 .contact__grid .k {
   display: block;
@@ -1493,10 +1491,12 @@ em, i, cite, address { font-style: normal; }
 .foot {
   position: relative;
   z-index: 1;
-  padding: 40px var(--pad);
+  padding: 0 var(--pad) 40px;
+  /* Overlap the contact block by 1px so the light page never shows
+     through the sub-pixel seam between the two dark sections. */
+  margin-top: -1px;
   background: var(--black);
   color: #fff;
-  border-top: 1px solid rgba(255,255,255,0.08);
 }
 .foot__top {
   display: flex; align-items: center; justify-content: space-between;
@@ -2754,7 +2754,7 @@ section[id] { scroll-margin-top: 80px; }
 .ledsec {
   display: flex;
   justify-content: center;
-  padding: clamp(64px, 12vh, 140px) 24px;
+  padding: 40px 24px clamp(64px, 12vh, 140px);
 }
 .led {
   display: block;
@@ -2909,6 +2909,11 @@ section[id] { scroll-margin-top: 80px; }
 
 /* ---- Route transition -------------------------------------- */
 .page-enter { animation: pageEnter .65s cubic-bezier(.2,.7,.2,1) both; }
+/* Side-sliding reveals start up to 44px off-screen; iOS Safari lets you
+   pan to them despite body's overflow-x: hidden. `clip` trims them
+   without making a scroll container, so position: sticky still works. */
+.page-enter,
+.foot { overflow-x: clip; }
 @keyframes pageEnter {
   from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: none; }
@@ -2929,4 +2934,104 @@ section[id] { scroll-margin-top: 80px; }
   .qw { opacity: 1 !important; filter: none !important; }
   .hero { opacity: 1; }
   .nav { transition: none; }
+}
+
+/* =========================================================
+   Global reach — dotted globe (left) with arcs launching from
+   Udupi, built-for-the-world copy (right). Dark in both themes
+   so the globe glows; the globe deliberately bleeds off the
+   left edge of the viewport.
+   ========================================================= */
+.globe {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 72px);
+  padding: clamp(80px, 9vw, 140px) var(--pad) clamp(80px, 9vw, 140px) 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 25% 50%, rgba(3,115,254,0.22), transparent 70%),
+    radial-gradient(ellipse 40% 50% at 90% 10%, rgba(163,168,244,0.10), transparent 70%),
+    #060913;
+  color: #fff;
+}
+.globe__stage {
+  position: relative;
+  aspect-ratio: 1;
+  width: calc(100% + 10vw);
+  max-width: min(860px, 92vh);
+  margin-left: -10vw;
+}
+.globe__canvas {
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+  cursor: grab;
+}
+.globe__canvas:active { cursor: grabbing; }
+
+.globe__body { position: relative; max-width: 560px; }
+.globe__tag {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 28px;
+}
+.globe__tag::before { content: ""; width: 28px; height: 1px; background: var(--cyan); }
+.globe__title {
+  font-weight: 500;
+  font-size: clamp(40px, 5.4vw, 80px);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: #fff;
+}
+.globe__title .pop { color: var(--orange); font-weight: 300; }
+.globe__copy {
+  margin-top: 28px;
+  font-size: 17px;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.68);
+}
+
+.globe__route {
+  margin-top: 40px;
+  display: flex; align-items: center; gap: 14px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+}
+.globe__route span:first-child { color: var(--orange); }
+.globe__route span:last-child { color: var(--cyan); }
+.globe__route i {
+  flex: 0 1 120px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--orange), var(--cyan));
+}
+
+@media (max-width: 960px) {
+  .globe {
+    grid-template-columns: 1fr;
+    padding: 72px var(--pad) 96px;
+  }
+  .globe__stage {
+    width: min(560px, 100%);
+    margin: 0 auto;
+  }
+  .globe__body { max-width: none; }
+}
+
+/* Phones: stack the contact details in one column and tighten the
+   run from the waves, through the details, into the LED screen. */
+@media (max-width: 600px) {
+  .contact { padding: 48px var(--pad) 8px; }
+  .contact__grid { grid-template-columns: 1fr; gap: 28px; }
+  .ledsec { padding: 24px 16px 56px; }
 }

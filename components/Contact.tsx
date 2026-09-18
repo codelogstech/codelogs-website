@@ -1,48 +1,6 @@
-import ParticleLogo from "./ParticleLogo";
-import Typewriter from "./Typewriter";
-
 export default function Contact() {
   return (
-    <section id="contact" className="contact">
-      <div className="contact__logo">
-        <ParticleLogo
-          id="contactCanvas"
-          particles={420}
-          passive
-          scatter={false}
-          formStrength={0.05}
-          damping={0.88}
-          drift={0.2}
-          rotate={-0.0008}
-          glow={false}
-          palette={[
-            "#0373fe",
-            "#0373fe",
-            "#31d1fe",
-            "#31d1fe",
-            "#f05828",
-            "#a3a8f4",
-          ]}
-        />
-      </div>
-      <header className="sec-head alt">
-        <span className="tag" data-scramble="">
-          05 / Contact
-        </span>
-        <h2
-          className="sec-title big"
-          aria-label="Ready for your next project?"
-        >
-          <Typewriter
-            tokens={[
-              { kind: "text", text: "Ready for your" },
-              { kind: "br" },
-              { kind: "text", text: "next " },
-              { kind: "text", text: "project?", className: "em" },
-            ]}
-          />
-        </h2>
-      </header>
+    <section id="contact" className="contact" aria-label="Contact">
       <div className="contact__grid" data-reveal-stagger="">
         <div data-reveal="rise">
           <span className="k">Write</span>
