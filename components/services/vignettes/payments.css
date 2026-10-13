@@ -1,0 +1,125 @@
+/* Payments & Collections vignette — a payment's journey (640×294).
+   Own palette for tiles; labels follow the card's text colour. */
+.vg-py text { font-size: 7px; letter-spacing: 0.02em; }
+.vg .vg-py .vg-py__lbl { fill: var(--vg-text); font-family: var(--f); font-size: 7.2px; font-weight: 500; letter-spacing: -0.01em; }
+.vg .vg-py .vg-py__lbl--b { font-weight: 600; }
+.vg .vg-py .vg-py__meta { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 5.4px; letter-spacing: 0.02em; }
+.vg .vg-py .vg-py__gtag { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 6px; font-weight: 600; letter-spacing: 0.12em; }
+.vg .vg-py .vg-py__row { fill: var(--vg-text); font-family: var(--f); font-size: 6.2px; letter-spacing: 0; }
+.vg .vg-py .vg-py__total { fill: var(--vg-text); font-family: var(--f); font-size: 9px; font-weight: 700; letter-spacing: -0.02em; }
+.vg .vg-py .vg-py__th { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 5px; font-weight: 600; letter-spacing: 0.1em; }
+.vg .vg-py .vg-py__td { fill: var(--vg-text); font-family: var(--f); font-size: 6.2px; font-weight: 500; letter-spacing: 0; }
+.vg .vg-py .vg-py__td--mute { fill: var(--vg-mute); }
+.vg .vg-py .vg-py__td--mono { font-family: var(--f-mono); font-size: 5.8px; }
+
+.vg-py__group {
+  fill: color-mix(in srgb, var(--vg-panel) 70%, transparent);
+  stroke: color-mix(in srgb, var(--vg-text) 16%, transparent);
+  stroke-width: 0.7;
+}
+.vg-py__link { fill: none; stroke: color-mix(in srgb, var(--vg-text) 22%, transparent); stroke-width: 1; transition: stroke .3s; }
+.vg-py__link.is-hot { stroke: #0373fe; stroke-width: 1.4; }
+.vg-py__rule { stroke: color-mix(in srgb, var(--vg-text) 12%, transparent); stroke-width: 0.6; }
+
+/* Tiles */
+.vg-py__face { fill: var(--tc); }
+.vg-py__shadow { fill: color-mix(in srgb, var(--tc) 30%, transparent); }
+.vg-py__gloss { fill: url(#vg-py-gloss); stroke: rgba(255, 255, 255, 0.25); stroke-width: 0.6; }
+.vg-py__glyph * { fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Checkout */
+.vg-py__secure { fill: color-mix(in srgb, #16a34a 12%, transparent); }
+.vg .vg-py .vg-py__secure-t { fill: #16a34a; font-family: var(--f-mono); font-size: 5px; font-weight: 700; }
+.vg .vg-py .vg-py__logo-t { fill: #fff; font-family: var(--f); font-size: 9px; font-weight: 700; }
+.vg-py__method rect { fill: var(--vg-panel); stroke: color-mix(in srgb, var(--vg-text) 16%, transparent); stroke-width: 0.6; }
+.vg .vg-py .vg-py__method text { fill: var(--vg-mute); font-family: var(--f); font-size: 5.8px; font-weight: 600; letter-spacing: 0; }
+.vg-py__method.is-on rect { fill: color-mix(in srgb, #16205b 10%, var(--vg-panel)); stroke: #16205b; stroke-width: 0.9; }
+.vg .vg-py .vg-py__method.is-on text { fill: #16205b; }
+.vg-py__cc { filter: drop-shadow(0 6px 10px rgba(22, 32, 91, 0.3)); }
+.vg-py__chip { fill: #f05828; opacity: .9; }
+.vg .vg-py .vg-py__cc-num { fill: #fff; font-family: var(--f-mono); font-size: 7px; font-weight: 600; letter-spacing: 0.06em; }
+.vg .vg-py .vg-py__cc-meta { fill: rgba(255, 255, 255, 0.65); font-family: var(--f-mono); font-size: 4.6px; letter-spacing: 0.08em; }
+.vg-py__caret { fill: #fff; animation: vgPulse 1s steps(1) infinite; }
+.vg-py__save { fill: #16205b; }
+.vg-py__save-tick { fill: none; stroke: #fff; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+
+.vg-py__pay-bg { fill: url(#vg-py-btn); filter: drop-shadow(0 6px 10px rgba(22, 32, 91, 0.35)); transition: fill .4s; }
+.vg-py__pay.is-busy .vg-py__pay-bg { animation: vgPyPress .25s ease; transform-box: fill-box; transform-origin: center; }
+@keyframes vgPyPress { 50% { transform: scale(.96); } }
+.vg-py__pay.is-paid .vg-py__pay-bg { fill: #16a34a; filter: drop-shadow(0 6px 10px rgba(22, 163, 74, 0.35)); }
+.vg .vg-py .vg-py__pay-t { fill: #fff; font-family: var(--f); font-size: 7.4px; font-weight: 700; letter-spacing: 0; }
+.vg-py__spin { fill: none; stroke: rgba(255, 255, 255, 0.35); stroke-width: 1.5; stroke-dasharray: 8 18; transform-box: fill-box; transform-origin: center; animation: vgPySpin .8s linear infinite; stroke: #fff; }
+@keyframes vgPySpin { to { rotate: 360deg; } }
+
+.vg-py__trust, .vg-py__receipt { opacity: 0; transition: opacity .4s, transform .5s cubic-bezier(.2,.7,.2,1); }
+.vg-py__trust.is-on { opacity: 1; }
+.vg-py__receipt { transform: translateY(8px); }
+.vg-py__receipt.is-on { opacity: 1; transform: none; }
+.vg-py__trust-dot { fill: #22c55e; }
+.vg-py__receipt-bg { fill: color-mix(in srgb, #16a34a 7%, var(--vg-panel)); stroke: color-mix(in srgb, #16a34a 50%, transparent); stroke-width: 0.7; }
+.vg-py__ok { fill: #16a34a; }
+.vg-py__ok-tick { fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Engine */
+.vg-py__node { transition: opacity .3s; }
+.vg-py__dot { fill: color-mix(in srgb, var(--vg-text) 25%, transparent); stroke: var(--vg-panel); stroke-width: 1.2; }
+.vg-py__node.is-run .vg-py__dot { fill: #0373fe; animation: vgPulse .7s infinite; }
+.vg-py__node.is-done .vg-py__dot { fill: #22c55e; }
+.vg-py__node.is-run .vg-py__face { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--tc) 85%, transparent)); }
+.vg-py__needle { transition: transform .9s cubic-bezier(.3,1.3,.5,1); }
+.vg-py.is-reset .vg-py__needle { transition: none; }
+.vg-py__needle * { fill: var(--vg-text); }
+
+/* Rails */
+.vg-py__rail { transition: opacity .3s; }
+.vg-py__rail.is-dim { opacity: .45; }
+.vg-py__rail-bg { fill: transparent; stroke: transparent; stroke-width: 0.8; transition: fill .3s, stroke .3s; }
+.vg-py__rail.is-on .vg-py__rail-bg { fill: color-mix(in srgb, #0373fe 9%, transparent); stroke: #0373fe; }
+.vg .vg-py .vg-py__rail.is-on .vg-py__meta { fill: #16a34a; font-weight: 600; }
+
+/* Dashboard */
+.vg-py__app { fill: var(--vg-panel); stroke: color-mix(in srgb, var(--vg-text) 16%, transparent); stroke-width: 0.7; filter: drop-shadow(0 8px 14px rgba(22, 32, 91, 0.1)); }
+.vg-py__appbar { fill: color-mix(in srgb, var(--vg-text) 5%, var(--vg-panel)); }
+.vg-py__live rect { fill: color-mix(in srgb, #16a34a 12%, transparent); }
+.vg-py__live circle { fill: #16a34a; animation: vgPulse 1.4s infinite; }
+.vg .vg-py .vg-py__live text { fill: #16a34a; font-family: var(--f); font-size: 5.8px; font-weight: 600; letter-spacing: 0; }
+.vg-py__kpi-bg { fill: color-mix(in srgb, var(--vg-text) 3%, var(--vg-panel)); stroke: color-mix(in srgb, var(--vg-text) 10%, transparent); stroke-width: 0.6; }
+.vg-py__kpi.is-bump .vg-py__kpi-bg { animation: vgPyFlash 1.2s ease; }
+@keyframes vgPyFlash { 0%, 40% { stroke: #16a34a; fill: color-mix(in srgb, #16a34a 10%, var(--vg-panel)); } }
+.vg .vg-py .vg-py__kpi-k { fill: var(--vg-mute); font-family: var(--f); font-size: 5.6px; font-weight: 500; letter-spacing: 0; }
+.vg .vg-py .vg-py__kpi-v { fill: var(--vg-text); font-family: var(--f); font-size: 9.6px; font-weight: 700; letter-spacing: -0.02em; animation: vgPyIn .4s ease both; }
+@keyframes vgPyIn { from { opacity: 0; } }
+.vg-py__bar { fill: url(#vg-py-bars); }
+.vg-py__bar.is-last { fill: color-mix(in srgb, #0373fe 45%, transparent); transform-box: fill-box; transform-origin: bottom; }
+.vg-py__bar.is-grow { fill: #16a34a; animation: vgPyGrow .6s cubic-bezier(.3,1.4,.5,1) both; }
+@keyframes vgPyGrow { from { transform: scaleY(.7); } }
+.vg-py__tr { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.vg-py.is-reset .vg-py__tr { transition: none; }
+.vg-py__tr-bg { fill: transparent; }
+.vg-py__tr.is-new { animation: vgPyIn .5s ease both; }
+.vg-py__tr.is-new .vg-py__tr-bg { fill: color-mix(in srgb, #16a34a 10%, transparent); }
+.vg-py__badge { opacity: .14; }
+.vg .vg-py .vg-py__badge-t { font-family: var(--f); font-size: 5.2px; font-weight: 700; letter-spacing: 0; }
+
+/* Ledger */
+.vg-py__recon { opacity: 0; transition: opacity .4s; }
+.vg-py__recon.is-on { opacity: 1; }
+.vg-py__recon rect { fill: color-mix(in srgb, #16a34a 14%, transparent); stroke: color-mix(in srgb, #16a34a 50%, transparent); stroke-width: 0.6; }
+.vg .vg-py .vg-py__recon text { fill: #16a34a; font-family: var(--f-mono); font-size: 5px; font-weight: 700; }
+.vg-py__entry { opacity: 0; transform: translateX(-4px); transition: opacity .35s, transform .35s; transition-delay: calc(var(--k) * 0.18s); }
+.vg-py__entry.is-on { opacity: 1; transform: none; }
+.vg .vg-py .vg-py__await { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 5.6px; opacity: 0; transition: opacity .3s; }
+.vg .vg-py .vg-py__await.is-on { opacity: 1; }
+.vg-py__payout circle { fill: color-mix(in srgb, var(--vg-text) 30%, transparent); transition: fill .3s; }
+.vg-py__payout.is-on circle { fill: #16a34a; }
+
+/* Webhooks */
+.vg-py__hook { animation: vgPyHook .4s ease both; }
+@keyframes vgPyHook { from { opacity: 0; transform: translateY(4px); } }
+.vg-py__hook-bg { fill: color-mix(in srgb, var(--vg-text) 3%, var(--vg-panel)); stroke: color-mix(in srgb, var(--vg-text) 10%, transparent); stroke-width: 0.5; }
+.vg-py__hook-flash { fill: none; stroke: #16a34a; stroke-width: 0.8; animation: vgPyFade 1.4s ease forwards; }
+@keyframes vgPyFade { to { opacity: 0; } }
+.vg-py__post { fill: color-mix(in srgb, #16205b 16%, transparent); }
+.vg .vg-py .vg-py__post-t { fill: #16205b; font-family: var(--f-mono); font-size: 4.4px; font-weight: 700; }
+.vg .vg-py .vg-py__hook-t { fill: var(--vg-text); font-family: var(--f-mono); font-size: 5.4px; letter-spacing: 0; }
+.vg .vg-py .vg-py__hook-ok { fill: #16a34a; font-family: var(--f-mono); font-size: 5.4px; font-weight: 700; }

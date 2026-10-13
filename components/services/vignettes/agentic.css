@@ -1,0 +1,140 @@
+/* Agentic AI vignette — agent system diagram (640×294). Its own vivid
+   palette; labels follow the card's text colour so they read in both
+   themes and on hover. Step state comes from svg[data-step]. */
+.vg-ag text { font-size: 7px; letter-spacing: 0.02em; }
+.vg .vg-ag .vg-ag__lbl { fill: var(--vg-text); font-family: var(--f); font-size: 7.4px; font-weight: 500; letter-spacing: -0.01em; }
+.vg .vg-ag .vg-ag__lbl--sm { font-size: 6.8px; }
+.vg .vg-ag .vg-ag__meta { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 5.6px; letter-spacing: 0.02em; }
+.vg .vg-ag .vg-ag__gtag { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 6px; font-weight: 600; letter-spacing: 0.12em; }
+
+/* Groups and links */
+.vg-ag__group {
+  fill: color-mix(in srgb, var(--vg-panel) 70%, transparent);
+  stroke: color-mix(in srgb, var(--vg-text) 16%, transparent);
+  stroke-width: 0.7;
+}
+.vg-ag__link {
+  fill: none;
+  stroke: color-mix(in srgb, var(--vg-text) 26%, transparent);
+  stroke-width: 1;
+  transition: stroke .3s, stroke-width .3s;
+}
+.vg-ag__link--dash { stroke-dasharray: 2.5 2.5; }
+.vg-ag__link.is-hot { stroke: #0373fe; stroke-width: 1.4; }
+
+/* Tiles */
+.vg-ag__face { fill: var(--tc); }
+.vg-ag__shadow { fill: color-mix(in srgb, var(--tc) 30%, transparent); }
+.vg-ag__gloss { fill: url(#vg-ag-gloss); stroke: rgba(255, 255, 255, 0.25); stroke-width: 0.6; }
+.vg-ag__glyph * { fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Pills (triggers, models) */
+.vg-ag__pill-bg {
+  fill: var(--vg-panel);
+  stroke: color-mix(in srgb, var(--vg-text) 14%, transparent);
+  stroke-width: 0.7;
+  transition: fill .3s, stroke .3s;
+}
+.vg-ag__pill.is-on .vg-ag__pill-bg {
+  fill: color-mix(in srgb, var(--tc) 12%, var(--vg-panel));
+  stroke: var(--tc);
+}
+.vg-ag__stream circle { fill: var(--tc); opacity: 0; }
+.vg-ag__pill.is-on .vg-ag__stream circle { animation: vgAgDot .6s ease-in-out infinite; }
+@keyframes vgAgDot { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+
+/* Agent core */
+.vg-ag__halo { animation: vgAgHalo 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes vgAgHalo { 0%, 100% { opacity: .6; transform: scale(.94); } 50% { opacity: 1; transform: scale(1.04); } }
+.vg-ag__ring { fill: none; stroke: color-mix(in srgb, #0373fe 45%, transparent); stroke-width: 1; stroke-dasharray: 2 3; }
+.vg-ag__orbit { fill: #a3a8f4; }
+.vg-ag__core-face { fill: url(#vg-ag-core); filter: drop-shadow(0 6px 10px rgba(22, 32, 91, 0.35)); transition: fill .4s; }
+.vg-ag__core.is-done .vg-ag__core-face { fill: #22c55e; }
+.vg-ag__core-spark path { fill: #fff; stroke: none; }
+.vg-ag__core-check { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.vg-ag__core.is-done .vg-ag__core-spark { opacity: 0; }
+.vg-ag__core.is-done .vg-ag__core-check { opacity: 1; }
+.vg .vg-ag .vg-ag__core-lbl { fill: #fff; font-family: var(--f-mono); font-size: 6.4px; font-weight: 700; letter-spacing: 0.16em; }
+.vg-ag__core:not(.is-done) .vg-ag__core-spark { animation: vgAgSpin 6s linear infinite; transform-box: view-box; transform-origin: 0 0; }
+@keyframes vgAgSpin { to { rotate: 360deg; } }
+
+.vg-ag__chip rect {
+  fill: var(--vg-panel);
+  stroke: color-mix(in srgb, #0373fe 40%, transparent);
+  stroke-width: 0.8;
+  transition: fill .3s, stroke .3s;
+}
+.vg .vg-ag .vg-ag__chip text { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 6px; font-weight: 600; letter-spacing: 0.06em; }
+.vg-ag__chip.is-on rect { fill: #0373fe; stroke: #0373fe; }
+.vg .vg-ag .vg-ag__chip.is-on text { fill: #fff; }
+
+/* Plan checklist */
+.vg-ag__step { opacity: 0; transition: opacity .35s; transition-delay: calc(var(--k) * 60ms); }
+.vg-ag__step.is-shown { opacity: 1; }
+.vg-ag__step-bg { fill: transparent; transition: fill .3s; }
+.vg-ag__step.is-run .vg-ag__step-bg { fill: color-mix(in srgb, #0373fe 12%, transparent); }
+.vg-ag__step-dot { fill: none; stroke: color-mix(in srgb, var(--vg-text) 35%, transparent); stroke-width: 1; transition: fill .3s, stroke .3s; }
+.vg-ag__step.is-run .vg-ag__step-dot { stroke: #0373fe; stroke-dasharray: 3 2; animation: vgAgSpin 1.4s linear infinite; transform-box: fill-box; transform-origin: center; }
+.vg-ag__step.is-done .vg-ag__step-dot { fill: #22c55e; stroke: #22c55e; }
+.vg-ag__step-check { fill: none; stroke: #fff; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.vg-ag__step.is-done .vg-ag__step-check { opacity: 1; }
+.vg .vg-ag .vg-ag__step-t { fill: var(--vg-text); font-family: var(--f); font-size: 6.6px; letter-spacing: 0; transition: fill .3s; }
+.vg .vg-ag .vg-ag__step.is-done .vg-ag__step-t { fill: var(--vg-mute); }
+
+/* Memory + guardrails glow when in use */
+.vg-ag__lit .vg-ag__face { filter: drop-shadow(0 0 5px rgba(240, 88, 40, 0.7)); }
+.vg-ag__guard.is-on .vg-ag__face { filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.75)); }
+.vg-ag__chunk { fill: #31d1fe; }
+
+/* Tools */
+.vg-ag__mcp rect { fill: color-mix(in srgb, #0373fe 14%, transparent); stroke: color-mix(in srgb, #0373fe 45%, transparent); stroke-width: 0.7; }
+.vg .vg-ag .vg-ag__mcp text { fill: #0373fe; font-family: var(--f-mono); font-size: 5.8px; font-weight: 700; letter-spacing: 0.1em; }
+.vg-ag__tool { transition: opacity .3s; }
+.vg-ag__tool.is-idle { opacity: .72; }
+.vg .vg-ag .vg-ag__tool-out { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 5.6px; }
+.vg .vg-ag .vg-ag__tool.is-done .vg-ag__tool-out { fill: #16a34a; }
+.vg .vg-ag .vg-ag__tool.is-run .vg-ag__tool-out { fill: #0373fe; }
+.vg-ag__tool-dot { fill: color-mix(in srgb, var(--vg-text) 25%, transparent); stroke: var(--vg-panel); stroke-width: 1.2; }
+.vg-ag__tool.is-run .vg-ag__tool-dot { fill: #0373fe; animation: vgPulse .8s infinite; }
+.vg-ag__tool.is-done .vg-ag__tool-dot { fill: #22c55e; }
+.vg-ag__tool-track { fill: color-mix(in srgb, var(--vg-text) 10%, transparent); }
+.vg-ag__tool-bar { fill: #0373fe; transform-box: fill-box; transform-origin: left; transform: scaleX(0); }
+.vg-ag__tool.is-run .vg-ag__tool-bar { animation: vgAgFill 1s linear forwards; }
+.vg-ag__tool.is-done .vg-ag__tool-bar { fill: #22c55e; transform: scaleX(1); }
+@keyframes vgAgFill { to { transform: scaleX(1); } }
+
+/* Human approval */
+.vg-ag__approve-bg {
+  fill: color-mix(in srgb, var(--vg-panel) 70%, transparent);
+  stroke: color-mix(in srgb, var(--vg-text) 16%, transparent);
+  stroke-width: 0.7;
+  transition: fill .4s, stroke .4s;
+}
+.vg-ag__approve.is-ask .vg-ag__approve-bg { fill: color-mix(in srgb, #f05828 10%, var(--vg-panel)); stroke: #f05828; }
+.vg-ag__approve.is-ok .vg-ag__approve-bg { fill: color-mix(in srgb, #22c55e 9%, var(--vg-panel)); stroke: #22c55e; }
+.vg-ag__avatar { fill: #f05828; }
+.vg .vg-ag .vg-ag__avatar-t { fill: #fff; font-family: var(--f); font-size: 8px; font-weight: 700; }
+.vg .vg-ag .vg-ag__ask { fill: var(--vg-text); font-family: var(--f); font-size: 6.6px; font-weight: 600; letter-spacing: 0; }
+.vg-ag__approve.is-idle .vg-ag__btn { opacity: .35; }
+.vg-ag__btn rect { stroke-width: 0.8; }
+.vg-ag__btn--ok rect { fill: #22c55e; stroke: #22c55e; }
+.vg-ag__btn--no rect { fill: transparent; stroke: color-mix(in srgb, var(--vg-text) 30%, transparent); }
+.vg .vg-ag .vg-ag__btn text { font-family: var(--f); font-size: 6.4px; font-weight: 600; letter-spacing: 0; }
+.vg .vg-ag .vg-ag__btn--ok text { fill: #fff; }
+.vg .vg-ag .vg-ag__btn--no text { fill: var(--vg-mute); }
+.vg-ag__approve.is-ask .vg-ag__btn--ok { animation: vgAgPress 1.7s ease forwards; transform-box: fill-box; transform-origin: center; }
+@keyframes vgAgPress { 0%, 60% { transform: none; } 70% { transform: scale(.92); } 80%, 100% { transform: none; } }
+.vg-ag__approve.is-ask .vg-ag__btn--ok rect { animation: vgAgGlow 1.2s ease-in-out infinite; }
+@keyframes vgAgGlow { 50% { filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.9)); } }
+
+/* Trace */
+.vg-ag__span { opacity: 0; transform-box: fill-box; transform-origin: left; transform: scaleX(0); transition: opacity .3s, transform .5s cubic-bezier(.2,.7,.2,1); }
+.vg-ag__span.is-on { opacity: 1; transform: none; }
+.vg-ag__rule { stroke: color-mix(in srgb, var(--vg-text) 14%, transparent); stroke-width: 0.7; }
+.vg .vg-ag .vg-ag__stat { fill: var(--vg-text); font-family: var(--f-mono); font-size: 7px; font-weight: 600; }
+
+/* Packets */
+.vg-ag__pkt { fill: var(--pc); }
+
+/* Reduced motion shows the finished run. */
+.vg.is-still .vg-ag__span { opacity: 1; transform: none; }

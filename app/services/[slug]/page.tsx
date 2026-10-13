@@ -4,6 +4,20 @@ import type { Metadata } from "next";
 import { SERVICES } from "@/lib/content";
 import { SERVICE_DETAILS } from "@/lib/servicesContent";
 import { pageMetadata } from "@/lib/seo";
+import { DEEP_DIVES } from "@/lib/deepDive";
+import { TECH_ICONS } from "@/lib/techIcons";
+import ArchitectureDiagram from "@/components/services/ArchitectureDiagram";
+import ServiceScene from "@/components/services/ServiceScene";
+import Vignette from "@/components/services/Vignette";
+
+function Check({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 18 18" fill="none" aria-hidden="true">
+      <circle cx="9" cy="9" r="8.25" stroke="currentColor" strokeOpacity=".35" />
+      <path d="M5.5 9.2l2.3 2.3 4.7-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 type Params = { slug: string };
 
@@ -38,6 +52,10 @@ export default async function ServicePage({
   if (!service || !detail) notFound();
 
   const accent = detail.accent;
+  const deep = DEEP_DIVES[slug];
+  const i = SERVICES.findIndex((s) => s.slug === slug);
+  const prev = SERVICES[(i - 1 + SERVICES.length) % SERVICES.length];
+  const next = SERVICES[(i + 1) % SERVICES.length];
 
   return (
     <div className={`svc-page svc-page--${accent}`}>
@@ -78,11 +96,56 @@ export default async function ServicePage({
             </Link>
           </div>
         </div>
-        <div className="svc-hero__media" aria-hidden="true">
-          <div className="svc-hero__orb" />
-          <div className="svc-hero__glyph">{service.num}</div>
-        </div>
+        {deep ? (
+          <div className="svc-hero__media">
+            <div className="svc-stage">
+              <div className="svc-stage__bar" aria-hidden="true">
+                <span className="svc-stage__dots">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span className="svc-stage__title">{deep.stage.title}</span>
+                <span className="svc-stage__status">
+                  <i />
+                  {deep.stage.status}
+                </span>
+              </div>
+              <div className="svc-stage__body">
+                <Vignette slug={slug} />
+              </div>
+              <dl className="svc-stage__metrics">
+                {deep.stage.metrics.map((m) => (
+                  <div key={m.k}>
+                    <dt>{m.k}</dt>
+                    <dd>{m.v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        ) : (
+          <div className="svc-hero__media" aria-hidden="true">
+            <div className="svc-hero__orb" />
+            <div className="svc-hero__glyph">{service.num}</div>
+          </div>
+        )}
       </section>
+
+      {deep && (
+        <section className="svc-deliver" aria-label="What you walk away with">
+          <p className="svc-deliver__label">What you walk away with</p>
+          <ul className="svc-deliver__grid" data-reveal-stagger="">
+            {deep.deliverables.map((d) => (
+              <li key={d.title} data-reveal="rise">
+                <Check size={20} />
+                <b>{d.title}</b>
+                <p>{d.body}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Capabilities */}
       <section className="pb-modules">
@@ -116,6 +179,56 @@ export default async function ServicePage({
         </div>
       </section>
 
+      {deep && (
+        <section className="svc-arch">
+          <header className="pb-section-head">
+            <span className="pb-tag">Reference architecture</span>
+            <h2>
+              {deep.architecture.title}
+              <br />
+              <span className="em">{deep.architecture.titleEm}</span>
+            </h2>
+            <p>{deep.architecture.intro}</p>
+          </header>
+          <p className="svc-swipe" aria-hidden="true">Swipe the diagram to explore →</p>
+          <ArchitectureDiagram arch={deep.architecture} />
+          <p className="svc-arch__note">
+            A typical shape, not a template. Every engagement starts by
+            drawing this for your systems.
+          </p>
+        </section>
+      )}
+
+      {deep && (
+        <section className="svc-scene">
+          <header className="pb-section-head">
+            <span className="pb-tag">In the product</span>
+            <h2>
+              {deep.scene.title}
+              <br />
+              <span className="em">{deep.scene.titleEm}</span>
+            </h2>
+            <p>{deep.scene.intro}</p>
+          </header>
+          <p className="svc-swipe" aria-hidden="true">Swipe the screen to see more →</p>
+          <div className="svc-scene__stage">
+            <ServiceScene slug={slug} />
+          </div>
+          <ol className="svc-scene__callouts">
+            {deep.scene.callouts.map((c, n) => (
+              <li key={c.title}>
+                <span>{String(n + 1).padStart(2, "0")}</span>
+                <b>{c.title}</b>
+                <p>{c.body}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="svc-scene__note">
+            Illustrative screens. Names and figures are sample data.
+          </p>
+        </section>
+      )}
+
       {/* Approach — dark navy */}
       <section className="pb-values svc-approach">
         <header className="pb-section-head">
@@ -136,6 +249,34 @@ export default async function ServicePage({
           ))}
         </div>
       </section>
+
+      {deep && (
+        <section className="svc-standards">
+          <header className="pb-section-head">
+            <span className="pb-tag">Engineering standards</span>
+            <h2>
+              Built in from v1,
+              <br />
+              <span className="em">not bolted on later.</span>
+            </h2>
+          </header>
+          <div className="svc-standards__grid" data-reveal-stagger="">
+            {deep.standards.map((g) => (
+              <div key={g.group} className="svc-standards__col" data-reveal="rise">
+                <h3>{g.group}</h3>
+                <ul>
+                  {g.items.map((it) => (
+                    <li key={it}>
+                      <Check />
+                      {it}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Use cases */}
       <section className="svc-usecases">
@@ -172,12 +313,82 @@ export default async function ServicePage({
             <span className="em">we reach for.</span>
           </h2>
         </header>
-        <ul className="svc-stack__chips">
-          {detail.stack.map((t) => (
-            <li key={t}>{t}</li>
-          ))}
-        </ul>
+        {deep ? (
+          <ul className="svc-layers" style={{ margin: "0 var(--pad)" }}>
+            {deep.stackLayers.map((l) => (
+              <li key={l.layer}>
+                <span className="svc-layers__name">{l.layer}</span>
+                <ul className="svc-stack__chips">
+                  {l.items.map((t) => {
+                    const Icon = TECH_ICONS[t];
+                    return (
+                      <li key={t}>
+                        {Icon && <Icon aria-hidden="true" />}
+                        {t}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ul className="svc-stack__chips">
+            {detail.stack.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        )}
       </section>
+
+      {deep && (
+        <section className="svc-faq">
+          <header className="pb-section-head">
+            <span className="pb-tag">Questions</span>
+            <h2>
+              Asked on
+              <br />
+              <span className="em">every first call.</span>
+            </h2>
+          </header>
+          <div className="svc-faq__list">
+            {deep.faqs.map((f, n) => (
+              <details key={f.q} open={n === 0}>
+                <summary>
+                  {f.q}
+                  <i aria-hidden="true" />
+                </summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: deep.faqs.map((f) => ({
+                  "@type": "Question",
+                  name: f.q,
+                  acceptedAnswer: { "@type": "Answer", text: f.a },
+                })),
+              }),
+            }}
+          />
+        </section>
+      )}
+
+      <nav className="svc-next" aria-label="Other services">
+        <Link href={`/services/${prev.slug}`}>
+          <span>← Previous service</span>
+          <b>{prev.title}</b>
+        </Link>
+        <Link href={`/services/${next.slug}`}>
+          <span>Next service →</span>
+          <b>{next.title}</b>
+        </Link>
+      </nav>
 
       {/* Bottom CTA */}
       <section className="pb-cta-strip">

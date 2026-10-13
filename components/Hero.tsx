@@ -1,21 +1,8 @@
 import Link from "next/link";
+import HeroHeadline from "./HeroHeadline";
 import ParticleLogo from "./ParticleLogo";
 import StatNumber from "./StatNumber";
 import { HERO_STATS } from "@/lib/content";
-
-// Split a word into per-character spans with staggered rise delays.
-// Each char animates independently for a polished entrance.
-function splitChars(text: string, baseDelay: number) {
-  return text.split("").map((c, i) => (
-    <span
-      key={i}
-      className="char"
-      style={{ animationDelay: `${baseDelay + i * 0.04}s` }}
-    >
-      {c === " " ? "\u00A0" : c}
-    </span>
-  ));
-}
 
 export default function Hero() {
   return (
@@ -45,17 +32,7 @@ export default function Hero() {
           Software services <i>·</i> AI-enabled applications <i>·</i>{" "}
           Enterprise SaaS
         </p>
-        <h1 className="display">
-          <span className="line">
-            <b className="em">{splitChars("Design.", 0.15)}</b>
-          </span>
-          <span className="line">
-            <span>{splitChars("Develop.", 0.45)}</span>{"\u00A0"}
-            <span className="orange-accent">
-              {splitChars("Deliver.", 0.78)}
-            </span>
-          </span>
-        </h1>
+        <HeroHeadline />
       </div>
 
       <div className="hero__sub">

@@ -1,0 +1,456 @@
+/* =========================================================
+   ProBank page — redrawn screens (960×560) and animated sections.
+   Screens animate when an ancestor has .is-on (one-shot, staggered
+   by --k); sections use brand colours only.
+   ========================================================= */
+
+/* ---------- Browser frame ---------- */
+.pbf {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(22, 32, 91, 0.12), 0 50px 90px -40px rgba(22, 32, 91, 0.55);
+}
+.pbf__bar { display: flex; align-items: center; gap: 14px; height: 34px; padding: 0 14px; background: #eef0f5; border-bottom: 1px solid #e1e4ee; }
+.pbf__dots { display: flex; gap: 6px; }
+.pbf__dots i { width: 10px; height: 10px; border-radius: 50%; background: #ff5f57; }
+.pbf__dots i:nth-child(2) { background: #febc2e; }
+.pbf__dots i:nth-child(3) { background: #28c840; }
+.pbf__url { flex: 1; max-width: 300px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 4px 12px; border-radius: 8px; background: #fff; font-family: var(--f-mono); font-size: 11px; color: #4a5068; }
+.pbf__url b { width: 8px; height: 9px; border-radius: 2px; background: #16a34a; }
+.pbf .ui-scaled { overflow: hidden; }
+
+/* ---------- Screen chrome ---------- */
+.pbs {
+  width: 960px;
+  height: 560px;
+  display: flex;
+  flex-direction: column;
+  background: #f3f5fa;
+  color: #1b1f2e;
+  font-family: var(--f);
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: left;
+}
+.pbs * { box-sizing: border-box; }
+.pbs b { font-weight: 600; }
+.pbs small { font-size: 10px; color: #7a8099; }
+.pbs-top { display: flex; align-items: center; gap: 18px; height: 40px; padding: 0 16px; background: #fff; border-bottom: 1px solid #e4e7ef; font-size: 11px; }
+.pbs-logo {
+  padding: 4px 10px 4px 8px;
+  border-radius: 3px;
+  background: #d71920;
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+}
+.pbs-meta { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: #3a4060; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.02em; }
+.pbs-ico { width: 11px; height: 11px; border-radius: 2px; border: 1.5px solid #3a4060; }
+.pbs-ico--cal { border-radius: 2px; }
+.pbs-ico--pin, .pbs-ico--user { border-radius: 50%; }
+.pbs-icons { margin-left: auto; display: flex; gap: 10px; }
+.pbs-icons i { position: relative; width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid #3a4060; }
+.pbs-icons i.has-dot::after { content: ""; position: absolute; right: -4px; top: -4px; width: 7px; height: 7px; border-radius: 50%; background: #d71920; }
+.pbs-menu { display: flex; gap: 2px; height: 34px; padding: 0 12px; align-items: center; background: #0a4fb0; }
+.pbs-menu span { padding: 6px 9px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); }
+.pbs-menu span.is-on { background: rgba(255, 255, 255, 0.18); color: #fff; }
+.pbs-body { flex: 1; min-height: 0; padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 12px; position: relative; }
+.pbs-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #1b1f2e; padding-bottom: 6px; border-bottom: 2px solid #0a4fb0; align-self: flex-start; }
+.pbs-card { position: relative; padding: 14px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px #e4e7ef; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+.pbs-card__h { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; }
+.pbs-mono { font-family: var(--f-mono); font-size: 10.5px; color: #5a607a; }
+.pbs-two { flex: 1; min-height: 0; display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; }
+.pbs-two--wide { grid-template-columns: 1.5fr 1fr; }
+.pbs-btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 14px; border-radius: 6px; font-size: 11.5px; font-weight: 600; color: #3a4060; background: #eef0f6; box-shadow: inset 0 0 0 1px #dde1eb; }
+.pbs-btn--primary { color: #fff; background: #0a4fb0; box-shadow: none; }
+.pbs-btn--ok { color: #fff; background: #16a34a; box-shadow: none; }
+.pbs-actions { display: flex; gap: 8px; margin-top: auto; }
+.pbs-check { width: 12px; height: 12px; }
+.pbs-check path { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Animations keyed off .is-on on an ancestor */
+@keyframes pbsRise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes pbsFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pbsPress { 0%, 30% { transform: none; filter: none; } 34% { transform: scale(.95); filter: brightness(1.15); } 40%, 100% { transform: none; filter: none; } }
+.is-on .pbs-press { animation: pbsPress 3s both; }
+
+/* Dashboard */
+.pbs-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.pbs-kpi { padding: 12px 14px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px #e4e7ef; display: flex; flex-direction: column; gap: 3px; border-top: 3px solid var(--c); }
+.pbs-kpi--blue { --c: #0373fe; }
+.pbs-kpi--navy { --c: #16205b; }
+.pbs-kpi--orange { --c: #f05828; }
+.pbs-kpi--cyan { --c: #31d1fe; }
+.pbs-kpi b { font-size: 21px; letter-spacing: -0.02em; }
+.pbs-kpi em { font-style: normal; font-size: 10px; color: #16a34a; font-weight: 600; }
+.pbs-kpi--orange em { color: #16a34a; }
+.is-on .pbs-kpi { animation: pbsRise .5s calc(var(--k) * .08s) both; }
+.pbs-dash { flex: 1; min-height: 0; display: grid; grid-template-columns: 1.35fr 1fr; grid-template-rows: 1fr auto; gap: 10px; }
+.pbs-chart { grid-row: 1; }
+.pbs-legend { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; color: #5a607a; }
+.pbs-legend i { width: 8px; height: 8px; border-radius: 2px; }
+.pbs-legend i.is-a { background: #0373fe; }
+.pbs-legend i.is-b { background: #31d1fe; margin-left: 6px; }
+.pbs-bars { flex: 1; display: flex; align-items: flex-end; gap: 8px; padding-top: 8px; border-bottom: 1px solid #e4e7ef; }
+.pbs-bars span { flex: 1; height: 100%; display: flex; align-items: flex-end; gap: 2px; }
+.pbs-bars i { flex: 1; border-radius: 3px 3px 0 0; background: #0373fe; transform-origin: bottom; }
+.pbs-bars i:last-child { background: #31d1fe; }
+.is-on .pbs-bars i { animation: pbsGrow .8s calc(.2s + var(--k) * .05s) cubic-bezier(.2,.7,.2,1) both; }
+@keyframes pbsGrow { from { transform: scaleY(0); } }
+.pbs-feed { grid-row: 1 / 3; grid-column: 2; overflow: hidden; }
+.pbs-live { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: #16a34a; font-weight: 600; }
+.pbs-live i { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; animation: vgPulse 1.2s infinite; }
+.pbs-feed__row { display: grid; grid-template-columns: 70px 1fr auto; grid-template-rows: auto auto; gap: 1px 8px; padding: 9px 10px; border-radius: 8px; background: #f7f8fb; }
+.pbs-feed__row b { text-align: right; font-family: var(--f-mono); font-size: 11.5px; color: #16a34a; }
+.pbs-feed__row b.is-dr { color: #f05828; }
+.pbs-feed__row em { grid-column: 2 / 4; font-style: normal; font-size: 9.5px; color: #7a8099; }
+.pbs-feed__row.is-new { animation: pbsNew .6s cubic-bezier(.2,.7,.2,1); box-shadow: inset 0 0 0 1.5px #0373fe; background: #fff; }
+@keyframes pbsNew { from { opacity: 0; transform: translateY(-14px); } }
+.pbs-mini { gap: 6px; }
+.pbs-badge { padding: 2px 7px; border-radius: 999px; background: #f05828; color: #fff; font-size: 10px; font-weight: 700; }
+.pbs-pend { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 5px 0; border-bottom: 1px dashed #e4e7ef; }
+.pbs-pend span { display: flex; flex-direction: column; }
+.pbs-pend b { font-size: 11px; }
+.pbs-pend i { font-style: normal; font-size: 10px; font-weight: 600; color: #0a4fb0; padding: 3px 8px; border-radius: 4px; background: #e6eefb; }
+.pbs-dash .pbs-mini:nth-of-type(3) { grid-column: 1; grid-row: 2; }
+.pbs-dash .pbs-mini:nth-of-type(4) { display: none; }
+.pbs-split { display: grid; grid-template-columns: 90px 1fr 36px; align-items: center; gap: 8px; font-size: 11px; }
+.pbs-track { height: 6px; border-radius: 3px; background: #eceff5; overflow: hidden; }
+.pbs-track i { display: block; height: 100%; width: var(--v); border-radius: inherit; background: #0373fe; }
+
+/* Day open */
+.pbs-step { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed #e4e7ef; font-size: 12px; }
+.pbs-tick { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #d6dbe7; flex-shrink: 0; }
+.is-on .pbs-step .pbs-tick { animation: pbsTick .3s calc(.3s + var(--k) * .35s) forwards; }
+@keyframes pbsTick { to { background: #16a34a; } }
+.pbs-tick .pbs-check path { stroke-dasharray: 22; stroke-dashoffset: 22; }
+.is-on .pbs-step .pbs-tick .pbs-check path { animation: pbsDraw .3s calc(.4s + var(--k) * .35s) forwards; }
+@keyframes pbsDraw { to { stroke-dashoffset: 0; } }
+.pbs-open { align-items: center; justify-content: center; text-align: center; gap: 10px; }
+.pbs-open__k { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #7a8099; }
+.pbs-open__state { position: relative; height: 28px; width: 100%; }
+.pbs-open__state b { position: absolute; inset: 0; font-size: 20px; letter-spacing: -0.01em; }
+.pbs-open__state .a { color: #7a8099; }
+.pbs-open__state .b { color: #16a34a; opacity: 0; }
+.is-on .pbs-open__state .a { animation: pbsOut .3s 2.3s forwards; }
+.is-on .pbs-open__state .b { animation: pbsFade .3s 2.3s forwards; }
+@keyframes pbsOut { to { opacity: 0; } }
+.pbs-cashbox { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; margin-top: 6px; }
+.pbs-cashbox span { display: flex; flex-direction: column; padding: 8px 4px; border-radius: 8px; background: #f3f5fa; font-family: var(--f-mono); font-size: 12px; font-weight: 600; }
+
+/* Forms */
+.pbs-form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 14px; }
+.pbs-form--3 { grid-template-columns: repeat(3, 1fr); margin-top: auto; }
+.pbs-f { display: flex; flex-direction: column; gap: 4px; }
+.pbs-f > span { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: #5a607a; }
+.pbs-f > span i { display: grid; place-items: center; width: 13px; height: 13px; border-radius: 50%; background: #0a4fb0; color: #fff; font-style: normal; font-size: 8px; font-weight: 700; }
+.pbs-f > b { padding: 7px 10px; border-radius: 6px; background: #fff; box-shadow: inset 0 0 0 1px #d6dbe7; font-size: 12px; font-weight: 500; }
+.pbs-f.is-hl > b { box-shadow: inset 0 0 0 1.5px #0373fe; font-weight: 700; font-size: 14px; }
+.is-on .pbs-f { animation: pbsRise .35s both; }
+.pbs-toast { position: absolute; left: 14px; right: 14px; bottom: 14px; padding: 9px 12px; border-radius: 8px; background: #e6eefb; color: #0a4fb0; font-size: 11.5px; font-weight: 600; opacity: 0; }
+.pbs-toast--ok { background: #e7f6ef; color: #0f8a5f; }
+.is-on .pbs-toast { animation: pbsFade .4s 1.5s forwards; }
+.pbs-denom { display: grid; grid-template-columns: 50px 16px 40px 1fr; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 6px; background: #f7f8fb; font-family: var(--f-mono); font-size: 12px; }
+.pbs-denom em { font-style: normal; text-align: right; font-weight: 600; }
+.is-on .pbs-denom { animation: pbsRise .35s calc(.2s + var(--k) * .2s) both; }
+.pbs-denom--t { background: #e7f6ef; color: #0f8a5f; }
+.pbs-sig { margin-top: auto; display: flex; flex-direction: column; gap: 4px; padding: 8px 10px; border-radius: 6px; box-shadow: inset 0 0 0 1px #e4e7ef; }
+.pbs-sig svg { width: 120px; height: 30px; }
+.pbs-sig path { fill: none; stroke: #16205b; stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 200; stroke-dashoffset: 200; }
+.is-on .pbs-sig path { animation: pbsSig 1.4s .5s ease forwards; }
+@keyframes pbsSig { to { stroke-dashoffset: 0; } }
+
+/* Tables */
+.pbs-table { display: flex; flex-direction: column; border-radius: 8px; overflow: hidden; box-shadow: inset 0 0 0 1px #e4e7ef; }
+.pbs-tr { display: grid; grid-template-columns: 90px 1fr 100px 100px 70px; gap: 8px; padding: 9px 10px; font-size: 11.5px; border-bottom: 1px solid #eef0f5; align-items: center; }
+.pbs-tr--h { background: #3a4060; color: #fff; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.pbs-tr.is-sel { background: #e6eefb; box-shadow: inset 3px 0 0 #0373fe; }
+.is-on .pbs-tr:not(.pbs-tr--h) { animation: pbsRise .35s calc(.15s + var(--k) * .12s) both; }
+.pbs-table--jewel .pbs-tr { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
+.pbs-tr--t { background: #f7f8fb; font-weight: 700; }
+.is-on .pbs-tr--add { animation: pbsRise .4s calc(.3s + var(--k) * .4s) both; }
+.pbs-table--neft .pbs-tr { grid-template-columns: 120px 1.2fr 110px 100px 90px; }
+.pbs-status { position: relative; height: 18px; }
+.pbs-status em { position: absolute; inset: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; font-style: normal; font-size: 10px; font-weight: 700; }
+.pbs-status .a { background: #eef0f6; color: #5a607a; }
+.pbs-status .b { background: #e6eefb; color: #0a4fb0; opacity: 0; }
+.pbs-status .c { background: #e7f6ef; color: #0f8a5f; opacity: 0; }
+.is-on .pbs-status .a { animation: pbsOut .2s calc(1s + var(--k) * .25s) forwards; }
+.is-on .pbs-status .b { animation: pbsFade .2s calc(1s + var(--k) * .25s) forwards, pbsOut .2s calc(2.4s + var(--k) * .25s) forwards; }
+.is-on .pbs-status .c { animation: pbsFade .2s calc(2.4s + var(--k) * .25s) forwards; }
+.pbs-route { font-size: 11px; color: #5a607a; }
+.pbs-route b { color: #f05828; }
+.pbs-railflow { display: flex; gap: 6px; margin-top: auto; }
+.pbs-railflow span { flex: 1; position: relative; padding: 10px; border-radius: 8px; text-align: center; font-size: 11px; font-weight: 600; color: #16205b; background: #eef2fb; }
+.pbs-railflow span:not(:last-child)::after { content: "→"; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); color: #0373fe; z-index: 1; }
+.is-on .pbs-railflow span { animation: pbsRail .5s calc(1s + var(--k) * .35s) both; }
+@keyframes pbsRail { 50% { background: #0373fe; color: #fff; } }
+
+/* Audit */
+.pbs-audit { display: grid; grid-template-columns: 62px 1fr; gap: 8px; padding: 7px 0; border-bottom: 1px dashed #e4e7ef; font-size: 11.5px; }
+.pbs-audit.is-ok span:last-child { color: #0f8a5f; font-weight: 600; }
+.is-on .pbs-audit { animation: pbsRise .35s calc(.3s + var(--k) * .35s) both; }
+
+/* Jewel */
+.pbs-tabs { display: flex; gap: 14px; border-bottom: 1px solid #e4e7ef; font-size: 11px; color: #0a4fb0; }
+.pbs-tabs span { padding: 6px 0; }
+.pbs-tabs .is-on { border-bottom: 2px solid #0a4fb0; font-weight: 700; }
+.pbs-elig { align-items: center; justify-content: center; text-align: center; gap: 8px; }
+.pbs-big { font-size: 26px; letter-spacing: -0.02em; }
+.pbs-big--blue { color: #0373fe; }
+.pbs-gauge { position: relative; width: 80%; height: 10px; border-radius: 5px; background: #eceff5; }
+.pbs-gauge i { position: absolute; left: 0; top: 0; bottom: 0; width: 75%; border-radius: inherit; background: #0373fe; transform-origin: left; }
+.is-on .pbs-gauge i { animation: pbsGrowX 1s 1.4s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes pbsGrowX { from { transform: scaleX(0); } }
+.pbs-gauge span { position: absolute; left: 75%; top: 14px; transform: translateX(-50%); font-family: var(--f-mono); font-size: 9.5px; color: #5a607a; }
+.pbs-elig .pbs-btn { margin-top: 10px; }
+.pbs-elig .pbs-toast { text-align: center; }
+.pbs-elig .pbs-toast, .pbs-card .pbs-toast { }
+.is-on .pbs-elig .pbs-toast { animation-delay: 2.6s; }
+.is-on .pbs-elig .pbs-press { animation-duration: 3.4s; }
+
+/* EOD */
+.pbs-job { display: grid; grid-template-columns: 20px 1fr 110px; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed #e4e7ef; font-size: 12px; }
+.pbs-job__ico { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #d6dbe7; }
+.pbs-job__bar { height: 6px; border-radius: 3px; background: #eceff5; overflow: hidden; }
+.pbs-job__bar i { display: block; height: 100%; width: 100%; background: #0373fe; transform: scaleX(0); transform-origin: left; }
+.is-on .pbs-job__bar i { animation: pbsGrowXFwd .6s calc(.2s + var(--k) * .35s) linear forwards, pbsDone .1s calc(.8s + var(--k) * .35s) forwards; }
+@keyframes pbsGrowXFwd { to { transform: scaleX(1); } }
+@keyframes pbsDone { to { background: #16a34a; transform: scaleX(1); } }
+.is-on .pbs-job__ico { animation: pbsJob .1s calc(.8s + var(--k) * .35s) forwards; }
+@keyframes pbsJob { to { background: #16a34a; border-color: #16a34a; } }
+.pbs-tb { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+.pbs-tb span { display: flex; flex-direction: column; gap: 2px; padding: 8px; border-radius: 8px; background: #f3f5fa; font-family: var(--f-mono); font-size: 11px; font-weight: 600; }
+.pbs-reports { display: flex; gap: 6px; width: 100%; }
+.pbs-reports span { flex: 1; display: flex; align-items: center; gap: 6px; padding: 7px; border-radius: 8px; background: #fff; box-shadow: inset 0 0 0 1px #e4e7ef; font-size: 10.5px; font-weight: 600; opacity: 0; }
+.pbs-reports i { padding: 2px 4px; border-radius: 3px; background: #f05828; color: #fff; font-style: normal; font-size: 8px; font-weight: 800; }
+.is-on .pbs-reports span { animation: pbsRiseIn .35s calc(2.5s + var(--k) * .15s) forwards; }
+@keyframes pbsRiseIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Hero ---------- */
+.pbx-hero__media { position: relative; }
+.pbx-hero__media .pb-hero__tick { position: relative; top: auto; right: auto; width: fit-content; margin: 16px 0 0 auto; }
+.pb-hero:has(.pbx-hero__media) { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
+
+/* ---------- Stats ---------- */
+.pbx-stats {
+  position: relative;
+  z-index: 1;
+  margin: 40px var(--pad) 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-radius: 22px;
+  background: var(--navy);
+  color: #fff;
+  overflow: hidden;
+}
+.pbx-stat { display: flex; flex-direction: column; gap: 6px; padding: 30px 32px; }
+.pbx-stat + .pbx-stat { border-left: 1px solid rgba(255, 255, 255, 0.12); }
+.pbx-stat b { font-size: clamp(32px, 3.6vw, 52px); font-weight: 500; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.pbx-stat b i { font-style: normal; color: var(--orange); }
+.pbx-stat span { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--periwinkle); }
+
+/* ---------- A day at the branch ---------- */
+.pbx-day { position: relative; z-index: 1; margin-top: 60px; }
+.pbx-day__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  min-height: 640px;
+  padding: 90px var(--pad) 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+  gap: clamp(28px, 4vw, 60px);
+  align-items: center;
+}
+.pbx-day__copy h2 { margin-top: 14px; font-size: clamp(32px, 3.6vw, 54px); font-weight: 500; line-height: 1; letter-spacing: -0.035em; color: var(--ink); }
+.pbx-day__copy h2 .em { font-weight: 300; color: var(--primary); }
+.pbx-clock { display: flex; align-items: center; gap: 14px; margin: 20px 0 14px; }
+.pbx-clock__t { font-family: var(--f-mono); font-size: 28px; font-weight: 600; color: var(--orange); font-variant-numeric: tabular-nums; }
+.pbx-clock__bar { flex: 1; height: 3px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.pbx-clock__bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--orange)); transform-origin: left; }
+.pbx-day__steps { list-style: none; display: flex; flex-direction: column; }
+.pbx-day__steps button { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 10px; width: 100%; padding: 9px 12px; border-radius: 12px; text-align: left; cursor: pointer; transition: background .3s; }
+.pbx-day__t { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); padding-top: 2px; }
+.pbx-day__steps b { display: block; font-size: 15px; font-weight: 500; color: var(--ink-3); transition: color .3s; }
+.pbx-day__body { display: block; max-height: 0; overflow: hidden; opacity: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); transition: max-height .4s, opacity .3s, margin .3s; }
+.pbx-day__steps em { font-style: normal; font-family: var(--f-mono); font-size: 10px; padding: 3px 8px; border-radius: 999px; color: var(--ink-3); background: var(--bg-3); align-self: start; }
+.pbx-day__steps li.is-past b { color: var(--ink-2); }
+.pbx-day__steps li.is-on button { background: var(--bg-2); box-shadow: inset 0 0 0 1px var(--line), 0 14px 30px -20px rgba(22, 32, 91, 0.4); }
+.pbx-day__steps li.is-on .pbx-day__t { color: var(--orange); }
+.pbx-day__steps li.is-on b { color: var(--ink); }
+.pbx-day__steps li.is-on .pbx-day__body { max-height: 70px; opacity: 1; margin-top: 4px; }
+.pbx-day__steps li.is-on em { color: #fff; background: var(--primary); }
+.pbx-day__screen .pbs-wrap { animation: pbsSwap .45s cubic-bezier(.2,.7,.2,1); }
+@keyframes pbsSwap { from { opacity: .3; transform: translateY(8px); } }
+.pbx-note { margin-top: 12px; text-align: center; font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); }
+.pbx-note--c { margin-top: 24px; }
+
+/* ---------- Module map ---------- */
+.pbx-map { position: relative; z-index: 1; padding: 110px var(--pad); background: var(--bg-3); }
+.pbx-map__grid { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(28px, 4vw, 64px); align-items: center; }
+.pbx-map__viz { position: relative; width: 100%; max-width: 600px; aspect-ratio: 1; margin: 0 auto; }
+.pbx-map__viz svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.pbx-ring { fill: none; stroke: color-mix(in srgb, var(--blue) 25%, transparent); stroke-width: 1; stroke-dasharray: 3 4; }
+.pbx-ring--outer { stroke: color-mix(in srgb, var(--orange) 30%, transparent); }
+.pbx-spoke { stroke: var(--line-2); stroke-width: 1; transition: stroke .3s, stroke-width .3s; }
+.pbx-spoke.is-on { stroke: var(--blue); stroke-width: 2; }
+.pbx-chan-line { fill: none; stroke: color-mix(in srgb, var(--orange) 22%, transparent); stroke-width: 1; }
+.pbx-pkt { fill: var(--orange); }
+.pbx-pkt--o { fill: var(--blue); }
+.pbx-core {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  width: 23%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--blue) 12%, transparent), 0 0 0 22px color-mix(in srgb, var(--blue) 6%, transparent);
+  animation: pbxCore 3s ease-in-out infinite;
+}
+@keyframes pbxCore { 50% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--blue) 14%, transparent), 0 0 0 30px color-mix(in srgb, var(--blue) 4%, transparent); } }
+.pbx-core span { padding: 3px 8px; border-radius: 3px; background: #d71920; font-weight: 800; font-size: clamp(11px, 1.2vw, 14px); clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%); }
+.pbx-core small { margin-top: 6px; font-family: var(--f-mono); font-size: 10px; color: var(--periwinkle); }
+.pbx-mod {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 92px;
+  padding: 8px 4px;
+  border-radius: 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ink-2);
+  text-align: center;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: border-color .3s, color .3s, transform .3s, box-shadow .3s;
+}
+.pbx-mod:hover { color: var(--ink); }
+.pbx-mod.is-on { color: var(--ink); border-color: var(--blue); transform: translate(-50%, -50%) scale(1.08); box-shadow: 0 16px 30px -18px rgba(3, 115, 254, 0.6); }
+.pbx-chan {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 5px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  border: 1px solid color-mix(in srgb, var(--orange) 35%, var(--line));
+  font-size: 11.5px;
+  color: var(--ink);
+  white-space: nowrap;
+  transition: transform .2s;
+}
+.pbx-chan:hover { transform: translate(-50%, -50%) scale(1.05); }
+.pbx-map__panel { position: relative; padding: 32px; border-radius: 24px; background: var(--bg-2); border: 1px solid var(--line); animation: pbsSwap .45s cubic-bezier(.2,.7,.2,1); }
+.pbx-map__n { position: absolute; right: 24px; top: 24px; font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); }
+.pbx-map__panel h3 { margin-top: 18px; font-size: clamp(24px, 2.4vw, 34px); font-weight: 500; letter-spacing: -0.02em; color: var(--ink); }
+.pbx-map__panel p { margin-top: 8px; font-size: 15.5px; line-height: 1.6; color: var(--ink-2); }
+.pbx-map__panel ul { list-style: none; margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+.pbx-map__panel li { position: relative; padding-left: 24px; font-size: 15px; color: var(--ink); animation: pbsRise .4s calc(.1s + var(--k) * .08s) both; }
+.pbx-map__panel li::before { content: ""; position: absolute; left: 0; top: 5px; width: 13px; height: 13px; border-radius: 50%; box-shadow: inset 0 0 0 4px var(--bg-2), inset 0 0 0 13px var(--blue); background: color-mix(in srgb, var(--blue) 20%, transparent); }
+.pbx-map__dots { display: flex; gap: 6px; margin-top: 24px; }
+.pbx-map__dots button { width: 8px; height: 8px; border-radius: 4px; background: var(--line-2); cursor: pointer; transition: width .3s, background .3s; }
+.pbx-map__dots button.is-on { width: 24px; background: var(--blue); }
+
+/* ---------- Partner rails animation ---------- */
+.pbx-rails { position: relative; max-width: 800px; margin: 36px auto 0; aspect-ratio: 800 / 140; }
+.pbx-rails svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pbx-rails__line { fill: none; stroke: color-mix(in srgb, var(--blue) 30%, transparent); stroke-width: 1.5; stroke-dasharray: 4 5; }
+.pbx-rails__node { position: absolute; transform: translate(-50%, -50%); padding: 8px 14px; border-radius: 10px; background: var(--bg-2); border: 1px solid var(--line); font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; box-shadow: 0 10px 24px -16px rgba(22, 32, 91, 0.4); }
+.pbx-rails__node--a { left: 12%; top: 50%; color: #fff; background: #d71920; border-color: #d71920; }
+.pbx-rails__node--b1 { left: 52.5%; top: 23%; }
+.pbx-rails__node--b2 { left: 52.5%; top: 77%; }
+.pbx-rails__node--c { left: 86%; top: 50%; font-family: var(--f-mono); font-size: 11px; color: var(--navy); background: color-mix(in srgb, var(--cyan) 18%, var(--bg-2)); }
+
+/* ---------- Reports ---------- */
+.pbx-rep { position: relative; z-index: 1; padding: 110px var(--pad); }
+.pbx-rep__grid { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.pbx-rep__list { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+.pbx-rep__list li { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-2); font-size: 13.5px; color: var(--ink); }
+.pbx-rep__list li i { padding: 3px 6px; border-radius: 6px; background: color-mix(in srgb, var(--orange) 14%, transparent); color: var(--orange); font-style: normal; font-family: var(--f-mono); font-size: 9.5px; font-weight: 700; }
+.pbx-rep__list li.is-on { border-color: var(--blue); box-shadow: 0 10px 24px -16px rgba(3, 115, 254, 0.6); }
+.pbx-paper { position: relative; border-radius: 18px; background: var(--bg-3); border: 1px solid var(--line); padding: 14px; }
+.pbx-paper__bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.pbx-lang { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--line); }
+.pbx-lang button { padding: 7px 14px; border-radius: 999px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
+.pbx-lang button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+.pbx-print { font-family: var(--f-mono); font-size: 11.5px; color: var(--blue); cursor: pointer; }
+.pbx-paper__sheet { padding: 24px 26px; border-radius: 6px; background: #fffef9; color: #1b1f2e; box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 24px 40px -28px rgba(22, 32, 91, 0.5); font-size: 13px; }
+.pbx-paper__head { display: flex; flex-direction: column; align-items: center; gap: 3px; padding-bottom: 12px; margin-bottom: 8px; border-bottom: 2px solid #1b1f2e; text-align: center; }
+.pbx-paper__head span { font-size: 16px; font-weight: 700; }
+.pbx-paper__head small { font-family: var(--f-mono); font-size: 11px; color: #5a607a; }
+.pbx-paper__tr { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 8px; padding: 7px 0; border-bottom: 1px dashed #d6dbe7; font-size: 13px; }
+.pbx-paper__tr span:not(:first-child) { text-align: right; font-family: var(--f-mono); font-size: 12px; }
+.pbx-paper__tr--h { font-weight: 700; border-bottom: 1px solid #1b1f2e; }
+.pbx-paper__tr--h span:not(:first-child) { font-family: var(--f); font-size: 12px; }
+.pbx-paper__tr--t { font-weight: 700; border-top: 2px solid #1b1f2e; border-bottom: 3px double #1b1f2e; }
+.pbx-paper__sig { display: flex; justify-content: space-between; margin-top: 30px; font-size: 11.5px; color: #5a607a; }
+.pbx-paper__sig span { padding-top: 6px; border-top: 1px solid #1b1f2e; min-width: 110px; text-align: center; }
+.pbx-paper .pbx-paper__tr:not(.pbx-paper__tr--h), .pbx-paper .pbx-paper__sig { opacity: 0; }
+.pbx-paper.is-on .pbx-paper__tr:not(.pbx-paper__tr--h),
+.pbx-paper.is-on .pbx-paper__sig { animation: pbxLine .3s calc(.2s + var(--k) * .16s) steps(4) forwards; }
+@keyframes pbxLine { from { opacity: 0; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0 0 0 0); } }
+
+/* ---------- Rollout ---------- */
+.pbx-roll { position: relative; z-index: 1; padding: 110px var(--pad); background: var(--bg-3); }
+.pbx-roll__list { list-style: none; position: relative; margin-top: 56px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.pbx-roll__list::before { content: ""; position: absolute; left: 18px; right: 18px; top: 18px; height: 2px; background: var(--line-2); }
+.pbx-roll__list::after { content: ""; position: absolute; left: 18px; right: 18px; top: 18px; height: 2px; background: linear-gradient(90deg, var(--blue), var(--orange)); transform: scaleX(0); transform-origin: left; transition: transform 2.4s cubic-bezier(.4,0,.2,1) .2s; }
+.pbx-roll__list.in::after { transform: scaleX(1); }
+.pbx-roll__list li { position: relative; display: flex; flex-direction: column; gap: 6px; }
+.pbx-roll__dot { position: relative; z-index: 1; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--bg-2); border: 2px solid var(--line-2); font-family: var(--f-mono); font-size: 13px; font-weight: 700; color: var(--ink-3); transition: background .3s, border-color .3s, color .3s; transition-delay: calc(.3s + var(--k) * .38s); }
+.pbx-roll__list.in .pbx-roll__dot { background: var(--blue); border-color: var(--blue); color: #fff; }
+.pbx-roll__list.in li:last-child .pbx-roll__dot { background: var(--orange); border-color: var(--orange); }
+.pbx-roll__list small { margin-top: 10px; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--orange); }
+.pbx-roll__list b { font-size: 18px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
+.pbx-roll__list p { font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .pbx-roll__list { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 32px; }
+  .pbx-roll__list::before, .pbx-roll__list::after { display: none; }
+}
+@media (max-width: 960px) {
+  .pb-hero:has(.pbx-hero__media) { grid-template-columns: minmax(0, 1fr); }
+  .pbx-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pbx-stat:nth-child(3) { border-left: 0; }
+  .pbx-stat:nth-child(n + 3) { border-top: 1px solid rgba(255, 255, 255, 0.12); }
+  .pbx-day__stage { position: relative; height: auto; min-height: 0; grid-template-columns: minmax(0, 1fr); padding-top: 60px; }
+  .pbx-day__track { height: auto !important; }
+  .pbx-day__screen { order: -1; }
+  .pbx-map__grid, .pbx-rep__grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .pbx-stat { padding: 22px 20px; }
+  .pbx-mod { width: 70px; font-size: 9.5px; padding: 6px 2px; }
+  .pbx-mod .navicon { width: 26px !important; height: 26px !important; }
+  .pbx-chan { font-size: 9.5px; padding: 3px 7px 3px 3px; }
+  .pbx-chan .navicon { width: 18px !important; height: 18px !important; }
+  .pbx-roll__list { grid-template-columns: minmax(0, 1fr); }
+  .pbx-rails__node { font-size: 10px; padding: 5px 8px; }
+  .pbx-rails__node--c { font-size: 8px; }
+  .pbx-paper__sheet { padding: 16px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pbx-core { animation: none; }
+  .pbs *, .pbx-paper * { animation-duration: 1ms !important; animation-delay: 0s !important; }
+}
+@media (max-width: 600px) { .pbx-map__viz { width: 78%; } }

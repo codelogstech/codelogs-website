@@ -11,7 +11,7 @@ const EDGES = [
   {
     idx: "02",
     word: "Scale-proven",
-    copy: "Enterprise SaaS isn't theoretical here. ProBank alone powers 400+ branches and ₹2000Cr+ in deposits at 99.9% uptime — engineering for businesses that cannot afford to stop.",
+    copy: "Enterprise SaaS isn't theoretical here. ProBank alone powers 450+ branches and ₹2000Cr+ in deposits at 99.9% uptime — engineering for businesses that cannot afford to stop.",
   },
   {
     idx: "03",

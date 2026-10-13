@@ -1,0 +1,927 @@
+<!doctype html>
+<!--
+  The landing film's overlay: captions and small animated pieces of CodeLogs'
+  work, drawn over stock footage. Not a page of the site — render-overlay.mjs
+  opens it, calls renderAt(t) for every frame and screenshots it with a
+  transparent background; scripts/build-film.sh lays the frames over the footage.
+
+  Query: ?film=home&lens=5.5,5.5,…&fade=0.8&loop=1 — which film, each scene's
+  length and the crossfade (so the words land on the right footage), and whether
+  the last scene clears too (a looping film). A film's scenes are its
+  <section data-film=…> blocks, in the same order as its SCENES in build-film.sh.
+
+  All figures on the cards are sample data.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --blue:#0373fe; --orange:#f05828; --cyan:#31d1fe; --navy:#16205b; --lilac:#797ca8; --peri:#a3a8f4; --ice:#e0ebf9;
+    --ink:#0c0c0c; --ink2:#40475e; --ink3:#797ca8; --line:#e7ebf3; --mist:#f2f5fb; --green:#12a150; --green1:#dcf5e6;
+    --f:"Helvetica Neue", Helvetica, Arial, sans-serif; --mono:"SF Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1920px; height:1080px; background:transparent; overflow:hidden; font-family:var(--f); -webkit-font-smoothing:antialiased; }
+  .scene { position:absolute; inset:0; opacity:0; display:none; }
+
+  /* words: bottom-left, over a soft navy shade so they read on any footage */
+  .scrim { position:absolute; inset:0; background:linear-gradient(10deg, rgba(10,14,40,.82) 0%, rgba(10,14,40,.46) 28%, rgba(10,14,40,0) 55%); }
+  .cap { position:absolute; left:120px; bottom:118px; width:1000px; color:#fff; }
+  .kick { display:flex; align-items:center; gap:14px; font:500 19px var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--cyan); }
+  .kick::before { content:""; width:34px; height:2px; background:var(--cyan); }
+  .cap h2 { margin-top:18px; font-size:58px; font-weight:500; line-height:1.05; letter-spacing:-.03em; text-shadow:0 2px 30px rgba(0,0,0,.35); }
+  .cap h2 b { font-weight:500; color:var(--cyan); }
+  .cap p { margin-top:18px; font-size:25px; line-height:1.4; color:rgba(255,255,255,.84); max-width:760px; }
+
+  /* the work: one card, bottom-right */
+  .card { position:absolute; right:120px; bottom:118px; width:480px; background:#fff; border-radius:20px; padding:22px 24px; color:var(--ink); box-shadow:0 40px 90px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(22,32,91,.05); }
+  .hd { display:flex; justify-content:space-between; align-items:center; font:500 13px var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--ink3); }
+  .hd .live { display:inline-flex; align-items:center; gap:7px; color:var(--green); }
+  .hd .live::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--green); }
+  .ttl { margin-top:6px; font-size:22px; font-weight:600; letter-spacing:-.01em; }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:999px; font-size:14px; font-weight:600; }
+  .pill.ok { background:var(--green1); color:var(--green); }
+  .pill.bl { background:var(--ice); color:var(--blue); }
+  .pill.or { background:#fde5dc; color:#c2410c; }
+
+  /* intro + outro */
+  .shade { position:absolute; inset:0; background:radial-gradient(62% 62% at 50% 50%, rgba(10,14,40,.72), rgba(10,14,40,.4) 70%, rgba(10,14,40,.22)); }
+  .centre { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#fff; }
+  .brand { display:flex; align-items:center; gap:30px; }
+  .brand svg { width:120px; height:120px; overflow:visible; }
+  .brand svg circle { fill:var(--blue); }
+  .brand .wm { font-size:92px; font-weight:400; letter-spacing:-.03em; }
+  .tri { margin-top:54px; display:flex; gap:28px; font-size:64px; font-weight:500; letter-spacing:-.03em; }
+  .tri span { display:inline-flex; align-items:baseline; }
+  .tri i { display:inline-block; width:14px; height:14px; border-radius:50%; margin-left:6px; }
+  .tri span:nth-child(1) i { background:var(--blue); }
+  .tri span:nth-child(2) i { background:var(--orange); }
+  .tri span:nth-child(3) i { background:var(--cyan); }
+  .centre .sub { margin-top:28px; font-size:28px; color:rgba(255,255,255,.82); }
+  .url { margin-top:40px; padding:14px 30px; border-radius:999px; background:var(--blue); font-size:26px; font-weight:500; box-shadow:0 20px 50px -14px rgba(3,115,254,.7); }
+
+  /* design: a screen assembling from wireframe to finished UI */
+  .dz { display:flex; gap:18px; margin-top:14px; }
+  .wf { position:relative; flex:none; width:178px; height:318px; border-radius:22px; background:var(--mist); box-shadow:inset 0 0 0 1.5px #d7deeb; padding:14px 12px; overflow:hidden; }
+  .wf .blk { position:relative; border-radius:9px; margin-bottom:9px; overflow:hidden; }
+  .wf .blk::before { content:""; position:absolute; inset:0; border:1.5px dashed #b9c2d6; border-radius:inherit; }
+  .wf .blk i { position:absolute; inset:0; transform-origin:left; transform:scaleX(0); border-radius:inherit; }
+  .tokens { flex:1; display:flex; flex-direction:column; gap:11px; }
+  .tok { display:flex; align-items:center; gap:12px; font-size:16px; opacity:0; }
+  .tok .sw { flex:none; width:30px; height:30px; border-radius:8px; }
+  .tok .k { flex:1; }
+  .tok .m { font:500 12px var(--mono); color:var(--ink3); }
+  .cursor { position:absolute; width:22px; height:22px; pointer-events:none; opacity:0; }
+  .cursor svg { width:22px; height:22px; filter:drop-shadow(0 2px 4px rgba(0,0,0,.35)); }
+
+  /* develop: an editor typing, then the tests */
+  .card.dark { background:#0f1530; color:#e6e9f5; box-shadow:0 40px 90px -30px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.06); padding:0; overflow:hidden; width:560px; }
+  .ed-top { display:flex; align-items:center; gap:8px; padding:14px 18px; background:#0b1026; border-bottom:1px solid rgba(255,255,255,.06); }
+  .ed-top i { width:11px; height:11px; border-radius:50%; background:#2a3157; }
+  .ed-top .tab { margin-left:12px; font:500 13px var(--mono); color:#c7cbe4; padding:5px 12px; border-radius:7px; background:#1a2148; }
+  .ed-top .tab b { color:var(--cyan); font-weight:500; }
+  .code { padding:16px 0 12px; font:500 16px/1.75 var(--mono); min-height:290px; }
+  .code .ln { display:flex; white-space:pre; }
+  .code .n { width:46px; padding-right:16px; text-align:right; color:#3b4470; flex:none; }
+  .k1 { color:#a3a8f4; } .k2 { color:#31d1fe; } .k3 { color:#ffb38f; } .k4 { color:#7d86b8; } .k5 { color:#8fe3b0; }
+  .caret { display:inline-block; width:9px; height:19px; background:var(--cyan); vertical-align:-3px; }
+  .term { border-top:1px solid rgba(255,255,255,.06); background:#0b1026; padding:12px 18px; font:500 15px/1.6 var(--mono); color:#9aa3cf; min-height:84px; }
+  .term .ok { color:#5fe39a; }
+
+  /* deliver: pipeline + uptime */
+  .pipe { position:relative; display:grid; grid-template-columns:repeat(5, 1fr); margin-top:20px; text-align:center; font-size:13px; color:var(--ink3); }
+  .pipe .ln, .pipe .fl { position:absolute; left:10%; top:12px; height:3px; border-radius:3px; }
+  .pipe .ln { right:10%; background:var(--line); }
+  .pipe .fl { width:0; background:var(--blue); }
+  .pipe span { position:relative; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .pipe b { width:27px; height:27px; border-radius:50%; background:#fff; border:3px solid #d5dbe6; display:grid; place-items:center; }
+  .pipe b svg { width:13px; height:13px; opacity:0; }
+  .pipe b path { fill:none; stroke:#fff; stroke-width:3.2; stroke-linecap:round; stroke-linejoin:round; }
+  .pipe .on { color:var(--ink); font-weight:600; }
+  .pipe .on b { border-color:var(--blue); background:var(--blue); }
+  .pipe .on b svg { opacity:1; }
+  .mets { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:20px; }
+  .met { background:var(--mist); border-radius:12px; padding:12px 14px; }
+  .met .k { font-size:13px; color:var(--ink2); }
+  .met .v { margin-top:3px; font-size:25px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+  .spark { margin-top:14px; height:70px; }
+  .spark path { fill:none; stroke:var(--blue); stroke-width:2.5; stroke-linejoin:round; }
+  .spark .area { fill:url(#sg); stroke:none; }
+
+  /* apps: the phone */
+  .phone { position:absolute; right:170px; bottom:70px; width:300px; height:620px; border-radius:46px; background:#0c0f24; padding:11px; box-shadow:0 50px 100px -30px rgba(0,0,0,.8), inset 0 0 0 2px rgba(255,255,255,.12); }
+  .scr { position:relative; width:100%; height:100%; border-radius:36px; background:var(--mist); overflow:hidden; color:var(--ink); }
+  .ph-top { background:linear-gradient(160deg, var(--navy), #0d3a9e); color:#fff; padding:44px 20px 22px; }
+  .ph-top .a { font:500 11px var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--cyan); }
+  .ph-top .b { margin-top:6px; font-size:14px; color:rgba(255,255,255,.75); }
+  .ph-top .c { margin-top:2px; font-size:31px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+  .acts { display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; padding:16px 12px 6px; text-align:center; font-size:11.5px; color:var(--ink2); }
+  .acts i { display:grid; place-items:center; width:46px; height:46px; margin:0 auto 6px; border-radius:14px; background:#fff; box-shadow:0 1px 0 var(--line); }
+  .acts i svg { width:22px; height:22px; fill:none; stroke:var(--blue); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .acts .on i { background:var(--blue); }
+  .acts .on i svg { stroke:#fff; }
+  .tx { margin:10px 12px 0; background:#fff; border-radius:16px; padding:6px 14px; }
+  .tx div { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-top:1px solid var(--line); font-size:13.5px; }
+  .tx div:first-child { border-top:0; }
+  .tx small { display:block; font-size:11.5px; color:var(--ink3); }
+  .tx b { font-weight:600; font-variant-numeric:tabular-nums; }
+  .tx .in { color:var(--green); }
+  .sheet { position:absolute; left:0; right:0; bottom:0; height:76%; background:#fff; border-radius:26px 26px 0 0; padding:22px 20px; box-shadow:0 -20px 40px -10px rgba(22,32,91,.25); transform:translateY(105%); }
+  .sheet .t { font-size:18px; font-weight:600; }
+  .btn { position:absolute; left:20px; right:20px; bottom:26px; height:54px; border-radius:16px; background:var(--blue); color:#fff; display:grid; place-items:center; font-size:17px; font-weight:600; }
+  .done { position:absolute; inset:0; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; opacity:0; }
+  .done .ring { width:96px; height:96px; border-radius:50%; background:var(--green); display:grid; place-items:center; }
+  .done .ring svg { width:48px; height:48px; }
+  .done .ring path { fill:none; stroke:#fff; stroke-width:5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:60; stroke-dashoffset:60; }
+  .done .t { font-size:22px; font-weight:600; }
+  .done small { font-size:14px; color:var(--ink3); }
+  .trk { position:relative; margin-top:20px; display:flex; flex-direction:column; gap:22px; }
+  .trk div { position:relative; z-index:1; display:flex; align-items:center; gap:14px; font-size:15px; color:var(--ink3); }
+  .trk div small { display:block; font-size:12px; color:var(--ink3); }
+  .trk div b { flex:none; width:22px; height:22px; border-radius:50%; background:#fff; border:3px solid #d5dbe6; }
+  .trk div.on { color:var(--ink); font-weight:600; }
+  .trk div.on b { border-color:var(--blue); background:var(--blue); box-shadow:0 0 0 4px var(--ice); }
+  .trk-ln, .trk-fl { position:absolute; left:10px; top:11px; width:3px; border-radius:3px; }
+  .trk-ln { bottom:30px; background:var(--line); }
+  .trk-fl { height:0; background:var(--blue); }
+  .tap { position:absolute; width:48px; height:48px; margin:-24px 0 0 -24px; border-radius:50%; background:rgba(255,255,255,.35); border:3px solid #fff; box-shadow:0 6px 20px rgba(0,0,0,.35); opacity:0; pointer-events:none; }
+
+  /* AI: a document read */
+  .inv { display:flex; gap:18px; margin-top:16px; }
+  .doc { position:relative; flex:none; width:150px; height:204px; border-radius:10px; background:#fff; box-shadow:0 0 0 1px var(--line), 0 10px 24px -14px rgba(22,32,91,.4); padding:14px 12px; overflow:hidden; }
+  .doc .l { height:7px; border-radius:4px; background:#e3e8f0; margin-bottom:9px; }
+  .doc .l.hl { background:var(--ice); }
+  .doc .scan { position:absolute; left:0; right:0; height:38px; background:linear-gradient(180deg, rgba(49,209,254,0), rgba(49,209,254,.32)); border-bottom:2px solid var(--cyan); top:-42px; }
+  .fields { flex:1; display:flex; flex-direction:column; gap:10px; }
+  .fld { opacity:0; }
+  .fld .k { font:500 11.5px var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--ink3); }
+  .fld .v { margin-top:2px; font-size:18px; font-weight:600; display:flex; align-items:center; gap:8px; }
+  .agent { display:flex; align-items:center; gap:12px; margin-top:16px; padding:12px 14px; border-radius:12px; background:var(--ice); font-size:15px; opacity:0; }
+  .agent i { flex:none; width:32px; height:32px; border-radius:9px; background:var(--blue); display:grid; place-items:center; }
+  .agent i svg { width:18px; height:18px; fill:none; stroke:#fff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .agent b { font-weight:600; }
+
+  /* data: KPIs and a chart */
+  .kpis { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .kpi { background:var(--mist); border-radius:12px; padding:12px 14px; }
+  .kpi .k { font-size:13.5px; color:var(--ink2); }
+  .kpi .v { margin-top:3px; font-size:27px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+  .kpi .d { font-size:13px; font-weight:600; color:var(--green); }
+  .cols { display:flex; align-items:flex-end; gap:12px; height:150px; margin-top:18px; border-bottom:1px solid var(--line); }
+  .col { flex:1; height:100%; display:flex; flex-direction:column; justify-content:flex-end; }
+  .col i { display:block; width:100%; height:0; border-radius:6px 6px 0 0; background:var(--ice); }
+  .col:last-child i { background:var(--blue); }
+  .colk { display:flex; gap:12px; margin-top:8px; font-size:12.5px; color:var(--ink3); text-align:center; }
+  .colk span { flex:1; }
+
+  /* services: the six practices */
+  .card.svcs { width:500px; padding:20px 22px 12px; }
+  .svc { display:flex; align-items:center; gap:14px; padding:10px 10px; margin:0 -10px; border-radius:12px; opacity:0; transition:none; }
+  .svc:first-of-type { margin-top:10px; }
+  .svc { position:relative; }
+  .svc + .svc::before { content:""; position:absolute; left:10px; right:10px; top:0; height:1px; background:var(--line); }
+  .svc.on::before, .svc.on + .svc::before { opacity:0; }
+  .svc i { flex:none; width:40px; height:40px; border-radius:11px; display:grid; place-items:center; }
+  .svc i svg { width:22px; height:22px; fill:none; stroke:#fff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .svc b { display:block; font-size:18px; font-weight:600; letter-spacing:-.01em; }
+  .svc small { display:block; margin-top:2px; font-size:13.5px; color:var(--ink3); }
+  .svc.on { background:var(--mist); }
+  /* ── ProBank film ── */
+  body.probank .shade { background:radial-gradient(60% 60% at 50% 50%, rgba(10,14,40,.82), rgba(10,14,40,.55) 70%, rgba(10,14,40,.35)); }
+  body.probank .scrim { background:linear-gradient(10deg, rgba(10,14,40,.9) 0%, rgba(10,14,40,.62) 30%, rgba(10,14,40,.12) 60%, rgba(10,14,40,0) 75%); }
+  .pbname { font-size:120px; font-weight:500; letter-spacing:-.04em; line-height:1; }
+  .pbname i { display:inline-block; width:22px; height:22px; border-radius:50%; background:var(--orange); margin-left:6px; }
+  .centre .sub b { font-weight:600; color:var(--cyan); }
+  .chips { margin-top:40px; display:flex; gap:14px; }
+  .chips span { padding:12px 26px; border-radius:999px; font-size:24px; font-weight:500; background:rgba(255,255,255,.1); box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.3); opacity:0; }
+  .chips span:first-child { background:var(--blue); box-shadow:none; }
+  .li { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-top:1px solid var(--line); font-size:17px; }
+  .ttl + .li { margin-top:12px; }
+  .li small { display:block; font-size:12.5px; color:var(--ink3); }
+  .li em { font-style:normal; font-variant-numeric:tabular-nums; }
+  .li b { font-weight:600; font-variant-numeric:tabular-nums; }
+  .li.tot { border-top:2px solid var(--ink); font-size:20px; font-weight:600; }
+  .foot { display:flex; justify-content:space-between; align-items:center; margin-top:14px; }
+  .foot .m, .m { font:500 13px var(--mono); color:var(--ink3); }
+  .pill.wait { background:var(--mist); color:var(--ink3); }
+  .q { display:grid; grid-template-columns:1fr auto 132px; align-items:center; gap:14px; padding:11px 0; border-top:1px solid var(--line); font-size:16.5px; }
+  .ttl + .q { margin-top:12px; }
+  .q small { display:block; font:500 12px var(--mono); color:var(--ink3); margin-top:2px; }
+  .q b { font-weight:600; font-variant-numeric:tabular-nums; }
+  .q .pill { justify-self:end; white-space:nowrap; }
+  .ltv { margin-top:10px; padding-top:10px; border-top:1px solid var(--line); font-size:15px; }
+  .ltv .top { display:flex; justify-content:space-between; }
+  .bar { height:8px; border-radius:99px; background:var(--mist); overflow:hidden; margin-top:8px; }
+  .bar i { display:block; height:100%; width:0; border-radius:99px; background:var(--blue); }
+  .steps { position:relative; display:grid; grid-template-columns:repeat(4, 1fr); margin-top:20px; text-align:center; font-size:13px; color:var(--ink3); }
+  .steps .ln, .steps .fl { position:absolute; left:12.5%; top:11px; height:3px; border-radius:3px; }
+  .steps .ln { right:12.5%; background:var(--line); }
+  .steps .fl { width:0; background:var(--blue); }
+  .steps span { position:relative; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .steps b { width:25px; height:25px; border-radius:50%; background:#fff; border:3px solid #d5dbe6; }
+  .steps .on { color:var(--ink); font-weight:600; }
+  .steps .on b { border-color:var(--blue); background:var(--blue); }
+  .eod { display:grid; grid-template-columns:190px 1fr; align-items:center; gap:14px; padding:8px 0; font-size:15.5px; }
+  .ttl + .eod { margin-top:10px; }
+  .eod .bar { margin-top:0; }
+  .eod.ok span { color:var(--ink); font-weight:600; }
+  .eod.ok .bar i { background:var(--green); }
+  .payee { display:flex; align-items:center; gap:12px; margin-top:16px; padding:12px; border-radius:14px; background:var(--mist); font-size:14.5px; }
+  .payee .av { width:40px; height:40px; border-radius:50%; background:var(--orange); color:#fff; display:grid; place-items:center; font-weight:600; font-size:15px; }
+  .payee small { display:block; color:var(--ink3); font-size:12px; }
+  .amt { margin-top:22px; text-align:center; font-size:46px; font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
+  .amt .caret { background:var(--blue); width:3px; height:40px; vertical-align:-4px; margin-left:2px; }
+</style>
+
+</head>
+<body>
+
+<!-- 0 · intro: the dotted C gathers, the name, then the three words -->
+<section class="scene" data-scene data-film="home">
+  <div class="shade"></div>
+  <div class="centre">
+    <div class="brand">
+      <svg viewBox="-1 -1 2 2" data-a="mark"></svg>
+      <span class="wm" data-a="wm">CodeLogs</span>
+    </div>
+    <div class="tri">
+      <span data-w>Design<i></i></span>
+      <span data-w>Develop<i></i></span>
+      <span data-w>Deliver<i></i></span>
+    </div>
+  </div>
+</section>
+
+<!-- 1 · design -->
+<section class="scene" data-scene data-film="home">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">01 · Design</div>
+    <h2>Interfaces people <b>trust</b><br>from day one.</h2>
+    <p>Research, flows and design systems for products people use every day.</p>
+  </div>
+  <div class="card">
+    <div class="hd"><span>Design system</span><span>v3.2</span></div>
+    <div class="ttl">Mobile app · Home</div>
+    <div class="dz">
+      <div class="wf" data-a="wf">
+        <div class="blk" style="height:64px"><i style="background:linear-gradient(135deg,var(--navy),var(--blue))"></i></div>
+        <div style="display:flex;gap:8px">
+          <div class="blk" style="height:44px;flex:1"><i style="background:var(--ice)"></i></div>
+          <div class="blk" style="height:44px;flex:1"><i style="background:var(--ice)"></i></div>
+          <div class="blk" style="height:44px;flex:1"><i style="background:var(--ice)"></i></div>
+        </div>
+        <div class="blk" style="height:20px;width:70%"><i style="background:#d9dff0"></i></div>
+        <div class="blk" style="height:46px"><i style="background:#fff;box-shadow:inset 0 0 0 1px var(--line)"></i></div>
+        <div class="blk" style="height:46px"><i style="background:#fff;box-shadow:inset 0 0 0 1px var(--line)"></i></div>
+        <div class="blk" style="height:36px"><i style="background:var(--orange)"></i></div>
+      </div>
+      <div class="tokens">
+        <div class="tok"><span class="sw" style="background:var(--blue)"></span><span class="k">Primary</span><span class="m">#0373FE</span></div>
+        <div class="tok"><span class="sw" style="background:var(--navy)"></span><span class="k">Navy</span><span class="m">#16205B</span></div>
+        <div class="tok"><span class="sw" style="background:var(--orange)"></span><span class="k">Action</span><span class="m">#F05828</span></div>
+        <div class="tok"><span class="sw" style="background:var(--cyan)"></span><span class="k">Accent</span><span class="m">#31D1FE</span></div>
+        <div class="tok"><span class="sw" style="background:var(--ice)"></span><span class="k">Surface</span><span class="m">#E0EBF9</span></div>
+        <div class="tok" style="margin-top:4px"><span class="pill ok">✓ AA contrast</span></div>
+      </div>
+    </div>
+    <div class="cursor" data-a="cursor"><svg viewBox="0 0 24 24"><path d="M4 2l16 9-7 1.6L9.4 20z" fill="#0c0c0c" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+  </div>
+</section>
+
+<!-- 2 · develop -->
+<section class="scene" data-scene data-film="home">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">02 · Develop</div>
+    <h2>Engineered to run<br>for <b>years</b>, not demos.</h2>
+    <p>Web, mobile and core systems, built and owned by one in-house team.</p>
+  </div>
+  <div class="card dark">
+    <div class="ed-top"><i></i><i></i><i></i><span class="tab">orders<b>.ts</b></span></div>
+    <div class="code" data-a="code"></div>
+    <div class="term" data-a="term"></div>
+  </div>
+</section>
+
+<!-- 3 · deliver -->
+<section class="scene" data-scene data-film="home">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">03 · Deliver</div>
+    <h2>Shipped to the cloud.<br>Watched <b>around the clock</b>.</h2>
+    <p>Automated releases, monitoring and support that stays after launch.</p>
+  </div>
+  <div class="card">
+    <div class="hd"><span>Release 4.18</span><span class="live" data-a="live" style="opacity:0">Live</span></div>
+    <div class="ttl">Production pipeline</div>
+    <div class="pipe">
+      <div class="ln"></div><div class="fl" data-a="fl"></div>
+      <span data-st><b><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5"/></svg></b>Build</span>
+      <span data-st><b><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5"/></svg></b>Test</span>
+      <span data-st><b><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5"/></svg></b>Scan</span>
+      <span data-st><b><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5"/></svg></b>Deploy</span>
+      <span data-st><b><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5"/></svg></b>Live</span>
+    </div>
+    <div class="mets">
+      <div class="met"><div class="k">Uptime</div><div class="v" data-a="up">0%</div></div>
+      <div class="met"><div class="k">p95 latency</div><div class="v" data-a="lat">0 ms</div></div>
+      <div class="met"><div class="k">Errors</div><div class="v" data-a="err">0</div></div>
+    </div>
+    <svg class="spark" viewBox="0 0 432 70" preserveAspectRatio="none">
+      <defs><linearGradient id="sg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0373fe" stop-opacity=".22"/><stop offset="1" stop-color="#0373fe" stop-opacity="0"/></linearGradient></defs>
+      <path class="area" data-a="area"/><path data-a="line"/>
+    </svg>
+  </div>
+</section>
+
+<!-- 4 · apps: an order tracked on the phone -->
+<section class="scene" data-scene data-film="home">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">Web & mobile apps</div>
+    <h2>Apps people<br><b>open every day</b>.</h2>
+    <p>Web and mobile products for retail, logistics, healthcare and finance.</p>
+  </div>
+  <div class="phone">
+    <div class="scr">
+      <div class="ph-top">
+        <div class="a">Good evening</div>
+        <div class="b">Priya, your order is on its way</div>
+        <div class="c">Arriving 6:40 PM</div>
+      </div>
+      <div class="acts">
+        <span><i><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.5 11h-11zM9 8V6a3 3 0 016 0v2"/></svg></i>Shop</span>
+        <span data-a="send"><i><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/></svg></i>Track</span>
+        <span><i><svg viewBox="0 0 24 24"><path d="M4 12l8-8 8 8-8 8z"/></svg></i>Offers</span>
+        <span><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v5M12 16h.01"/></svg></i>Help</span>
+      </div>
+      <div class="tx">
+        <div><span>Order #2291<small>3 items · Today</small></span><b class="in">On the way</b></div>
+        <div><span>Order #2264<small>1 item · 9 Oct</small></span><b>Delivered</b></div>
+        <div><span>Order #2230<small>2 items · 2 Oct</small></span><b>Delivered</b></div>
+      </div>
+      <div class="sheet" data-a="sheet">
+        <div class="t">Order #2291</div>
+        <div class="trk">
+          <div data-k><b></b><span>Order placed<small>5:52 PM</small></span></div>
+          <div data-k><b></b><span>Packed<small>6:04 PM</small></span></div>
+          <div data-k><b></b><span>Out for delivery<small>6:18 PM</small></span></div>
+          <div data-k><b></b><span>Arriving<small>6:40 PM</small></span></div>
+          <i class="trk-ln"></i><i class="trk-fl" data-a="fl"></i>
+        </div>
+        <div class="btn" data-a="pay">Live tracking</div>
+      </div>
+      <div class="done" data-a="done">
+        <div class="ring"><svg viewBox="0 0 48 48"><path d="M13 25l7 7 15-16"/></svg></div>
+        <div class="t">Delivered</div>
+        <small>Order #2291 · 6:38 PM</small>
+      </div>
+    </div>
+  </div>
+  <div class="tap" data-tap></div>
+</section>
+
+<!-- 5 · AI -->
+<section class="scene" data-scene data-film="home">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">Intelligent software</div>
+    <h2>AI that handles<br>the <b>paperwork</b>.</h2>
+    <p>Agents that read, check and route documents, with your people in control.</p>
+  </div>
+  <div class="card">
+    <div class="hd"><span>Invoice</span><span>#INV-2291</span></div>
+    <div class="ttl">Reading documents…</div>
+    <div class="inv">
+      <div class="doc">
+        <div class="l" style="width:60%"></div><div class="l hl"></div><div class="l" style="width:80%"></div>
+        <div class="l"></div><div class="l hl" style="width:70%"></div><div class="l"></div>
+        <div class="l" style="width:50%"></div><div class="l hl"></div><div class="l" style="width:85%"></div>
+        <div class="l"></div><div class="l" style="width:40%"></div>
+        <div class="scan" data-a="scan"></div>
+      </div>
+      <div class="fields">
+        <div class="fld"><div class="k">Supplier</div><div class="v">Coastal Packaging</div></div>
+        <div class="fld"><div class="k">Amount</div><div class="v">₹ 1,48,200</div></div>
+        <div class="fld"><div class="k">Purchase order</div><div class="v"><span class="pill ok">✓ Matched</span></div></div>
+        <div class="fld"><div class="k">Due</div><div class="v"><span class="pill bl">30 Oct</span></div></div>
+      </div>
+    </div>
+    <div class="agent" data-a="agent"><i><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i><span>Sent to <b>finance</b> for approval</span></div>
+  </div>
+</section>
+
+<!-- 6 · data -->
+<section class="scene" data-scene data-film="home">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">Data & analytics</div>
+    <h2>Every team,<br>one <b>live</b> view.</h2>
+    <p>Dashboards and reports that answer the question before the meeting starts.</p>
+  </div>
+  <div class="card">
+    <div class="hd"><span>Business overview</span><span class="live">Live</span></div>
+    <div class="ttl">This quarter</div>
+    <div class="kpis">
+      <div class="kpi"><div class="k">Revenue</div><div class="v" data-a="dep">₹ 0 L</div><div class="d">▲ 12.4%</div></div>
+      <div class="kpi"><div class="k">Active users</div><div class="v" data-a="mem">0</div><div class="d">▲ 8.1%</div></div>
+    </div>
+    <div class="cols" data-a="cols">
+      <div class="col" data-h="42"><i></i></div><div class="col" data-h="55"><i></i></div><div class="col" data-h="51"><i></i></div>
+      <div class="col" data-h="66"><i></i></div><div class="col" data-h="74"><i></i></div><div class="col" data-h="92"><i></i></div>
+    </div>
+    <div class="colk"><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span></div>
+  </div>
+</section>
+
+<!-- 7 · services: the six practices -->
+<section class="scene" data-scene data-film="home">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">What we do</div>
+    <h2>Six practices.<br><b>One</b> team.</h2>
+    <p>From AI agents to the cloud they run on, all built in-house.</p>
+  </div>
+  <div class="card svcs">
+    <div class="hd"><span>Services</span><span>06</span></div>
+      <div class="svc"><i style="background:var(--navy)"><svg viewBox="0 0 24 24"><path d="M12 3v3M8 8h8a3 3 0 013 3v5a3 3 0 01-3 3H8a3 3 0 01-3-3v-5a3 3 0 013-3z"/><circle cx="9.5" cy="13" r="1"/><circle cx="14.5" cy="13" r="1"/></svg></i><span><b>Agentic AI</b><small>Agents · workflow automation</small></span></div>
+      <div class="svc"><i style="background:var(--blue)"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><path d="M8 7h.01M8 17h.01"/></svg></i><span><b>Enterprise SaaS</b><small>Multi-tenant platforms · ERP</small></span></div>
+      <div class="svc"><i style="background:var(--orange)"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/></svg></i><span><b>Web & Mobile Apps</b><small>iOS · Android · web</small></span></div>
+      <div class="svc"><i style="background:var(--cyan)"><svg viewBox="0 0 24 24"><path d="M5 19V11M10 19V6M15 19v-5M20 19V9"/></svg></i><span><b>Data & Analytics</b><small>Dashboards · pipelines · models</small></span></div>
+      <div class="svc"><i style="background:var(--navy)"><svg viewBox="0 0 24 24"><path d="M7 18a4 4 0 01-.5-7.97A5.5 5.5 0 0117 9a4.5 4.5 0 01.5 9z"/></svg></i><span><b>Cloud Solutions</b><small>Migration · DevOps · hosting</small></span></div>
+      <div class="svc"><i style="background:var(--blue)"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg></i><span><b>Payments & Collections</b><small>UPI · NACH · reconciliation</small></span></div>
+  </div>
+</section>
+
+<!-- 8 · outro -->
+<section class="scene" data-scene data-film="home">
+  <div class="shade"></div>
+  <div class="centre">
+    <div class="brand">
+      <svg viewBox="-1 -1 2 2" data-a="mark"></svg>
+      <span class="wm">CodeLogs</span>
+    </div>
+    <div class="sub" data-a="sub">Let's build what's next.</div>
+    <div class="url" data-a="url">codelogstech.com</div>
+  </div>
+</section>
+
+<!-- ═════════ ProBank film (?film=probank) ═════════ -->
+
+<!-- 0 · intro -->
+<section class="scene" data-scene data-film="probank">
+  <div class="shade"></div>
+  <div class="centre">
+    <div class="pbname" data-a="name">ProBank<i></i></div>
+    <div class="sub" data-a="tag">Core banking for co-operative banks and societies</div>
+    <div class="chips">
+      <span data-c>Deposits</span><span data-c>Loans</span><span data-c>Payments</span><span data-c>Mobile</span><span data-c>Reports</span>
+    </div>
+  </div>
+</section>
+
+<!-- 1 · cash counter -->
+<section class="scene" data-scene data-film="probank">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">10:15 · Cash counter</div>
+    <h2>Every note<br><b>accounted for</b>.</h2>
+    <p>Deposits go in with their denominations, and can't be saved until the notes add up.</p>
+  </div>
+  <div class="card">
+    <div class="hd"><span>Cash deposit</span><span>SB 1042</span></div>
+    <div class="ttl">K. Shetty · Savings</div>
+    <div class="li" data-d="20"><span>₹ 500 × <em data-n>0</em></span><b data-v>0</b></div>
+    <div class="li" data-d="10"><span>₹ 200 × <em data-n>0</em></span><b data-v>0</b></div>
+    <div class="li" data-d="5"><span>₹ 100 × <em data-n>0</em></span><b data-v>0</b></div>
+    <div class="li tot"><span>Total</span><b data-a="tot">₹ 0</b></div>
+    <div class="foot"><span class="pill wait" data-a="st">Counting…</span><span class="m" data-a="chk">Entered ₹ 12,500</span></div>
+  </div>
+</section>
+
+<!-- 2 · maker-checker -->
+<section class="scene" data-scene data-film="probank">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">Maker · checker</div>
+    <h2>A second pair of eyes<br>on <b>every entry</b>.</h2>
+    <p>A checker authorises each transaction, and every step lands in the audit trail.</p>
+  </div>
+  <div class="card">
+    <div class="hd"><span>Authorisation queue</span><span data-a="left">3 pending</span></div>
+    <div class="ttl">Udupi Main branch</div>
+    <div class="q" data-q><span class="t">Cash deposit<small>SB 1042 · maker Ravi</small></span><b>₹ 12,500</b><span class="pill wait">Pending</span></div>
+    <div class="q" data-q><span class="t">Loan disbursal<small>LN 3318 · maker Asha</small></span><b>₹ 2,00,000</b><span class="pill wait">Pending</span></div>
+    <div class="q" data-q><span class="t">FD renewal<small>FD 0761 · maker Ravi</small></span><b>₹ 50,000</b><span class="pill wait">Pending</span></div>
+    <div class="foot"><span class="m" data-a="audit">Audit trail · 0 entries</span></div>
+  </div>
+</section>
+
+<!-- 3 · gold loan -->
+<section class="scene" data-scene data-film="probank">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">13:05 · Gold loans</div>
+    <h2>Jewels valued at<br><b>today's rate</b>.</h2>
+    <p>Weighed, valued and sanctioned at the loan-to-value limit, in minutes.</p>
+  </div>
+  <div class="card">
+    <div class="hd"><span>Gold loan appraisal</span><span>22K</span></div>
+    <div class="ttl">Jewel details</div>
+    <div class="li" data-r><span>Chain<small>Net weight</small></span><b>18.4 g</b></div>
+    <div class="li" data-r><span>Bangles (2)<small>Net weight</small></span><b>24.0 g</b></div>
+    <div class="li" data-r><span>Rate today<small>per gram, 22K</small></span><b>₹ 6,850</b></div>
+    <div class="li" data-r><span>Value<small>42.4 g</small></span><b data-a="val">₹ 0</b></div>
+    <div class="ltv"><div class="top"><span>Loan-to-value</span><b>75%</b></div><div class="bar"><i data-a="ltv"></i></div></div>
+    <div class="li tot"><span>Eligible amount</span><b data-a="elig">₹ 0</b></div>
+  </div>
+</section>
+
+<!-- 4 · farmers -->
+<section class="scene" data-scene data-film="probank">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">Agri & crop loans</div>
+    <h2>Built for the members<br><b>co-ops serve</b>.</h2>
+    <p>Crop loans, deposits and recoveries for farming families, at every branch.</p>
+  </div>
+  <div class="card">
+    <div class="hd"><span>Crop loan</span><span>KCC 2207</span></div>
+    <div class="ttl">M. Poojary · Paddy, 2.4 acres</div>
+    <div class="steps">
+      <div class="ln"></div><div class="fl" data-a="fl"></div>
+      <span data-st><b></b>Applied</span><span data-st><b></b>Verified</span><span data-st><b></b>Sanctioned</span><span data-st><b></b>Disbursed</span>
+    </div>
+    <div class="li" style="margin-top:18px"><span>Scale of finance<small>per acre</small></span><b>₹ 50,000</b></div>
+    <div class="li tot"><span>Sanctioned</span><b data-a="sanc">₹ 0</b></div>
+  </div>
+</section>
+
+<!-- 5 · mobile banking -->
+<section class="scene" data-scene data-film="probank">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">Mobile banking</div>
+    <h2>The branch, in every<br><b>member's pocket</b>.</h2>
+    <p>White-label apps on the same core: balances, UPI, deposits and loans.</p>
+  </div>
+  <div class="phone">
+    <div class="scr">
+      <div class="ph-top">
+        <div class="a">Savings · ••1042</div>
+        <div class="b">Available balance</div>
+        <div class="c" data-a="bal">₹ 48,250.00</div>
+      </div>
+      <div class="acts">
+        <span data-a="send"><i><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i>Send</span>
+        <span><i><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9z"/></svg></i>Scan UPI</span>
+        <span><i><svg viewBox="0 0 24 24"><path d="M4 7h16v10H4zM4 11h16"/></svg></i>Deposits</span>
+        <span><i><svg viewBox="0 0 24 24"><path d="M12 4v16M8 8h6a3 3 0 010 6H8"/></svg></i>Loans</span>
+      </div>
+      <div class="tx">
+        <div><span>Salary credit<small>Today · NEFT</small></span><b class="in">+ ₹ 32,000</b></div>
+        <div><span>Electricity bill<small>Yesterday · BBPS</small></span><b>− ₹ 1,840</b></div>
+        <div><span>RD instalment<small>12 Oct · Auto</small></span><b>− ₹ 2,000</b></div>
+      </div>
+      <div class="sheet" data-a="sheet">
+        <div class="t">Send money</div>
+        <div class="payee"><span class="av">AR</span><span>Anita Rao<small>UPI · anita@coop</small></span></div>
+        <div class="amt"><span data-a="amt">₹ </span><span class="caret" data-a="caret"></span></div>
+        <div class="btn" data-a="pay">Pay securely</div>
+      </div>
+      <div class="done" data-a="done">
+        <div class="ring"><svg viewBox="0 0 48 48"><path d="M13 25l7 7 15-16"/></svg></div>
+        <div class="t">₹ 2,500 sent</div>
+        <small>to Anita Rao · just now</small>
+      </div>
+    </div>
+  </div>
+  <div class="tap" data-tap></div>
+</section>
+
+<!-- 6 · payments -->
+<section class="scene" data-scene data-film="probank">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">15:30 · NEFT · RTGS · IMPS</div>
+    <h2>Payments on<br><b>native rails</b>.</h2>
+    <p>Outward batches go through the partner bank and come back with UTRs.</p>
+  </div>
+  <div class="card">
+    <div class="hd"><span>Outward batch 14</span><span data-a="sett">0 of 4 settled</span></div>
+    <div class="ttl">Partner bank · today</div>
+    <div class="q" data-p><span class="t">NEFT<small data-u="N2610125583104">—</small></span><b>₹ 45,000</b><span class="pill wait">Queued</span></div>
+    <div class="q" data-p><span class="t">RTGS<small data-u="R2610120098431">—</small></span><b>₹ 6,20,000</b><span class="pill wait">Queued</span></div>
+    <div class="q" data-p><span class="t">IMPS<small data-u="612816449027">—</small></span><b>₹ 8,400</b><span class="pill wait">Queued</span></div>
+    <div class="q" data-p><span class="t">NEFT<small data-u="N2610125583167">—</small></span><b>₹ 1,12,000</b><span class="pill wait">Queued</span></div>
+  </div>
+</section>
+
+<!-- 7 · day end -->
+<section class="scene" data-scene data-film="probank">
+  <div class="scrim"></div>
+  <div class="cap">
+    <div class="kick">18:30 · Day end</div>
+    <h2>Books that balance,<br><b>every evening</b>.</h2>
+    <p>Interest, standing instructions, NPA and backup run in one batch.</p>
+  </div>
+  <div class="card">
+    <div class="hd"><span>End of day</span><span>12-10-2026</span></div>
+    <div class="ttl" data-a="eodt">Running day end…</div>
+    <div class="eod" data-e><span>Interest accrual</span><div class="bar"><i></i></div></div>
+    <div class="eod" data-e><span>Standing instructions</span><div class="bar"><i></i></div></div>
+    <div class="eod" data-e><span>Postings</span><div class="bar"><i></i></div></div>
+    <div class="eod" data-e><span>NPA classification</span><div class="bar"><i></i></div></div>
+    <div class="eod" data-e><span>Backup</span><div class="bar"><i></i></div></div>
+    <div class="foot"><span class="pill ok" data-a="closed" style="opacity:0">✓ Day closed · books balanced</span></div>
+  </div>
+</section>
+
+<!-- 8 · outro -->
+<section class="scene" data-scene data-film="probank">
+  <div class="shade"></div>
+  <div class="centre">
+    <div class="pbname" data-a="name">ProBank<i></i></div>
+    <div class="sub" data-a="sub">Running <b>450+</b> branches of co-operative banking.</div>
+    <div class="url" data-a="url">Get a demo · codelogstech.com</div>
+  </div>
+</section>
+
+<script>
+  const q = new URLSearchParams(location.search);
+  const LENS = (q.get('lens') || '5.5,5.5,5.5,5.5,6,5.5,5.5,6,6').split(',').map(Number);
+  const FADE = Number(q.get('fade') || 0.8);
+  const STARTS = LENS.reduce((a, l, i) => (a.push(i ? a[i - 1] + LENS[i - 1] - FADE : 0), a), []);
+
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const ramp = (u, a, b) => clamp((u - a) / (b - a));
+  const out = (p) => 1 - Math.pow(1 - p, 3);
+  const pop = (p) => (p <= 0 ? 0 : 1 + 2.2 * Math.pow(p - 1, 3) + 1.2 * Math.pow(p - 1, 2));
+  const $ = (root, s) => root.querySelector(s);
+  const $$ = (root, s) => [...root.querySelectorAll(s)];
+  const show = (el, p, dy = 14) => { el.style.opacity = p; el.style.transform = `translateY(${(1 - out(p)) * dy}px)`; };
+  const popIn = (el, p) => { el.style.opacity = clamp(p * 1.6); el.style.transform = `scale(${0.6 + 0.4 * pop(p)})`; };
+  const inr = (n) => n.toLocaleString('en-IN');
+  function tapAt(el, u, at, x, y) {
+    const p = ramp(u, at - 0.18, at + 0.3);
+    el.style.left = x + 'px'; el.style.top = y + 'px';
+    el.style.opacity = p > 0 && p < 1 ? Math.sin(Math.PI * p) : 0;
+    el.style.transform = `scale(${1.3 - 0.5 * p})`;
+  }
+
+  // the dotted C (the logo's 20 dots), each with a scattered start
+  const DOTS = [[.132,-.945,.057],[-.209,-.819,.12],[.472,-.819,.12],[.135,-.665,.098],[-.53,-.668,.056],[.8,-.668,.056],[.604,-.473,.101],[-.331,-.469,.098],[-.687,-.347,.12],[-.527,-.003,.098],[-.807,-.007,.056],[-.688,.334,.12],[-.331,.463,.097],[.607,.469,.097],[.135,.658,.097],[-.53,.661,.057],[.8,.668,.056],[-.209,.813,.12],[.472,.819,.12],[.132,.938,.056]];
+  $$(document, '[data-a=mark]').forEach((svg) => {
+    svg.innerHTML = DOTS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join('');
+  });
+  const SCATTER = DOTS.map((_, i) => { const a = i * 2.399, d = 2.2 + (i % 5) * 0.5; return [Math.cos(a) * d, Math.sin(a) * d]; });
+  function gather(svg, p) {
+    $$(svg, 'circle').forEach((c, i) => {
+      const k = out(clamp(p * 1.25 - (i % 7) * 0.035));
+      const [x, y] = DOTS[i], [sx, sy] = SCATTER[i];
+      c.setAttribute('cx', (sx + (x - sx) * k).toFixed(4));
+      c.setAttribute('cy', (sy + (y - sy) * k).toFixed(4));
+      c.style.opacity = clamp(k * 1.5);
+    });
+  }
+
+  // develop: the code, as [indent, tokens…]; each token [class, text]
+  const CODE = [
+    [['k1','export async function '],['k2','placeOrder'],['','(cart: '],['k2','Cart'],['',') {']],
+    [['','  '],['k1','const '],['','stock = '],['k1','await '],['','inventory.'],['k2','reserve'],['','(cart.items);']],
+    [['','  '],['k1','if '],['','(!stock.ok)']],
+    [['','    '],['k1','throw new '],['k2','OutOfStock'],['','(stock.missing);']],
+    [['','  '],['k4','// one transaction, fully audited']],
+    [['','  '],['k1','const '],['','order = '],['k1','await '],['','orders.'],['k2','create'],['','({ cart,']],
+    [['','    total: cart.total, status: '],['k3','"PLACED"'],['',' });']],
+    [['','  '],['k1','return '],['','order.id;']],
+    [['','}']],
+  ];
+  const CODE_LEN = CODE.map((l) => l.reduce((a, [, t]) => a + t.length, 0));
+  const CODE_TOTAL = CODE_LEN.reduce((a, b) => a + b, 0);
+  function codeUpTo(n) {
+    let left = n, html = '';
+    for (let i = 0; i < CODE.length && left > 0; i++) {
+      let line = '';
+      for (const [cls, t] of CODE[i]) {
+        if (left <= 0) break;
+        const s = t.slice(0, left); left -= s.length;
+        line += cls ? `<span class="${cls}">${s.replace(/</g, '&lt;')}</span>` : s.replace(/</g, '&lt;');
+      }
+      const typing = left <= 0;
+      html += `<div class="ln"><span class="n">${i + 1}</span><span>${line}${typing ? '<span class="caret"></span>' : ''}</span></div>`;
+    }
+    return html;
+  }
+
+  const SPARK = Array.from({ length: 40 }, (_, i) => 38 + 10 * Math.sin(i * 0.7) + 6 * Math.sin(i * 1.9 + 1) - (i > 30 ? (i - 30) * 1.2 : 0));
+
+  const FILMS = {};
+  FILMS.home = [
+    // 0 · intro
+    (r, u) => {
+      gather($(r, '[data-a=mark]'), ramp(u, 0.2, 1.6));
+      show($(r, '[data-a=wm]'), ramp(u, 1.1, 1.7), 0);
+      $(r, '[data-a=wm]').style.transform = `translateX(${(1 - out(ramp(u, 1.1, 1.7))) * -24}px)`;
+      $$(r, '[data-w]').forEach((el, i) => show(el, ramp(u, 2.0 + i * 0.45, 2.5 + i * 0.45), 26));
+    },
+    // 1 · design: blocks fill, tokens land, a cursor walks the swatches
+    (r, u) => {
+      $$(r, '.wf .blk i').forEach((el, i) => { el.style.transform = `scaleX(${out(ramp(u, 1.1 + i * 0.22, 1.6 + i * 0.22))})`; });
+      $$(r, '.tok').forEach((el, i) => show(el, ramp(u, 1.3 + i * 0.3, 1.7 + i * 0.3), 10));
+      const cur = $(r, '[data-a=cursor]'), card = $(r, '.card').getBoundingClientRect();
+      const toks = $$(r, '.tok .sw');
+      const k = Math.min(toks.length - 1, Math.floor(ramp(u, 1.5, 3.3) * toks.length));
+      const tb = toks[k].getBoundingClientRect();
+      const tx = tb.left - card.left + 18, ty = tb.top - card.top + 18;
+      cur.style.opacity = ramp(u, 1.3, 1.6) * (1 - ramp(u, 4.0, 4.3));
+      cur.style.left = tx + 'px'; cur.style.top = ty + 'px';
+      toks.forEach((s, i) => { s.style.boxShadow = i === k && u < 4 ? '0 0 0 3px #fff, 0 0 0 5px var(--blue)' : 'none'; });
+    },
+    // 2 · develop: typing, then the run
+    (r, u) => {
+      const n = Math.round(CODE_TOTAL * ramp(u, 0.9, 3.6));
+      $(r, '[data-a=code]').innerHTML = codeUpTo(n) || '<div class="ln"><span class="n">1</span><span><span class="caret"></span></span></div>';
+      const lines = [];
+      if (u > 3.7) lines.push('<span class="k4">$</span> npm test');
+      if (u > 4.0) lines.push(`<span class="ok">✓</span> ${Math.round(412 * ramp(u, 4.0, 4.5))} passed · orders, inventory, payments`);
+      $(r, '[data-a=term]').innerHTML = lines.join('<br>');
+    },
+    // 3 · deliver: stages go green, the numbers settle
+    (r, u) => {
+      const at = [1.1, 1.6, 2.1, 2.6, 3.1];
+      $$(r, '[data-st]').forEach((el, i) => el.classList.toggle('on', u >= at[i]));
+      $(r, '[data-a=fl]').style.width = 80 * out(ramp(u, 1.1, 3.1)) + '%';
+      $(r, '[data-a=live]').style.opacity = ramp(u, 3.1, 3.4);
+      const m = out(ramp(u, 2.6, 4.0));
+      $(r, '[data-a=up]').textContent = (99.98 * m).toFixed(2) + '%';
+      $(r, '[data-a=lat]').textContent = Math.round(182 * m) + ' ms';
+      $(r, '[data-a=err]').textContent = '0';
+      const k = Math.max(2, Math.round(SPARK.length * ramp(u, 1.0, 4.4)));
+      const pts = SPARK.slice(0, k).map((y, i) => `${(i * 432 / (SPARK.length - 1)).toFixed(1)},${y.toFixed(1)}`);
+      $(r, '[data-a=line]').setAttribute('d', 'M' + pts.join(' L'));
+      $(r, '[data-a=area]').setAttribute('d', 'M' + pts.join(' L') + ` L${((k - 1) * 432 / (SPARK.length - 1)).toFixed(1)},70 L0,70 Z`);
+    },
+    // 4 · apps: tap Track, the steps fill, delivered
+    (r, u) => {
+      const send = $(r, '[data-a=send]'), sheet = $(r, '[data-a=sheet]'), tapEl = $(r, '[data-tap]');
+      send.classList.toggle('on', u > 1.25 && u < 1.9);
+      sheet.style.transform = `translateY(${(1 - out(ramp(u, 1.35, 1.75))) * 105}%)`;
+      const at = [1.8, 2.25, 2.7, 3.3];
+      $$(r, '[data-k]').forEach((el, i) => el.classList.toggle('on', u >= at[i]));
+      $(r, '[data-a=fl]').style.height = 75 * out(ramp(u, 1.8, 3.3)) + '%';
+      const d = ramp(u, 3.75, 4.05);
+      $(r, '[data-a=done]').style.opacity = d;
+      $(r, '[data-a=done] path').style.strokeDashoffset = 60 * (1 - out(ramp(u, 4.0, 4.5)));
+      $(r, '[data-a=done] .ring').style.transform = `scale(${0.6 + 0.4 * pop(ramp(u, 3.8, 4.2))})`;
+      const sb = send.querySelector('i').getBoundingClientRect();
+      if (u < 1.6) tapAt(tapEl, u, 1.25, sb.left + sb.width / 2, sb.top + sb.height / 2);
+      else tapEl.style.opacity = 0;
+    },
+    // 5 · AI: the scan line, fields filled, routed
+    (r, u) => {
+      const s = ramp(u, 0.9, 2.6);
+      const scan = $(r, '[data-a=scan]');
+      scan.style.top = (-42 + 250 * s) + 'px';
+      scan.style.opacity = s > 0 && s < 1 ? 1 : 0;
+      $$(r, '.fld').forEach((el, i) => show(el, ramp(u, 1.3 + i * 0.4, 1.7 + i * 0.4), 10));
+      $(r, '.ttl').textContent = u > 3.2 ? 'Checked in 4 seconds' : 'Reading documents…';
+      show($(r, '[data-a=agent]'), ramp(u, 3.3, 3.7), 12);
+    },
+    // 6 · data: counters and bars
+    (r, u) => {
+      const p = out(ramp(u, 1.0, 3.0));
+      $(r, '[data-a=dep]').textContent = '₹ ' + inr(Math.round(842 * p)) + ' L';
+      $(r, '[data-a=mem]').textContent = inr(Math.round(58420 * p));
+      $$(r, '.col').forEach((c, i) => { $(c, 'i').style.height = Number(c.dataset.h) * out(ramp(u, 1.2 + i * 0.18, 2.0 + i * 0.18)) + '%'; });
+    },
+    // 7 · services: each practice lands in turn, a highlight walks the list
+    (r, u) => {
+      const rows = $$(r, '.svc');
+      rows.forEach((el, i) => show(el, ramp(u, 1.0 + i * 0.28, 1.4 + i * 0.28), 12));
+      const k = Math.floor(ramp(u, 2.9, 4.7) * rows.length);
+      rows.forEach((el, i) => el.classList.toggle('on', u > 2.9 && u < 4.8 && i === Math.min(k, rows.length - 1)));
+    },
+    // 8 · outro
+    (r, u) => {
+      gather($(r, '[data-a=mark]'), ramp(u, 0.3, 1.5));
+      show($(r, '[data-a=sub]'), ramp(u, 1.3, 1.9), 20);
+      popIn($(r, '[data-a=url]'), ramp(u, 1.9, 2.4));
+    },
+  ];
+
+  const rup = (n) => '₹ ' + inr(Math.round(n));
+  function setPill(el, cls, txt) { el.className = 'pill ' + cls; el.textContent = txt; }
+  FILMS.probank = [
+    // 0 · intro
+    (r, u) => {
+      show($(r, '[data-a=name]'), ramp(u, 0.3, 0.9), 26);
+      show($(r, '[data-a=tag]'), ramp(u, 0.9, 1.4), 16);
+      $$(r, '[data-c]').forEach((el, i) => popIn(el, ramp(u, 1.5 + i * 0.22, 1.85 + i * 0.22)));
+    },
+    // 1 · counter: the notes counted, the total tallies
+    (r, u) => {
+      let tot = 0;
+      $$(r, '[data-d]').forEach((row, i) => {
+        const face = [500, 200, 100][i], n = Math.round(Number(row.dataset.d) * out(ramp(u, 1.0 + i * 0.7, 1.7 + i * 0.7)));
+        $(row, '[data-n]').textContent = n; $(row, '[data-v]').textContent = inr(n * face); tot += n * face;
+      });
+      $(r, '[data-a=tot]').textContent = rup(tot);
+      const ok = u > 3.5;
+      setPill($(r, '[data-a=st]'), ok ? 'ok' : 'wait', ok ? '✓ Tallied · sent to checker' : 'Counting…');
+    },
+    // 2 · checker: approve one by one
+    (r, u) => {
+      const at = [1.3, 2.1, 2.9];
+      let n = 0;
+      $$(r, '[data-q]').forEach((row, i) => { const on = u >= at[i]; if (on) n++; setPill($(row, '.pill'), on ? 'ok' : 'wait', on ? '✓ Authorised' : 'Pending'); });
+      $(r, '[data-a=left]').textContent = (3 - n) + ' pending';
+      $(r, '[data-a=audit]').textContent = `Audit trail · ${n * 2} entries`;
+    },
+    // 3 · gold: rows, value, LTV, eligible
+    (r, u) => {
+      $$(r, '[data-r]').forEach((el, i) => show(el, ramp(u, 0.9 + i * 0.35, 1.3 + i * 0.35), 10));
+      $(r, '[data-a=val]').textContent = rup(290440 * out(ramp(u, 1.95, 2.8)));
+      $(r, '[data-a=ltv]').style.width = 75 * out(ramp(u, 2.6, 3.4)) + '%';
+      $(r, '[data-a=elig]').textContent = rup(217830 * out(ramp(u, 3.0, 4.0)));
+    },
+    // 4 · farmers: the loan moves through its steps
+    (r, u) => {
+      const at = [1.0, 1.7, 2.4, 3.1];
+      $$(r, '[data-st]').forEach((el, i) => el.classList.toggle('on', u >= at[i]));
+      $(r, '[data-a=fl]').style.width = 75 * out(ramp(u, 1.0, 3.1)) + '%';
+      $(r, '[data-a=sanc]').textContent = rup(120000 * out(ramp(u, 2.4, 3.4)));
+    },
+    // 5 · mobile: tap Send, type the amount, pay, done
+    (r, u) => {
+      const send = $(r, '[data-a=send]'), sheet = $(r, '[data-a=sheet]'), pay = $(r, '[data-a=pay]'), tapEl = $(r, '[data-tap]');
+      send.classList.toggle('on', u > 1.25 && u < 1.9);
+      sheet.style.transform = `translateY(${(1 - out(ramp(u, 1.35, 1.75))) * 105}%)`;
+      const full = '2,500';
+      $(r, '[data-a=amt]').textContent = '₹ ' + full.slice(0, Math.round(full.length * ramp(u, 2.0, 2.9)));
+      $(r, '[data-a=caret]').style.opacity = u > 1.9 && u < 3.3 && Math.floor(u * 3) % 2 === 0 ? 1 : 0;
+      pay.style.transform = `scale(${u > 3.3 && u < 3.48 ? 0.96 : 1})`;
+      $(r, '[data-a=done]').style.opacity = ramp(u, 3.55, 3.85);
+      $(r, '[data-a=done] path').style.strokeDashoffset = 60 * (1 - out(ramp(u, 3.8, 4.3)));
+      $(r, '[data-a=done] .ring').style.transform = `scale(${0.6 + 0.4 * pop(ramp(u, 3.6, 4.0))})`;
+      $(r, '[data-a=bal]').textContent = '₹ ' + (u > 3.6 ? '45,750.00' : '48,250.00');
+      const sb = send.querySelector('i').getBoundingClientRect(), pb = pay.getBoundingClientRect();
+      if (u < 1.6) tapAt(tapEl, u, 1.25, sb.left + sb.width / 2, sb.top + sb.height / 2);
+      else if (u < 3.7) tapAt(tapEl, u, 3.35, pb.left + pb.width / 2, pb.top + pb.height / 2);
+      else tapEl.style.opacity = 0;
+    },
+    // 6 · payments: sent, then settled with UTRs
+    (r, u) => {
+      let n = 0;
+      $$(r, '[data-p]').forEach((row, i) => {
+        const sent = u >= 1.1 + i * 0.25, done = u >= 2.2 + i * 0.5;
+        if (done) n++;
+        setPill($(row, '.pill'), done ? 'ok' : sent ? 'bl' : 'wait', done ? '✓ Settled' : sent ? 'Sent' : 'Queued');
+        const s = $(row, 'small'), utr = s.dataset.u;
+        s.textContent = done ? 'UTR ' + utr.slice(0, Math.round(utr.length * ramp(u, 2.2 + i * 0.5, 2.6 + i * 0.5))) : '—';
+      });
+      $(r, '[data-a=sett]').textContent = `${n} of 4 settled`;
+    },
+    // 7 · day end: each job runs, then the day closes
+    (r, u) => {
+      const rows = $$(r, '[data-e]');
+      rows.forEach((row, i) => { const p = out(ramp(u, 1.0 + i * 0.5, 1.5 + i * 0.5)); $(row, 'i').style.width = p * 100 + '%'; row.classList.toggle('ok', p >= 1); });
+      const c = ramp(u, 3.7, 4.0);
+      $(r, '[data-a=closed]').style.opacity = c;
+      $(r, '[data-a=closed]').style.transform = `scale(${0.7 + 0.3 * pop(c)})`;
+      $(r, '[data-a=eodt]').textContent = u > 3.6 ? 'Day end complete' : 'Running day end…';
+    },
+    // 8 · outro
+    (r, u) => {
+      show($(r, '[data-a=name]'), ramp(u, 0.3, 0.9), 26);
+      show($(r, '[data-a=sub]'), ramp(u, 1.0, 1.5), 16);
+      popIn($(r, '[data-a=url]'), ramp(u, 1.6, 2.1));
+    },
+  ];
+
+  const FILM = q.get('film') || 'home';
+  const LOOP = q.get('loop') === '1';
+  document.body.classList.add(FILM);
+  const roots = [...document.querySelectorAll(`[data-scene][data-film="${FILM}"]`)];
+  document.querySelectorAll('[data-film]').forEach((r) => { if (r.dataset.film !== FILM) r.remove(); });
+  window.renderAt = (t) => {
+    roots.forEach((r, i) => {
+      const u = t - STARTS[i], len = LENS[i];
+      const last = i === roots.length - 1 && !LOOP;
+      // the words and the work arrive once the crossfade has landed, and leave before the next one
+      const vis = ramp(u, 0.3, 0.7) * (last ? 1 : 1 - ramp(u, len - 0.95, len - 0.55));
+      r.style.opacity = vis;
+      r.style.display = vis > 0 ? 'block' : 'none';
+      if (vis <= 0) return;
+      const cap = r.querySelector('.cap'), card = r.querySelector('.card, .phone');
+      if (cap) show(cap, ramp(u, 0.3, 0.9), 22);
+      if (card) { const p = ramp(u, 0.55, 1.1); card.style.opacity = p; card.style.transform = `translateY(${(1 - out(p)) * 30}px)`; }
+      FILMS[FILM][i](r, u);
+    });
+  };
+  window.renderAt(Number(q.get('t') || 0));
+</script>
+</body>
+</html>

@@ -1,5 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./services.css";
+import "./process.css";
+import "./hero.css";
+import "./whitelabel.css";
+import "./product.css";
+import "./industry.css";
+import "./home.css";
+import "./omics.css";
 import AmbientStarfield from "@/components/AmbientStarfield";
 import CustomCursor from "@/components/CustomCursor";
 import Footer from "@/components/Footer";
