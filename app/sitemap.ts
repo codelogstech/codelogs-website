@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SERVICES } from "@/lib/content";
+import { PRODUCTS } from "@/lib/products";
+import { INDUSTRIES } from "@/lib/industries";
 import { SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-static";
@@ -14,6 +16,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.9,
     },
+    { url: `${SITE_URL}/industries`, lastModified, changeFrequency: "monthly", priority: 0.85 },
+    ...INDUSTRIES.map((i) => ({
+      url: `${SITE_URL}/industries/${i.slug}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.85,
+    })),
+    ...PRODUCTS.map((p) => ({
+      url: `${SITE_URL}/products/${p.slug}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.85,
+    })),
     ...SERVICES.map((s) => ({
       url: `${SITE_URL}/services/${s.slug}`,
       lastModified,

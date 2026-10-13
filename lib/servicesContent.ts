@@ -138,7 +138,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetail> = {
       {
         title: "Core banking systems",
         description:
-          "Complete stack for co-operative societies and banks — CASA, loans, GL, compliance, channels. Battle-tested across 400+ branches.",
+          "Complete stack for co-operative societies and banks — CASA, loans, GL, compliance, channels. Battle-tested across 450+ branches.",
         bullets: [
           "Member, CASA, FD, RD",
           "Loans and NPA management",
@@ -407,7 +407,7 @@ export const SERVICE_DETAILS: Record<string, ServiceDetail> = {
         industry: "Banking",
         title: "Branch performance MIS",
         description:
-          "Daily branch-level dashboards tracking deposits, loans, and NPA — delivered to 400+ branches across India.",
+          "Daily branch-level dashboards tracking deposits, loans, and NPA — delivered to 450+ branches across India.",
       },
       {
         industry: "Operations",

@@ -1,0 +1,111 @@
+/* Data & Analytics vignette — data platform diagram (640×294).
+   Own palette for tiles and charts; labels follow the card's text colour. */
+.vg-dt text { font-size: 7px; letter-spacing: 0.02em; }
+.vg .vg-dt .vg-dt__lbl { fill: var(--vg-text); font-family: var(--f); font-size: 7.2px; font-weight: 500; letter-spacing: -0.01em; }
+.vg .vg-dt .vg-dt__lbl--sm { font-size: 6.4px; }
+.vg .vg-dt .vg-dt__lbl--b { font-weight: 600; font-size: 7.6px; }
+.vg .vg-dt .vg-dt__meta { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 5.4px; letter-spacing: 0.02em; }
+.vg .vg-dt .vg-dt__gtag { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 6px; font-weight: 600; letter-spacing: 0.12em; }
+
+.vg-dt__group {
+  fill: color-mix(in srgb, var(--vg-panel) 70%, transparent);
+  stroke: color-mix(in srgb, var(--vg-text) 16%, transparent);
+  stroke-width: 0.7;
+}
+.vg-dt__link { fill: none; stroke: color-mix(in srgb, var(--vg-text) 24%, transparent); stroke-width: 1; transition: stroke .3s; }
+.vg-dt__link.is-hot { stroke: #0373fe; stroke-width: 1.3; }
+
+/* Tiles */
+.vg-dt__face { fill: var(--tc); }
+.vg-dt__shadow { fill: color-mix(in srgb, var(--tc) 30%, transparent); }
+.vg-dt__gloss { fill: url(#vg-dt-gloss); stroke: rgba(255, 255, 255, 0.25); stroke-width: 0.6; }
+.vg-dt__glyph * { fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.vg-dt__live { fill: #22c55e; animation: vgPulse 1.2s ease-in-out infinite; }
+.vg-dt__lag rect { fill: color-mix(in srgb, #22c55e 12%, transparent); stroke: color-mix(in srgb, #22c55e 45%, transparent); stroke-width: 0.6; }
+.vg .vg-dt .vg-dt__lag text { fill: #16a34a; font-family: var(--f-mono); font-size: 5.4px; font-weight: 700; }
+
+/* Medallion layers */
+.vg-dt__layer-bg { fill: color-mix(in srgb, var(--lc) 6%, transparent); stroke: color-mix(in srgb, var(--lc) 35%, transparent); stroke-width: 0.7; transition: stroke .4s, fill .4s; }
+.vg-dt__layer.is-run .vg-dt__layer-bg { stroke: var(--lc); fill: color-mix(in srgb, var(--lc) 11%, transparent); }
+.vg-dt__layer-chip { fill: var(--lc); }
+.vg .vg-dt .vg-dt__layer-n { fill: #fff; font-family: var(--f-mono); font-size: 5.6px; font-weight: 700; letter-spacing: 0.14em; }
+.vg-dt__tbl-bg { fill: var(--vg-panel); stroke: color-mix(in srgb, var(--vg-text) 12%, transparent); stroke-width: 0.6; filter: drop-shadow(0 1px 1.5px rgba(22, 32, 91, 0.06)); }
+.vg-dt__tbl-ico { fill: color-mix(in srgb, var(--lc) 75%, transparent); }
+.vg .vg-dt .vg-dt__tbl-t { fill: var(--vg-text); font-family: var(--f-mono); font-size: 5.2px; letter-spacing: 0; }
+.vg-dt__bar-track { fill: color-mix(in srgb, var(--vg-text) 10%, transparent); }
+.vg-dt__bar { fill: var(--lc); transform-box: fill-box; transform-origin: left; transform: scaleX(0); }
+.vg-dt__layer.is-run .vg-dt__bar { animation: vgDtFill 1.2s cubic-bezier(.4,0,.2,1) forwards; animation-delay: calc(var(--k) * 0.15s); }
+.vg-dt__layer.is-done .vg-dt__bar { transform: scaleX(1); fill: #22c55e; }
+@keyframes vgDtFill { to { transform: scaleX(1); } }
+
+/* Quality checks */
+.vg-dt__check circle { fill: none; stroke: color-mix(in srgb, var(--vg-text) 30%, transparent); stroke-width: 0.9; transition: fill .3s, stroke .3s; }
+.vg-dt__tick { fill: none; stroke: #fff; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.vg .vg-dt .vg-dt__warn { fill: #fff; font-family: var(--f); font-size: 6px; font-weight: 800; opacity: 0; }
+.vg-dt__check.is-ok circle { fill: #22c55e; stroke: #22c55e; }
+.vg-dt__check.is-ok .vg-dt__tick { opacity: 1; }
+.vg-dt__check.is-run circle { stroke: #0373fe; stroke-dasharray: 3 2; transform-box: fill-box; transform-origin: center; animation: vgDtSpin 1.2s linear infinite; }
+.vg-dt__check.is-warn circle { fill: #f05828; stroke: #f05828; }
+.vg .vg-dt .vg-dt__check.is-warn .vg-dt__warn { opacity: 1; }
+@keyframes vgDtSpin { to { rotate: 360deg; } }
+.vg .vg-dt .vg-dt__check-t { fill: var(--vg-text); font-family: var(--f-mono); font-size: 5.6px; letter-spacing: 0; }
+.vg-dt__gov rect { fill: color-mix(in srgb, var(--gc) 10%, transparent); stroke: color-mix(in srgb, var(--gc) 40%, transparent); stroke-width: 0.6; }
+.vg-dt__gov circle { fill: var(--gc); }
+.vg .vg-dt .vg-dt__gov text { fill: var(--gc); font-family: var(--f); font-size: 6px; font-weight: 600; letter-spacing: 0; }
+
+/* Dashboard */
+.vg-dt__app { fill: var(--vg-panel); stroke: color-mix(in srgb, var(--vg-text) 16%, transparent); stroke-width: 0.7; filter: drop-shadow(0 8px 14px rgba(22, 32, 91, 0.1)); }
+.vg-dt__appbar { fill: color-mix(in srgb, var(--vg-text) 5%, var(--vg-panel)); }
+.vg-dt__range rect { fill: var(--vg-panel); stroke: color-mix(in srgb, var(--vg-text) 16%, transparent); stroke-width: 0.6; }
+.vg-dt__range circle { fill: #f05828; animation: vgPulse .8s infinite; }
+.vg-dt__range circle.is-live { fill: #22c55e; animation: vgPulse 1.6s infinite; }
+.vg .vg-dt .vg-dt__range text { fill: var(--vg-text); font-family: var(--f); font-size: 5.6px; font-weight: 600; letter-spacing: 0; }
+.vg-dt__kpi-bg { fill: color-mix(in srgb, var(--vg-text) 3%, var(--vg-panel)); stroke: color-mix(in srgb, var(--vg-text) 10%, transparent); stroke-width: 0.6; transition: stroke .4s; }
+.vg-dt__kpi.is-fresh .vg-dt__kpi-bg { animation: vgDtFlash 1.2s ease; }
+@keyframes vgDtFlash { 0%, 40% { stroke: #0373fe; fill: color-mix(in srgb, #0373fe 10%, var(--vg-panel)); } }
+.vg .vg-dt .vg-dt__kpi-k { fill: var(--vg-mute); font-family: var(--f); font-size: 5.6px; font-weight: 500; letter-spacing: 0; }
+.vg .vg-dt .vg-dt__kpi-v { fill: var(--vg-text); font-family: var(--f); font-size: 10px; font-weight: 700; letter-spacing: -0.02em; animation: vgDtIn .4s ease both; }
+@keyframes vgDtIn { from { opacity: 0; } }
+.vg .vg-dt .vg-dt__kpi-d { fill: #16a34a; font-family: var(--f-mono); font-size: 5.2px; font-weight: 600; }
+.vg-dt__grid { stroke: color-mix(in srgb, var(--vg-text) 8%, transparent); stroke-width: 0.6; }
+.vg-dt__line { fill: none; stroke: url(#vg-dt-line); stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 100; }
+.vg-dt__line.is-fresh { animation: vgDtDraw 1.4s cubic-bezier(.4,0,.2,1) both; }
+@keyframes vgDtDraw { from { stroke-dashoffset: 100; } }
+.vg-dt__fc { opacity: 0; transition: opacity .6s; }
+.vg-dt__fc.is-on { opacity: 1; }
+.vg-dt__band { fill: color-mix(in srgb, #0373fe 14%, transparent); }
+.vg-dt__fline { fill: none; stroke: #0373fe; stroke-width: 1.4; stroke-dasharray: 3 2.5; }
+.vg .vg-dt .vg-dt__fc-t { fill: #0373fe; font-family: var(--f-mono); font-size: 5.2px; font-weight: 600; }
+.vg-dt__anom { opacity: 0; transition: opacity .4s; }
+.vg-dt__anom.is-on { opacity: 1; }
+.vg-dt__anom-ring { fill: none; stroke: #f05828; stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: vgDtPing 1.2s ease-out infinite; }
+@keyframes vgDtPing { from { transform: scale(.5); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+.vg-dt__anom-dot { fill: #f05828; }
+.vg-dt__bar-v { transform-box: fill-box; transform-origin: bottom; }
+.vg-dt[data-step="3"] .vg-dt__bar-v { animation: vgDtGrow .8s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--k) * 0.08s); }
+@keyframes vgDtGrow { from { transform: scaleY(0.2); } }
+.vg-dt__donut { fill: none; stroke-width: 5; }
+.vg .vg-dt .vg-dt__leg { fill: var(--vg-text); font-family: var(--f); font-size: 5.4px; letter-spacing: 0; }
+
+/* ML */
+.vg .vg-dt .vg-dt__auc { fill: var(--vg-mute); font-family: var(--f-mono); font-size: 5.6px; font-weight: 700; }
+.vg .vg-dt .vg-dt__auc.is-on { fill: #16a34a; }
+.vg-dt__feat-bar { fill: url(#vg-dt-line); transform-box: fill-box; transform-origin: left; transform: scaleX(0.15); transition: transform .8s cubic-bezier(.2,.7,.2,1); transition-delay: calc(var(--k) * 0.12s); }
+.vg-dt__feat.is-on .vg-dt__feat-bar { transform: scaleX(1); }
+
+/* Alerts */
+.vg-dt__idle, .vg-dt__alert { opacity: 0; transition: opacity .4s, transform .5s cubic-bezier(.2,.7,.2,1); }
+.vg-dt__idle.is-on { opacity: 1; }
+.vg-dt__alert { transform: translateY(6px); }
+.vg-dt__alert.is-on { opacity: 1; transform: none; }
+.vg-dt__idle-ring { fill: color-mix(in srgb, #22c55e 14%, transparent); stroke: #22c55e; stroke-width: 1; }
+.vg-dt__idle-tick { fill: none; stroke: #16a34a; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.vg-dt__alert-bg { fill: color-mix(in srgb, #f05828 8%, var(--vg-panel)); stroke: #f05828; stroke-width: 0.8; }
+.vg .vg-dt .vg-dt__alert-h { fill: #f05828; font-family: var(--f); font-size: 5.8px; font-weight: 700; letter-spacing: 0; }
+.vg .vg-dt .vg-dt__alert-v { fill: var(--vg-text); font-family: var(--f); font-size: 9px; font-weight: 700; letter-spacing: -0.02em; }
+.vg-dt__alert-spark { fill: none; stroke: #f05828; stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
+.vg-dt__sent { fill: #16205b; }
+.vg .vg-dt .vg-dt__sent-t { fill: #fff; font-family: var(--f-mono); font-size: 5px; font-weight: 600; }
+
+/* Reduced motion: finished state. */
+.vg.is-still .vg-dt__bar { transform: scaleX(1); }

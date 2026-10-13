@@ -1,0 +1,141 @@
+/* Cloud Solutions vignette — AWS-style architecture diagram.
+   Fixed AWS category colours (they don't take the card's hover tint):
+   compute orange, networking purple, database magenta, storage green,
+   management pink, region teal, AZ blue. 8s cycle:
+     0–22%  steady · 22% alarm · 28% +2 instances · 38% +2 more
+     62% alarm clears · 82% / 88% scale back in. */
+.vg-aws {
+  --aws-compute: #f05828;
+  --aws-net: #16205b;
+  --aws-db: #797ca8;
+  --aws-storage: #31d1fe;
+  --aws-mgmt: #f05828;
+  --aws-region: #31d1fe;
+  --aws-az: #0373fe;
+  --aws-red: #f05828;
+  --aws-ok: #16a34a;
+  --aws-dev: #0373fe;
+  --aws-pub: #31d1fe;
+}
+
+.vg-aws text { font-size: 7px; letter-spacing: 0.04em; }
+.vg .vg-aws .vg-aws__lbl { fill: var(--vg-text); font-family: var(--f); font-size: 7.2px; font-weight: 500; letter-spacing: -0.01em; }
+.vg .vg-aws .vg-aws__sub-txt { fill: var(--vg-mute); font-size: 6.2px; }
+.vg .vg-aws .vg-aws__lbl--left { font-weight: 600; }
+
+/* Groups */
+.vg-aws__region { fill: color-mix(in srgb, var(--aws-region) 3%, transparent); stroke: var(--aws-region); stroke-width: 0.9; stroke-dasharray: 4 3; }
+.vg-aws__region-flag { fill: var(--aws-region); }
+.vg-aws__vpc {
+  fill: color-mix(in srgb, var(--aws-net) 4%, transparent);
+  stroke: var(--aws-net);
+  stroke-width: 0.9;
+}
+.vg-aws__vpc-flag { fill: var(--aws-net); }
+.vg .vg-aws .vg-aws__tag { font-weight: 600; font-size: 7px; }
+.vg .vg-aws .vg-aws__tag--region { fill: var(--aws-region); }
+.vg .vg-aws .vg-aws__tag--vpc { fill: var(--aws-net); }
+.vg .vg-aws .vg-aws__tag--asg { fill: var(--aws-compute); font-size: 6.4px; }
+.vg-aws__asg {
+  fill: color-mix(in srgb, var(--aws-compute) 5%, transparent);
+  stroke: var(--aws-compute);
+  stroke-width: 0.9;
+  stroke-dasharray: 3 2.5;
+}
+.vg-aws__az { fill: color-mix(in srgb, var(--vg-panel) 60%, transparent); stroke: color-mix(in srgb, var(--aws-az) 70%, transparent); stroke-width: 0.8; stroke-dasharray: 3 2.5; }
+.vg .vg-aws .vg-aws__azl { fill: var(--aws-az); font-size: 6.6px; font-weight: 600; }
+.vg-aws__sub { stroke-width: 0.6; }
+.vg-aws__sub--pub { fill: color-mix(in srgb, var(--aws-pub) 9%, transparent); stroke: color-mix(in srgb, var(--aws-pub) 55%, transparent); }
+.vg-aws__sub--prv { fill: color-mix(in srgb, var(--aws-region) 7%, transparent); stroke: color-mix(in srgb, var(--aws-region) 50%, transparent); }
+.vg .vg-aws .vg-aws__subl { font-size: 5.4px; font-weight: 600; letter-spacing: 0.08em; }
+.vg .vg-aws .vg-aws__subl--pub { fill: var(--aws-pub); }
+.vg .vg-aws .vg-aws__subl--prv { fill: var(--aws-region); }
+.vg .vg-aws .vg-aws__count { fill: var(--aws-compute); font-weight: 700; font-size: 7px; }
+
+/* Service tiles */
+.vg-aws__tile > rect { fill: var(--tc); }
+.vg-aws__tile > rect.vg-aws__shadow { fill: color-mix(in srgb, var(--tc) 30%, transparent); }
+.vg-aws__tile > rect.vg-aws__gloss { fill: url(#vg-aws-gloss); stroke: rgba(255, 255, 255, 0.25); stroke-width: 0.6; }
+.vg-aws__glyph * { fill: none; stroke: #fff; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.vg-aws--compute { --tc: var(--aws-compute); }
+.vg-aws--net { --tc: var(--aws-net); }
+.vg-aws--db { --tc: var(--aws-db); }
+.vg-aws--storage { --tc: var(--aws-storage); }
+.vg-aws--sec { --tc: var(--aws-red); }
+.vg-aws--mgmt { --tc: var(--aws-mgmt); }
+.vg-aws--dev { --tc: var(--aws-dev); }
+.vg-aws--db.replica { --tc: color-mix(in srgb, #797ca8 72%, #fff); }
+.vg-aws__users * { fill: none; stroke: var(--vg-text); stroke-width: 1.5; stroke-linecap: round; }
+.vg-aws__slot { fill: none; stroke: color-mix(in srgb, var(--aws-compute) 45%, transparent); stroke-width: 1; stroke-dasharray: 3 3; }
+.vg-aws__led { fill: #fff; animation: vgPulse 1.2s ease-in-out infinite; }
+
+/* Links and traffic */
+.vg-aws__link { fill: none; stroke: color-mix(in srgb, var(--vg-text) 35%, transparent); stroke-width: 1; }
+.vg-aws__link--dash { stroke-dasharray: 2 3; }
+.vg-aws__link--mon { stroke: color-mix(in srgb, var(--aws-mgmt) 55%, transparent); stroke-dasharray: 3 3; }
+.vg-aws__pkt { fill: var(--aws-net); }
+.vg-aws__pkt--db { fill: var(--aws-db); }
+.vg-aws__pkt--s3 { fill: var(--aws-storage); }
+.vg-aws__pkt--mon { fill: var(--aws-mgmt); }
+.vg-aws__sync { fill: none; stroke: var(--aws-db); stroke-width: 1.4; stroke-dasharray: 3 3; animation: vgAwsRepl 1s linear infinite; }
+.vg .vg-aws .vg-aws__sync-lbl { fill: var(--aws-db); font-size: 6px; font-weight: 600; }
+.vg-aws__msg { fill: var(--aws-mgmt); }
+.vg-aws__fn > g > rect { animation: vgAwsFn 1.2s ease-in-out infinite; }
+@keyframes vgAwsFn { 0%, 100% { filter: none; } 50% { filter: drop-shadow(0 0 4px rgba(240, 88, 40, 0.8)); } }
+.vg-aws__fn-count rect { fill: color-mix(in srgb, var(--aws-compute) 14%, transparent); stroke: color-mix(in srgb, var(--aws-compute) 50%, transparent); stroke-width: 0.8; }
+.vg .vg-aws .vg-aws__fn-count text { fill: var(--aws-compute); font-family: var(--f-mono); font-size: 6.2px; font-weight: 600; }
+.vg .vg-aws .vg-aws__thr-lbl { fill: var(--aws-red); font-size: 5.6px; font-family: var(--f-mono); }
+@keyframes vgAwsRepl { to { stroke-dashoffset: -12; } }
+
+/* Monitoring */
+.vg-aws__mon-panel { fill: var(--vg-panel); stroke: color-mix(in srgb, var(--aws-mgmt) 35%, transparent); stroke-width: 0.8; filter: drop-shadow(0 3px 6px rgba(22, 32, 91, 0.08)); }
+.vg-aws__mon-icon { fill: var(--aws-mgmt); }
+.vg-aws__mon-icon-line { fill: none; stroke: #fff; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.vg-aws__threshold { stroke: var(--aws-red); stroke-width: 1; stroke-dasharray: 3 2; opacity: .7; }
+.vg-aws__metric {
+  fill: none;
+  stroke: var(--aws-mgmt);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  animation: vgAwsMetric 8s linear infinite;
+}
+.vg .vg-aws .vg-aws__badge text { font-family: var(--f-mono); font-size: 6.4px; font-weight: 700; fill: #fff; letter-spacing: 0.06em; }
+.vg-aws__badge--ok rect { fill: var(--aws-ok); }
+.vg-aws__badge--alarm rect { fill: var(--aws-red); }
+.vg-aws__badge--ok { animation: vgAwsOk 8s infinite; }
+.vg-aws__badge--alarm { opacity: 0; animation: vgAwsAlarm 8s infinite; }
+
+/* Scale-out waves: links, packets and instance tiles for slots 3–6.
+   The dashed empty-slot outline underneath stays visible throughout. */
+.vg-aws__link.vg-aws__w1, .vg-aws__pw1, .vg-aws__inst.vg-aws__w1 .vg-aws__tile { animation: vgAwsWave1 8s infinite; }
+.vg-aws__link.vg-aws__w2, .vg-aws__pw2, .vg-aws__inst.vg-aws__w2 .vg-aws__tile { animation: vgAwsWave2 8s infinite; }
+.vg-aws__count--2 { opacity: 0; animation: vgAwsC2 8s infinite; }
+.vg-aws__count--4 { opacity: 0; animation: vgAwsC4 8s infinite; }
+.vg-aws__count--6 { animation: vgAwsC6 8s infinite; }
+
+@keyframes vgAwsWave1 {
+  0%, 27% { opacity: 0; }
+  31%, 86% { opacity: 1; }
+  89%, 100% { opacity: 0; }
+}
+@keyframes vgAwsWave2 {
+  0%, 37% { opacity: 0; }
+  41%, 80% { opacity: 1; }
+  83%, 100% { opacity: 0; }
+}
+@keyframes vgAwsC2 { 0%, 28% { opacity: 1; } 29%, 87% { opacity: 0; } 88%, 100% { opacity: 1; } }
+@keyframes vgAwsC4 { 0%, 28% { opacity: 0; } 29%, 38% { opacity: 1; } 39%, 81% { opacity: 0; } 82%, 87% { opacity: 1; } 88%, 100% { opacity: 0; } }
+@keyframes vgAwsC6 { 0%, 38% { opacity: 0; } 39%, 81% { opacity: 1; } 82%, 100% { opacity: 0; } }
+@keyframes vgAwsOk { 0%, 21% { opacity: 1; } 22%, 61% { opacity: 0; } 62%, 100% { opacity: 1; } }
+@keyframes vgAwsAlarm { 0%, 21% { opacity: 0; } 22%, 61% { opacity: 1; } 62%, 100% { opacity: 0; } }
+@keyframes vgAwsMetric {
+  0% { stroke-dashoffset: 100; }
+  60% { stroke-dashoffset: 0; }
+  92% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+/* Reduced motion / still: show the scaled-out state, alarm cleared. */
+.vg.is-still .vg-aws__metric { stroke-dashoffset: 0; }

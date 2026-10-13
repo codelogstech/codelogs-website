@@ -1,0 +1,184 @@
+/* Payments scene — reconciliation console (1120×640) */
+.scn-pay .ui-win__body { display: flex; flex-direction: column; }
+.scn-pay__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.scn-pay__head h4 { font-size: 18px; font-weight: 500; letter-spacing: -0.015em; margin-top: 2px; }
+.scn-pay__head-r { display: flex; gap: 8px; }
+
+.scn-pay__grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 330px 80px 330px 1fr;
+  grid-template-rows: auto 1fr;
+  padding: 18px 20px 20px;
+}
+
+.scn-pay__panel {
+  align-self: start;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-2);
+  overflow: hidden;
+}
+.scn-pay__ph {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 34px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-3);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.scn-pay__ph .ui-mono { font-size: 10px; }
+.scn-pay__panel ol { list-style: none; }
+.scn-pay__row {
+  position: relative;
+  height: 54px;
+  display: grid;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border-bottom: 1px dashed var(--line);
+  transition: background .45s;
+}
+.scn-pay__row:last-child { border-bottom: 0; }
+.scn-pay__panel:first-child .scn-pay__row { grid-template-columns: 46px 1fr 18px; }
+.scn-pay__panel:not(:first-child) .scn-pay__row { grid-template-columns: 18px 1fr auto; }
+.scn-pay__row.is-on { background: color-mix(in srgb, #0f8a5f 6%, transparent); }
+.scn-pay__row.is-ex {
+  background: color-mix(in srgb, #d68a00 10%, transparent);
+  box-shadow: inset 3px 0 0 #d68a00;
+}
+.scn-pay__row.is-sug { box-shadow: inset 0 0 0 1.5px rgba(214,138,0,0.7); background: color-mix(in srgb, #d68a00 6%, transparent); }
+
+.scn-pay__rail {
+  justify-self: start;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-family: var(--f-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--blue);
+  background: rgba(3,115,254,0.08);
+}
+.scn-pay__rail--nach { color: var(--orange); background: rgba(240,88,40,0.08); }
+.scn-pay__rail--imps { color: #7c5cd6; background: rgba(124,92,214,0.1); }
+.scn-pay__rail--neft { color: #0a8fb3; background: rgba(49,209,254,0.12); }
+.scn-pay__main { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.scn-pay__main b { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scn-pay__main .ui-mono { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scn-pay__amt { font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+
+.scn-pay__tick {
+  position: relative;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-2);
+  transition: border-color .4s, background .4s;
+}
+.scn-pay__tick::after {
+  content: "";
+  position: absolute;
+  left: 4.5px; top: 2px;
+  width: 4px; height: 7px;
+  border: solid #fff;
+  border-width: 0 1.6px 1.6px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform .3s .1s;
+}
+.scn-pay__row.is-on .scn-pay__tick { border-color: #0f8a5f; background: #0f8a5f; }
+.scn-pay__row.is-on .scn-pay__tick::after { transform: rotate(45deg) scale(1); }
+.scn-pay__row.is-ex .scn-pay__tick { border-color: #d68a00; animation: vgPulse 1.1s infinite; }
+
+.scn-pay__links { position: relative; }
+.scn-pay__links svg { position: absolute; left: 0; overflow: visible; }
+.scn-pay__link {
+  fill: none;
+  stroke: #0f8a5f;
+  stroke-width: 1.6;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0.85;
+  transition: stroke-dashoffset .7s ease, stroke .3s;
+}
+.scn-pay__link.is-on { stroke-dashoffset: 0; }
+.scn-pay__link.is-suggest {
+  stroke: #d68a00;
+  stroke-dashoffset: 0;
+  animation: vgPulse 1.1s ease-in-out infinite;
+}
+
+.scn-pay__rules {
+  grid-column: 1 / 4;
+  grid-row: 2;
+  align-self: end;
+  display: flex; align-items: center; gap: 8px;
+}
+.scn-pay__rules .ui-mono { font-size: 10px; margin-right: 4px; }
+.scn-pay__side {
+  grid-column: 4;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-left: 16px;
+  min-width: 0;
+}
+.scn-pay__kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.scn-pay__kpi {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg-2);
+}
+.scn-pay__kpi--wide { grid-column: 1 / -1; }
+.scn-pay__kpi .ui-mono { display: block; font-size: 10px; margin-bottom: 4px; }
+.scn-pay__kpi b {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  transition: color .3s;
+}
+.scn-pay__kpi.is-amber b { color: #d68a00; }
+.scn-pay__kpi.is-green b { color: #0f8a5f; }
+
+.scn-pay__ex {
+  margin-top: auto;
+  padding: 14px 14px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(214,138,0,0.45);
+  background: color-mix(in srgb, #d68a00 7%, var(--bg-2));
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .45s, transform .45s, border-color .4s, background .4s;
+}
+.scn-pay__ex.is-on { opacity: 1; transform: none; }
+.scn-pay__ex.is-done { border-color: rgba(15,138,95,0.45); background: color-mix(in srgb, #0f8a5f 7%, var(--bg-2)); }
+.scn-pay__ex > .ui-mono { font-size: 10px; }
+.scn-pay__ex > b { display: block; margin: 4px 0 8px; font-size: 14px; font-weight: 500; }
+.scn-pay__sug {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .45s, opacity .45s;
+}
+.scn-pay__ex.is-open .scn-pay__sug { max-height: 90px; opacity: 1; }
+.scn-pay__sug {
+  border-radius: 8px;
+  background: var(--bg-2);
+}
+.scn-pay__ex.is-open .scn-pay__sug { padding: 8px 10px; border: 1px dashed rgba(214,138,0,0.55); }
+.scn-pay__sug .ui-mono { font-size: 10px; color: #b46a00; }
+.scn-pay__sug p { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; line-height: 1.4; }
+.scn-pay__btns { display: flex; gap: 8px; margin-top: 12px; }
+.scn-pay__btns .ui-btn { padding: 8px 14px; font-size: 12.5px; }
+.scn-pay__ex.is-done .ui-btn--primary { background: #0f8a5f; border-color: #0f8a5f; }
+
+.scn-pay .ui-toast { top: 82px; bottom: auto; transform: translate(-50%, -10px); }
+.scn-pay .ui-toast.is-on { transform: translate(-50%, 0); }

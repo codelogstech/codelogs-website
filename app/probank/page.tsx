@@ -2,98 +2,16 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { FLAGSHIP } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
+import LandingFilm from "@/components/home/LandingFilm";
+import { PbDay, PbHeroScreen, PbMap, PbRails, PbReports, PbRollout, PbStats } from "@/components/probank/PbSections";
+import "./probank.css";
 
 export const metadata: Metadata = pageMetadata({
   title: "ProBank — Core banking for co-operative societies | CodeLogs",
   description:
-    "ProBank is a cloud-native, multi-channel core banking platform built for co-operative societies and banks. Powering 400+ branches across India.",
+    "ProBank is a cloud-native, multi-channel core banking platform built for co-operative societies and banks. Powering 450+ branches across India.",
   path: "/probank",
 });
-
-type Module = {
-  name: string;
-  description: string;
-  bullets: string[];
-};
-
-const MODULES: Module[] = [
-  {
-    name: "Core Banking",
-    description:
-      "Member creation, CASA, term deposits, and recurring deposits — the transactional heart of the bank.",
-    bullets: ["Member & CIF", "CASA · FD · RD", "Standing instructions"],
-  },
-  {
-    name: "Loans & Advances",
-    description:
-      "End-to-end loan life-cycle — from origination through disbursal, EMI tracking, NPA and recovery.",
-    bullets: [
-      "Gold · Jewel loans",
-      "Agri, housing, vehicle",
-      "NPA & provisioning",
-    ],
-  },
-  {
-    name: "Payments",
-    description:
-      "All rails, one console. Settle, reconcile, and report across NEFT, RTGS, IMPS, UPI and E-NACH.",
-    bullets: [
-      "NEFT · RTGS · IMPS",
-      "UPI · E-NACH",
-      "E-collection gateways",
-    ],
-  },
-  {
-    name: "General Ledger",
-    description:
-      "Live GL with day-end, month-end, and year-end closure. Branch, region, and consolidated views.",
-    bullets: [
-      "Multi-branch GL",
-      "Automated EOD / EOM",
-      "Consolidation",
-    ],
-  },
-  {
-    name: "Reporting & MIS",
-    description:
-      "Regulatory, operational and analytical reports. Drill-through from a single dashboard.",
-    bullets: [
-      "RBI / NABARD returns",
-      "GST · TDS statements",
-      "Custom MIS builder",
-    ],
-  },
-  {
-    name: "Compliance",
-    description:
-      "KYC, e-KYC, AML, audit trails and dual control — compliance that runs in the background, not in your way.",
-    bullets: [
-      "KYC · e-KYC · AML",
-      "Role-based access",
-      "Immutable audit log",
-    ],
-  },
-  {
-    name: "HR & Payroll",
-    description:
-      "Staff onboarding, attendance, payroll, and statutory filings — self-contained, no integrations needed.",
-    bullets: [
-      "Payroll & PF / ESI",
-      "Leave & attendance",
-      "Form 16 · TDS",
-    ],
-  },
-  {
-    name: "Customer Channels",
-    description:
-      "White-labelled mobile banking, internet banking and SMS alerts — extend ProBank to your members.",
-    bullets: [
-      "Mobile banking (iOS / Android)",
-      "Internet banking",
-      "SMS · email alerts",
-    ],
-  },
-];
 
 type ValueProp = { idx: string; title: string; description: string };
 const VALUES: ValueProp[] = [
@@ -160,14 +78,8 @@ export default function ProBankPage() {
             </Link>
           </div>
         </div>
-        <div className="pb-hero__media">
-          <div className="pb-hero__frame">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/assets/probank_2.avif"
-              alt="ProBank — Core Banking Solutions, Built for Digital India"
-            />
-          </div>
+        <div className="pb-hero__media pbx-hero__media">
+          <PbHeroScreen />
           <div className="pb-hero__tick" aria-hidden="true">
             <span className="blip" />
             <span className="blip-lbl">{FLAGSHIP.liveLabel}</span>
@@ -175,51 +87,18 @@ export default function ProBankPage() {
         </div>
       </section>
 
-      {/* Stats strip */}
-      <section className="pb-stats">
-        {FLAGSHIP.stats.map((s) => (
-          <div key={s.label} className="pb-stats__item">
-            <span className="pb-stats__n">
-              {s.n}
-              {s.suffix ? <i>{s.suffix}</i> : null}
-            </span>
-            <span className="pb-stats__l">{s.label}</span>
-          </div>
-        ))}
-      </section>
+      <PbStats />
 
-      {/* Modules */}
-      <section className="pb-modules">
-        <header className="pb-section-head">
-          <span className="pb-tag">Capabilities</span>
-          <h2>
-            Everything you need
-            <br />
-            <span className="em">in one platform.</span>
-          </h2>
-          <p>
-            Eight integrated modules covering daily operations, statutory
-            compliance, and inter-bank rails — all under one login, one
-            database, one support contract.
-          </p>
-        </header>
-        <div className="pb-mod-grid">
-          {MODULES.map((m, i) => (
-            <article key={m.name} className="pb-mod">
-              <span className="pb-mod__idx">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <h3>{m.name}</h3>
-              <p>{m.description}</p>
-              <ul className="pb-mod__bullets">
-                {m.bullets.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </section>
+      <LandingFilm
+        src="/assets/film/probank-film.mp4"
+        poster="/assets/film/probank-film-poster.webp"
+        label="A day at a co-operative branch on ProBank"
+        className="lfilm--pb"
+      />
+
+      <PbDay />
+
+      <PbMap />
 
       {/* Banking partners */}
       <section className="pb-partners">
@@ -237,6 +116,8 @@ export default function ProBankPage() {
             your members and their money.
           </p>
         </header>
+
+        <PbRails />
 
         <div className="pb-partners__grid">
           <article className="pb-partner">
@@ -269,6 +150,8 @@ export default function ProBankPage() {
         </div>
       </section>
 
+      <PbReports />
+
       {/* Why ProBank — dark navy */}
       <section className="pb-values">
         <header className="pb-section-head">
@@ -289,6 +172,8 @@ export default function ProBankPage() {
           ))}
         </div>
       </section>
+
+      <PbRollout />
 
       {/* Quote */}
       <section className="pb-quote">

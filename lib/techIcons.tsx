@@ -1,4 +1,5 @@
 import type { IconType } from "react-icons";
+import { DiMsqlServer } from "react-icons/di";
 import { FaAws } from "react-icons/fa";
 import {
   SiAnthropic,
@@ -52,7 +53,7 @@ export const TECH_ICONS: Record<string, IconType> = {
 
   PostgreSQL: SiPostgresql,
   MongoDB: SiMongodb,
-  // MS SQL Server: no icon available in Si or Fa; rendered as text-only.
+  "MS SQL Server": DiMsqlServer,
   Redis: SiRedis,
   MySQL: SiMysql,
 
@@ -75,4 +76,46 @@ export const TECH_ICONS: Record<string, IconType> = {
 
   Stripe: SiStripe,
   Razorpay: SiRazorpay,
+};
+
+// Brand colour per tool for the toolkit grid: [light theme, dark theme].
+// Dark-on-dark marks (Next.js, OpenAI…) flip to white in dark mode.
+export const TECH_COLORS: Record<string, [string, string?]> = {
+  React: ["#149eca", "#61dafb"],
+  "Next.js": ["#000000", "#ffffff"],
+  TypeScript: ["#3178c6"],
+  "Tailwind CSS": ["#06b6d4"],
+  "Node.js": ["#5fa04e"],
+  Python: ["#3776ab", "#5a9fd4"],
+  Java: ["#ed8b00"],
+  "Spring Boot": ["#6db33f"],
+  Swift: ["#f05138"],
+  Kotlin: ["#7f52ff"],
+  "React Native": ["#149eca", "#61dafb"],
+  Flutter: ["#02569b", "#47c5fb"],
+  PostgreSQL: ["#4169e1", "#6b8cff"],
+  MongoDB: ["#47a248"],
+  "MS SQL Server": ["#cc2927", "#ff5a52"],
+  Redis: ["#ff4438"],
+  MySQL: ["#4479a1", "#6aa6d6"],
+  AWS: ["#ff9900"],
+  Docker: ["#2496ed"],
+  Kubernetes: ["#326ce5", "#5b8cff"],
+  Jenkins: ["#d24939"],
+  OpenAI: ["#000000", "#ffffff"],
+  Anthropic: ["#d97757"],
+  Gemini: ["#8e75b2", "#a991d4"],
+  Mistral: ["#fa520f"],
+  Ollama: ["#000000", "#ffffff"],
+  Llama: ["#0467df", "#3b8bff"],
+  LangChain: ["#1c3c3c", "#7fd1c7"],
+  TensorFlow: ["#ff6f00"],
+  "scikit-learn": ["#f7931e"],
+  Stripe: ["#635bff", "#8b85ff"],
+  Razorpay: ["#0c2451", "#3395ff"],
+  UPI: ["#097939", "#2fbf71"],
+  NEFT: ["#16205b", "#8fb8ff"],
+  RTGS: ["#16205b", "#8fb8ff"],
+  IMPS: ["#16205b", "#8fb8ff"],
+  NACH: ["#16205b", "#8fb8ff"],
 };

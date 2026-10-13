@@ -1,20 +1,21 @@
 import { CODELOGS_DOTS } from "@/lib/logoDots";
 import { PROCESS } from "@/lib/content";
+import ProcessScroll from "./ProcessScroll";
 
 export default function Process() {
   return (
     <section id="process" className="process">
+      {/* The scroll story carries its own label inside the pinned stage;
+          this header only shows with the static grid (reduced motion). */}
       <header className="sec-head">
-        <span className="tag" data-scramble="">
-          03 / How We Work
-        </span>
-        <h2 className="sec-title">
-          Design. Develop.
-          <br />
-          <span className="pop">Deliver.</span>
+        <h2 className="tag" data-scramble="">
+          04 / How We Work
         </h2>
       </header>
 
+      <ProcessScroll />
+
+      {/* Static grid: shown instead of the scroll story for reduced motion. */}
       <ol className="proc" data-reveal-stagger="">
         {PROCESS.map((step) => (
           <li key={step.idx} data-reveal="left">

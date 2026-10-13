@@ -57,7 +57,18 @@ export default function RevealObserver() {
       (entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) {
-            e.target.classList.add("in");
+            // Entering from above means the reader is scrolling up: show
+            // it in place instead of animating, so motion only plays on
+            // the way down.
+            const el = e.target as HTMLElement;
+            if (e.boundingClientRect.top < 0) {
+              el.classList.add("in-now");
+              // Drop it after the jump so hover transitions work again.
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => el.classList.remove("in-now"))
+              );
+            }
+            el.classList.add("in");
             if (!reduced && e.target.hasAttribute("data-scramble")) {
               scramble(e.target as HTMLElement);
             }
