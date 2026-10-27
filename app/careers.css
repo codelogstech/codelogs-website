@@ -1,0 +1,129 @@
+/* =========================================================
+   Careers (/careers, /careers/[slug]).
+   Builds on the product-page styles (.pp, app/product.css).
+   ========================================================= */
+
+.car { --pa: var(--primary); }
+
+/* Index */
+.car-head { padding-top: 150px; padding-bottom: 40px; }
+.car-head .pp-title { margin-top: 18px; }
+.car-head .pp-lede { margin-top: 24px; }
+.car-list { padding-top: 20px; }
+.car-list__head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.car-list__head h2 { font-size: clamp(28px, 3vw, 40px); font-weight: 500; letter-spacing: -0.03em; color: var(--ink); }
+.car-list__head span { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.08em; }
+.car-rows { list-style: none; }
+.car-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 24px;
+  padding: 28px 20px;
+  margin: 0 -20px;
+  border-bottom: 1px solid var(--line);
+  border-radius: 18px;
+  transition: background .25s, transform .25s;
+}
+.car-row:hover { background: color-mix(in srgb, var(--pa) 6%, var(--bg-2)); }
+.car-row h3 { font-size: 24px; font-weight: 500; letter-spacing: -0.02em; color: var(--ink); }
+.car-row p { margin-top: 4px; font-size: 15px; color: var(--ink-2); max-width: 560px; }
+.car-meta { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.car-meta li { font-family: var(--f-mono); font-size: 11px; padding: 4px 10px; border-radius: 999px; color: var(--pa); background: color-mix(in srgb, var(--pa) 9%, transparent); }
+[data-theme="dark"] .car-meta li { color: color-mix(in srgb, var(--pa) 55%, #fff); }
+.car-row__go { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.car-row:hover .car-row__go svg { transform: translateX(3px); }
+.car-row__go svg { transition: transform .25s; }
+.car-empty { padding: 40px 0; color: var(--ink-2); }
+
+/* Detail hero */
+.car-hero { padding-top: 140px; padding-bottom: 60px; }
+.car-hero .pb-back { display: flex; width: fit-content; margin-bottom: 40px; }
+.car-hero .pp-title { margin-top: 18px; }
+.car-facts { margin: 32px 0 36px; display: flex; flex-wrap: wrap; gap: 12px; }
+.car-facts > div { padding: 14px 18px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg-2); }
+.car-facts dt { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.car-facts dd { margin-top: 4px; font-size: 15px; color: var(--ink); }
+
+/* Detail body */
+.car-body { padding-top: 20px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: clamp(32px, 5vw, 80px); align-items: start; }
+.car-doc { max-width: 760px; }
+.car-doc h2 { margin: 56px 0 18px; font-size: clamp(26px, 2.6vw, 34px); font-weight: 500; letter-spacing: -0.03em; color: var(--ink); }
+.car-doc h2:first-child { margin-top: 0; }
+.car-doc > p { font-size: 17px; line-height: 1.65; color: var(--ink-2); }
+.car-doc > p + p { margin-top: 14px; }
+.car-resp { list-style: none; display: grid; gap: 14px; }
+.car-resp > li { padding: 24px 26px; border-radius: 20px; border: 1px solid var(--line); background: var(--bg-2); }
+.car-resp h3 { display: flex; align-items: baseline; gap: 14px; font-size: 19px; font-weight: 500; color: var(--ink); }
+.car-resp h3 span { font-family: var(--f-mono); font-size: 12px; color: var(--pa); }
+.car-resp ul { margin-top: 12px; padding-left: 40px; display: grid; gap: 8px; }
+.car-resp ul li { font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+.car-resp ul li::marker { color: var(--pa); }
+.car-ticks { list-style: none; display: grid; gap: 10px; }
+.car-ticks li { position: relative; padding-left: 32px; font-size: 16px; line-height: 1.55; color: var(--ink-2); }
+.car-ticks li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 3px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--pa);
+}
+.car-ticks li::after {
+  content: "";
+  position: absolute;
+  left: 7px; top: 7px;
+  width: 4px; height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.car-ticks--soft li::before { background: color-mix(in srgb, var(--pa) 18%, transparent); }
+.car-ticks--soft li::after { border-color: var(--pa); }
+.car-quote {
+  margin-top: 28px;
+  padding: 24px 28px;
+  border-left: 3px solid var(--pa);
+  border-radius: 0 16px 16px 0;
+  background: color-mix(in srgb, var(--pa) 7%, var(--bg-2));
+  font-size: clamp(18px, 1.6vw, 22px);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.car-side { position: sticky; top: 110px; }
+.car-side__card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 26px;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(90% 70% at 100% 0%, color-mix(in srgb, var(--pa) 14%, transparent), transparent 60%),
+    var(--bg-2);
+}
+.car-side__card b { font-size: 20px; font-weight: 500; color: var(--ink); }
+.car-side__card span { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); }
+.car-side__card .pb-cta { margin-top: 14px; justify-content: center; }
+.car-side__card p { margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--ink-3); }
+
+@media (max-width: 1000px) {
+  .car-body { grid-template-columns: minmax(0, 1fr); }
+  .car-side { position: static; order: -1; }
+  .car-side__card { display: none; }
+}
+@media (max-width: 800px) {
+  .car-row { grid-template-columns: auto minmax(0, 1fr); gap: 14px 18px; }
+  .car-meta, .car-row__go { grid-column: 2; }
+}
+@media (max-width: 600px) {
+  .car-head { padding-top: 110px; }
+  .car-hero { padding-top: 100px; }
+  .car-row { grid-template-columns: minmax(0, 1fr); margin: 0; padding: 24px 0; }
+  .car-row > :first-child { display: none; }
+  .car-meta, .car-row__go { grid-column: 1; }
+  .car-resp > li { padding: 20px; }
+  .car-resp ul { padding-left: 20px; }
+}

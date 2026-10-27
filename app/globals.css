@@ -3621,7 +3621,7 @@ section[id] { scroll-margin-top: 80px; }
 .sheet__list { list-style: none; display: none; padding-bottom: 14px; }
 .sheet__group.is-open .sheet__list { display: flex; flex-direction: column; gap: 2px; }
 .sheet__item { display: flex; align-items: center; gap: 12px; padding: 9px 4px; border-radius: 12px; }
-.sheet__item > span { display: flex; flex-direction: column; min-width: 0; }
+.sheet__item > span:not(.navicon) { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 .sheet__item b { font-size: 15px; font-weight: 500; color: var(--ink); }
 .sheet__item span span { font-size: 12.5px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sheet__cta {

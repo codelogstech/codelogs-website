@@ -6,6 +6,7 @@ import "./hero.css";
 import "./whitelabel.css";
 import "./product.css";
 import "./industry.css";
+import "./careers.css";
 import "./home.css";
 import "./omics.css";
 import AmbientStarfield from "@/components/AmbientStarfield";

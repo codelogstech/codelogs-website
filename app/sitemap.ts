@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { SERVICES } from "@/lib/content";
 import { PRODUCTS } from "@/lib/products";
 import { INDUSTRIES } from "@/lib/industries";
+import { OPENINGS } from "@/lib/careers";
 import { SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-static";
@@ -28,6 +29,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.85,
+    })),
+    { url: `${SITE_URL}/careers`, lastModified, changeFrequency: "weekly", priority: 0.7 },
+    ...OPENINGS.map((o) => ({
+      url: `${SITE_URL}/careers/${o.slug}`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
     })),
     ...SERVICES.map((s) => ({
       url: `${SITE_URL}/services/${s.slug}`,

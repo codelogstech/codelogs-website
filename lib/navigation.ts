@@ -254,6 +254,13 @@ export const NAV_GROUPS: NavGroup[] = [
         color: "#f05828",
       },
       {
+        label: "Careers",
+        href: "/careers",
+        line: "Open roles at our Udupi office.",
+        icon: "users",
+        color: "#8b5cf6",
+      },
+      {
         label: "Contact",
         href: "/#contact",
         line: "Email, call or visit the office.",
