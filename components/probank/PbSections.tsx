@@ -200,10 +200,191 @@ export function PbDay() {
   );
 }
 
+/* ---------- e-KYC, credit reports and WhatsApp ---------- */
+const VERIFY = [
+  {
+    k: "kyc",
+    tag: "e-KYC",
+    icon: "idcard",
+    title: "Verify members at the counter",
+    body: "PAN, Aadhaar through DigiLocker, driving licence, passport and vehicle RC, checked against the issuing source. Verified details fill the member record.",
+    href: "/products/e-kyc",
+    cta: "Explore e-KYC",
+  },
+  {
+    k: "cibil",
+    tag: "CIBIL reports",
+    icon: "gauge",
+    title: "Check borrowers before you lend",
+    body: "Pull the applicant's CIBIL report from the loan screen, with consent. Score, accounts, repayment history and enquiries go straight into the loan file.",
+    href: "/products/cibil-reports",
+    cta: "Explore CIBIL reports",
+  },
+  {
+    k: "wa",
+    tag: "WhatsApp",
+    icon: "chat",
+    title: "Reach members on WhatsApp",
+    body: "Credits, debits, EMI and RD reminders and deposit maturities sent from the society's verified WhatsApp Business number, straight from ProBank.",
+    href: "mailto:enquire@codelogstech.com?subject=ProBank%20WhatsApp%20integration",
+    cta: "Ask about WhatsApp",
+  },
+];
+const KYC_CHECKS = [
+  ["PAN", "Valid · name matched"],
+  ["Aadhaar", "DigiLocker · signed"],
+  ["Driving licence", "Active till 2038"],
+  ["Passport", "Verified"],
+  ["Vehicle RC", "Owner matched"],
+];
+const WA_MSGS = [
+  ["Credit", "₹2,500.00 credited to your savings A/c ••4471 by IMPS. Balance ₹48,250.00.", "09:41"],
+  ["Reminder", "Your gold loan EMI of ₹4,250 is due on 15 Nov. Please keep your savings account funded.", "10:02"],
+  ["Deposit", "Your FD ••8812 of ₹1,50,000 matures on 02 Dec. Visit the branch to renew.", "10:30"],
+];
+
+function Tick() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 12.5l4 4 8-9" />
+    </svg>
+  );
+}
+
+export function PbVerify() {
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, 0.3);
+  const reduced = useReducedMotion();
+  const [sel, setSel] = useState(0);
+  const [held, setHeld] = useState(false);
+  useEffect(() => {
+    if (!inView || reduced || held) return;
+    const t = setTimeout(() => setSel((s) => (s + 1) % VERIFY.length), 5200);
+    return () => clearTimeout(t);
+  }, [sel, inView, reduced, held]);
+
+  const v = VERIFY[sel];
+  return (
+    <section className="pbx-ver" id="verify" ref={ref}>
+      <header className="pb-section-head">
+        <span className="pb-tag">New in ProBank</span>
+        <h2>
+          e-KYC, credit checks
+          <br />
+          <span className="em">and WhatsApp, built in.</span>
+        </h2>
+        <p>e-KYC, CIBIL reports and WhatsApp alerts now run inside ProBank, on the same screens and the same audit trail as everything else.</p>
+      </header>
+      <div className="pbx-ver__grid">
+        <div className="pbx-ver__tabs" role="tablist" aria-label="New ProBank features">
+          {VERIFY.map((x, i) => (
+            <button
+              key={x.k}
+              type="button"
+              role="tab"
+              aria-selected={i === sel}
+              className={i === sel ? "is-on" : ""}
+              onClick={() => {
+                setSel(i);
+                setHeld(true);
+              }}
+            >
+              <NavIcon name={x.icon} color={i === sel ? "#0373fe" : "#16205b"} size={40} />
+              <span>
+                <small>{x.tag}</small>
+                <b>{x.title}</b>
+                <span className="pbx-ver__body">{x.body}</span>
+              </span>
+            </button>
+          ))}
+          <a className="pbx-ver__link" href={v.href}>
+            {v.cta} <span aria-hidden="true">→</span>
+          </a>
+        </div>
+        <div className={`pbx-ver__stage${inView ? " is-on" : ""}`} key={v.k} role="tabpanel" aria-label={v.tag}>
+          {v.k === "kyc" && (
+            <div className="pbx-kyc">
+              <div className="pbx-kyc__head">
+                <span className="pbx-kyc__ava" aria-hidden="true" />
+                <span>
+                  <b>Ravi Kumar</b>
+                  <small>New member · Udupi Main</small>
+                </span>
+                <em>e-KYC</em>
+              </div>
+              <ul>
+                {KYC_CHECKS.map(([d, r], i) => (
+                  <li key={d} style={k(i)}>
+                    <span className="pbx-kyc__tick">
+                      <Tick />
+                    </span>
+                    <b>{d}</b>
+                    <span>{r}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="pbx-kyc__foot">Verified details filled into CIF 0021-4471 · sent for authorisation</p>
+            </div>
+          )}
+          {v.k === "cibil" && (
+            <div className="pbx-cr">
+              <div className="pbx-cr__gauge">
+                <svg viewBox="0 0 120 70" aria-hidden="true">
+                  <path d="M10,62 A50,50 0 0 1 110,62" pathLength={100} className="pbx-cr__bg" />
+                  <path d="M10,62 A50,50 0 0 1 110,62" pathLength={100} className="pbx-cr__fg" />
+                </svg>
+                <b>762</b>
+                <span>CIBIL score · Good</span>
+              </div>
+              <dl>
+                {[
+                  ["Active accounts", "3"],
+                  ["Overdue", "₹0"],
+                  ["Existing EMIs", "₹21,800/mo"],
+                  ["Enquiries · 30 days", "1"],
+                ].map(([l, x], i) => (
+                  <div key={l} style={k(i)}>
+                    <dt>{l}</dt>
+                    <dd>{x}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="pbx-kyc__foot">Report saved to loan file LA-0418 · vehicle loan ₹4,50,000</p>
+            </div>
+          )}
+          {v.k === "wa" && (
+            <div className="pbx-wa">
+              <div className="pbx-wa__bar">
+                <span className="pbx-wa__ava">DC</span>
+                <span>
+                  <b>
+                    Demo Credit Co-op <i className="pbx-wa__ok" aria-label="Verified business" />
+                  </b>
+                  <small>Business account</small>
+                </span>
+              </div>
+              <div className="pbx-wa__chat">
+                {WA_MSGS.map(([t, m, time], i) => (
+                  <div key={t} className="pbx-wa__msg" style={k(i)}>
+                    <small>{t}</small>
+                    <p>{m}</p>
+                    <time>{time}</time>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          <p className="pbx-note">Sample data</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------- Module & channel map ---------- */
 const MODS = [
-  { k: "core", name: "Core banking", icon: "bank", desc: "Members, CIF and every account type: savings, current, FD, RD and pigmy.", pts: ["Member & CIF with KYC", "CASA · FD · RD · pigmy", "Auto-renewal and standing instructions"] },
-  { k: "loans", name: "Loans & advances", icon: "coins", desc: "Origination to closure, including gold and jewel loans with stock registers.", pts: ["Gold, agri, housing, vehicle", "EMI schedules and notices", "NPA and provisioning"] },
+  { k: "core", name: "Core banking", icon: "bank", desc: "Members, CIF and every account type: savings, current, FD, RD and pigmy.", pts: ["Member & CIF with e-KYC", "CASA · FD · RD · pigmy", "Auto-renewal and standing instructions"] },
+  { k: "loans", name: "Loans & advances", icon: "coins", desc: "Origination to closure, including gold and jewel loans with stock registers.", pts: ["Gold, agri, housing, vehicle", "CIBIL report on application", "EMI schedules and notices", "NPA and provisioning"] },
   { k: "pay", name: "Payments", icon: "route", desc: "All rails from one console, settled and reconciled.", pts: ["NEFT · RTGS · IMPS · UPI", "NACH and E-NACH", "Cheque clearing"] },
   { k: "gl", name: "General ledger", icon: "layers", desc: "A live, multi-branch GL with automated day, month and year end.", pts: ["Day book and trial balance", "Profit & loss, balance sheet", "Branch consolidation"] },
   { k: "reports", name: "Reports & MIS", icon: "chart", desc: "Statutory, operational and analytical reports from the same data.", pts: ["RBI and NABARD returns", "DCB, NPA, defaulter lists", "English and Kannada"] },
@@ -218,6 +399,7 @@ const CHANNELS = [
   { name: "Sangrahak", icon: "coins", href: "/products/sangrahak" },
   { name: "Recoverease", icon: "route", href: "/products/recoverease" },
   { name: "E-NACH", icon: "repeat", href: "/products/e-nach" },
+  { name: "WhatsApp", icon: "chat", href: "#verify" },
 ];
 
 export function PbMap() {
@@ -244,7 +426,7 @@ export function PbMap() {
       <header className="pb-section-head">
         <span className="pb-tag">Everything in one place</span>
         <h2>
-          Eight modules, six channels,
+          Eight modules, seven channels,
           <br />
           <span className="em">one ledger.</span>
         </h2>

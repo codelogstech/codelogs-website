@@ -162,6 +162,22 @@ export const NAV_GROUPS: NavGroup[] = [
         color: "#10b981",
       },
       {
+        label: "e-KYC",
+        href: "/products/e-kyc",
+        line: "PAN, DigiLocker Aadhaar, DL, passport and RC checks.",
+        verbs: ["Verify", "Match", "Onboard"],
+        icon: "idcard",
+        color: "#db2777",
+      },
+      {
+        label: "CIBIL Reports",
+        href: "/products/cibil-reports",
+        line: "Credit reports pulled into the loan file.",
+        verbs: ["Consent", "Fetch", "Assess"],
+        icon: "gauge",
+        color: "#0f766e",
+      },
+      {
         label: "Gram Suvidha",
         href: "/products/gram-suvidha",
         line: "Panchayat billing and collections with OCR.",

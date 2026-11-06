@@ -74,6 +74,9 @@ export const INDUSTRIES: Industry[] = [
       { icon: "coins", color: "#1d5fd1", title: "Sangrahak", body: "Daily deposit collection, offline, with receipts at the door.", href: "/products/sangrahak", tag: "Field" },
       { icon: "route", color: "#0f8f7a", title: "Recoverease", body: "Loan recovery with borrower-confirmed collections.", href: "/products/recoverease", tag: "Field" },
       { icon: "repeat", color: "#6d28d9", title: "E-NACH", body: "Auto-debit for EMIs and RDs, posted on its own.", href: "/products/e-nach", tag: "Collections" },
+      { icon: "idcard", color: "#db2777", title: "e-KYC", body: "PAN, DigiLocker Aadhaar, licence, passport and RC checks.", href: "/products/e-kyc", tag: "Onboarding" },
+      { icon: "gauge", color: "#0f766e", title: "CIBIL Reports", body: "Credit reports fetched into the loan file, with consent.", href: "/products/cibil-reports", tag: "Lending" },
+      { icon: "chat", color: "#16a34a", title: "WhatsApp alerts", body: "Credits, EMI reminders and maturities on members' WhatsApp.", href: "/probank#verify", tag: "Members" },
     ],
     tour: {
       title: ["One member's month,", "across every channel."],
@@ -94,7 +97,7 @@ export const INDUSTRIES: Industry[] = [
     standards: [
       { title: "Role-based access", body: "Every user sees and does only what their role allows." },
       { title: "Immutable audit trail", body: "Branch, mobile, field and auto-debit entries in one record." },
-      { title: "KYC built in", body: "KYC and e-KYC captured where members are onboarded." },
+      { title: "KYC built in", body: "PAN, DigiLocker Aadhaar and other IDs verified where members are onboarded." },
       { title: "Statutory reporting", body: "RBI and NABARD returns, GST and TDS from the same data." },
     ],
     services: [S.saas, S.apps, S.pay, S.data],
