@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { FLAGSHIP } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 import LandingFilm from "@/components/home/LandingFilm";
-import { PbDay, PbHeroScreen, PbMap, PbRails, PbReports, PbRollout, PbStats } from "@/components/probank/PbSections";
+import { PbDay, PbHeroScreen, PbMap, PbRails, PbReports, PbRollout, PbStats, PbVerify } from "@/components/probank/PbSections";
 import "./probank.css";
 
 export const metadata: Metadata = pageMetadata({
@@ -99,6 +99,8 @@ export default function ProBankPage() {
       <PbDay />
 
       <PbMap />
+
+      <PbVerify />
 
       {/* Banking partners */}
       <section className="pb-partners">

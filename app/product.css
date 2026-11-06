@@ -1057,3 +1057,79 @@
   .pp-hero__media--web .pp-chip--1 { right: 0; bottom: 0; }
 }
 @media (max-width: 600px) { .pp-browser__screen { height: 300px; } }
+
+/* e-KYC and credit report console screens */
+.kv-mono { font-family: var(--f-mono); font-size: 12px !important; letter-spacing: 0.02em; }
+.kv-q { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 10px; align-items: stretch; }
+.kv-q .ps-btn { display: grid; place-items: center; padding: 0; }
+.kv-res { display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px #eceef4; opacity: 0; }
+.ps.is-on .kv-res { animation: psRise .45s 1.1s both; opacity: 1; }
+.kv-res__h { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; }
+.kv-res .ps-verified { padding: 5px 10px; font-size: 10.5px; }
+.ps.is-on .kv-res .ps-verified { animation: psFade .3s 1.6s forwards; }
+.ps.is-on .kv-res .ps-verified .ps-checkmark path { animation: psDraw .4s 1.7s forwards; }
+.kv-res__body { display: flex; gap: 12px; }
+.kv-photo { flex-shrink: 0; width: 58px; height: 70px; border-radius: 10px; background: radial-gradient(circle at 50% 34%, #c9cede 0 11px, transparent 12px), radial-gradient(ellipse 24px 20px at 50% 100%, #c9cede 98%, transparent), #eef0f6; }
+.kv-dl { flex: 1; min-width: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+.kv-dl > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ps.is-on .kv-dl > div { animation: psRise .35s calc(1.3s + var(--k) * .08s) both; }
+.kv-dl dt { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.06em; color: #8b90a6; }
+.kv-dl dd { font-size: 11.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kv-dl--card { flex: none; padding: 12px 14px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px #eceef4; }
+.ps.is-on .kv-dl--card > div { animation-delay: calc(.9s + var(--k) * .08s); }
+.kv-good { font-style: normal; color: #0f8a5f; }
+.kv-chips { display: inline-flex; gap: 4px; }
+.kv-chips em { font-style: normal; font-family: var(--f-mono); font-size: 9.5px; padding: 2px 6px; border-radius: 6px; background: color-mix(in srgb, var(--pa) 10%, #fff); color: var(--pa); }
+.kv-steps { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.kv-steps li { display: flex; flex-direction: column; gap: 6px; font-size: 10px; color: #4a5068; }
+.kv-steps i { height: 4px; border-radius: 2px; background: #e4e7ef; position: relative; overflow: hidden; }
+.kv-steps i::after { content: ""; position: absolute; inset: 0; background: var(--pa); transform: scaleX(0); transform-origin: left; }
+.ps.is-on .kv-steps i::after { animation: kvFill .3s calc(.2s + var(--k) * .22s) forwards; }
+@keyframes kvFill { to { transform: none; } }
+.kv-doc { grid-template-columns: 22px minmax(0, 1fr) auto !important; align-items: center; }
+.kv-doc > span:nth-child(2) { font-family: var(--f) !important; font-size: 11.5px !important; color: #171a29 !important; font-weight: 600; }
+.kv-doc b { font-family: var(--f) !important; font-weight: 500; color: #4a5068; }
+.kv-tick { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #16a34a; }
+.kv-tick .ps-checkmark { width: 14px; height: 14px; }
+.ps.is-on .kv-tick .ps-checkmark path { animation: psDraw .35s calc(.4s + var(--k) * .12s) forwards; }
+.kv-note { font-size: 10.5px; color: #4a5068; padding: 8px 10px; border-radius: 10px; background: color-mix(in srgb, var(--pa) 7%, #fff); }
+.kv-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ps.is-on .kv-grid2 > * { animation: psRise .35s calc(.15s + var(--k) * .07s) both; }
+.kv-consent { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1.5px #16a34a; }
+.kv-consent > span:last-child { display: flex; flex-direction: column; gap: 2px; }
+.kv-consent small { font-size: 10px; color: #7a8099; }
+.kv-box { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; background: #16a34a; flex-shrink: 0; }
+.kv-box .ps-checkmark { width: 14px; height: 14px; }
+.ps.is-on .kv-box .ps-checkmark path { animation: psDraw .35s .7s forwards; }
+.kv-score { align-items: center; }
+.kv-gauge { position: relative; display: flex; flex-direction: column; align-items: center; padding: 14px 12px 12px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px #eceef4; }
+.kv-gauge svg { width: 100%; max-width: 200px; overflow: visible; }
+.kv-gauge path { fill: none; stroke-width: 10; stroke-linecap: round; }
+.kv-gauge__bg { stroke: #eceef4; }
+.kv-gauge__fg { stroke: var(--pa); stroke-dasharray: 100; stroke-dashoffset: 100; }
+.ps.is-on .kv-gauge__fg { animation: kvArc 1.4s .3s cubic-bezier(.3,.7,.2,1) forwards; }
+@keyframes kvArc { to { stroke-dashoffset: 22; } }
+.kv-gauge b { margin-top: -34px; font-size: 30px; letter-spacing: -0.03em; }
+.kv-gauge span { font-size: 10.5px; color: #0f8a5f; font-weight: 600; }
+.kv-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kv-tiles .ib-acct b { font-size: 18px; }
+.kv-acc { grid-template-columns: minmax(0, 1fr) 46px 74px 92px !important; align-items: center; }
+.kv-acc > span:first-child { font-family: var(--f) !important; font-size: 11px !important; color: #171a29 !important; }
+.kv-dpd { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; }
+.kv-dpd i { height: 10px; border-radius: 2px; background: #22c55e; }
+.kv-dpd i.is-late { background: #f59e0b; }
+.kv-flags { display: flex; flex-direction: column; gap: 6px; }
+.kv-flags span { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 10px; background: #e7f6ef; color: #0f8a5f; font-size: 11px; font-weight: 600; }
+.kv-flags .ps-checkmark { width: 15px; height: 15px; }
+.kv-flags .ps-checkmark path { stroke: #0f8a5f; }
+.ps.is-on .kv-flags span { animation: psRise .35s calc(.3s + var(--k) * .12s) both; }
+.ps.is-on .kv-flags .ps-checkmark path { animation: psDraw .35s calc(.5s + var(--k) * .12s) forwards; }
+@container (max-width: 470px) {
+  .kv-dl { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .kv-dl > div:nth-child(n + 4) { display: none; }
+  .kv-steps li { font-size: 0; }
+  .kv-acc { grid-template-columns: minmax(0, 1fr) 70px 80px !important; }
+  .kv-acc > :nth-child(2) { display: none; }
+  .kv-dl--card > div:nth-child(n + 4) { display: flex; }
+  .kv-dl--card { grid-template-columns: 1fr 1fr; }
+}

@@ -75,7 +75,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
         <div className={`pp-hero__media${p.device === "browser" ? " pp-hero__media--web" : ""}`}>
           <div className="pp-hero__orb" aria-hidden="true" />
-          <Device device={p.device} accent={p.accent} accent2={p.accent2}>
+          <Device device={p.device} accent={p.accent} accent2={p.accent2} url={p.url}>
             <Screen id={p.heroScreen} on />
           </Device>
           {p.heroChips.map((c, n) => (
@@ -108,7 +108,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </h2>
           <p>{p.tourIntro}</p>
         </header>
-        <ProductTour steps={p.tour} accent={p.accent} accent2={p.accent2} device={p.device} />
+        <ProductTour steps={p.tour} accent={p.accent} accent2={p.accent2} device={p.device} url={p.url} />
       </section>
 
       {/* Features */}

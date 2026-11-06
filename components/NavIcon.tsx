@@ -37,6 +37,9 @@ const GLYPHS: Record<string, string> = {
   list: "M-4,-6 H8 M-4,0 H8 M-4,6 H8 M-8,-6 H-7 M-8,0 H-7 M-8,6 H-7",
   sync: "M7,-2 A7,7 0 0 0 -6,-4 M-6,-8 V-4 H-2 M-7,2 A7,7 0 0 0 6,4 M6,8 V4 H2",
   clock: "M0,-8 A8,8 0 1 0 0.01,-8 Z M0,-5 V0 L4,3",
+  idcard: "M-8,-5.5 H8 V5.5 H-8 Z M-4,-2.8 A1.8,1.8 0 1 0 -3.99,-2.8 Z M-6.5,3 C-6.5,0.8 -1.5,0.8 -1.5,3 M1.5,-2 H6 M1.5,1 H6",
+  gauge: "M-8,5 A8,8 0 1 1 8,5 M0,5 L4.5,-1.5 M-5,5 H-4 M4,5 H5",
+  chat: "M-6.5,4 A7.6,7.6 0 1 1 -3.5,6.8 L-8,8 Z M-3,0 H-2.9 M0,0 H0.1 M3,0 H3.1",
 };
 
 export default function NavIcon({ name, color, size = 34 }: { name: string; color: string; size?: number }) {

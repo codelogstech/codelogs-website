@@ -1868,6 +1868,379 @@ function AcLocal() {
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* e-KYC and credit reports (ProBank staff console)                     */
+/* ------------------------------------------------------------------ */
+
+function KvShell({ active, children }: { active: string; children: ReactNode }) {
+  return (
+    <div className="ib">
+      <aside className="ib-side">
+        <span className="ib-brand">
+          <i>PB</i>
+          <b>Pro-bank</b>
+        </span>
+        {["Members", "e-KYC", "Credit reports", "Loans", "Reports"].map((n) => (
+          <span key={n} className={`ib-nav${n === active ? " is-on" : ""}`}>
+            <i />
+            {n}
+          </span>
+        ))}
+        <span className="ib-side__foot">Udupi Main · 09:41</span>
+      </aside>
+      <main className="ib-main">{children}</main>
+    </div>
+  );
+}
+
+function KvTop({ title, pill }: { title: string; pill: string }) {
+  return (
+    <div className="ib-top">
+      <b>{title}</b>
+      <span className="ib-pill">{pill}</span>
+    </div>
+  );
+}
+
+function KvQuery({ label, value, cta = "Verify" }: { label: string; value: string; cta?: string }) {
+  return (
+    <div className="kv-q">
+      <div className="ps-field ps-field--focus">
+        <small>{label}</small>
+        <b className="kv-mono">{value}</b>
+      </div>
+      <span className="ps-btn ps-btn--brand ps-press">{cta}</span>
+    </div>
+  );
+}
+
+function KvResult({ title, rows, badge = "Verified", photo, children }: { title: string; rows: [string, ReactNode][]; badge?: string; photo?: boolean; children?: ReactNode }) {
+  return (
+    <div className={`kv-res${photo ? " kv-res--id" : ""}`}>
+      <div className="kv-res__h">
+        <b>{title}</b>
+        <span className="ps-verified">
+          <Check />
+          {badge}
+        </span>
+      </div>
+      <div className="kv-res__body">
+        {photo && <span className="kv-photo" aria-hidden="true" />}
+        <dl className="kv-dl">
+          {rows.map(([l, v], n) => (
+            <div key={l} style={k(n)}>
+              <dt>{l}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function KycPan() {
+  return (
+    <KvShell active="e-KYC">
+      <KvTop title="PAN verification" pill="New member · Ravi Kumar" />
+      <KvQuery label="PAN" value="ABCPK1234F" />
+      <KvResult
+        title="PAN record"
+        rows={[
+          ["Name on PAN", "RAVI KUMAR"],
+          ["Status", "Valid · Individual"],
+          ["Aadhaar seeding", "Linked"],
+          ["Name match", <em key="m" className="kv-good">100% with application</em>],
+        ]}
+      />
+    </KvShell>
+  );
+}
+
+function KycAadhaar() {
+  return (
+    <KvShell active="e-KYC">
+      <KvTop title="Aadhaar via DigiLocker" pill="Member consent" />
+      <ol className="kv-steps">
+        {["Link sent to ••• 45612", "Member signs in", "Consent given", "e-Aadhaar received"].map((s, n) => (
+          <li key={s} style={k(n)}>
+            <i />
+            {s}
+          </li>
+        ))}
+      </ol>
+      <KvResult
+        title="e-Aadhaar"
+        badge="Signed document"
+        photo
+        rows={[
+          ["Name", "RAVI KUMAR"],
+          ["Aadhaar", "XXXX XXXX 4471"],
+          ["DOB · Gender", "14-06-1988 · Male"],
+          ["Address", "Brahmagiri, Udupi 576101"],
+        ]}
+      />
+    </KvShell>
+  );
+}
+
+function KycDl() {
+  return (
+    <KvShell active="e-KYC">
+      <KvTop title="Driving licence" pill="New member · Ravi Kumar" />
+      <KvQuery label="Licence no. · Date of birth" value="KA20 20190012345 · 14-06-1988" />
+      <KvResult
+        title="Licence record"
+        badge="Active"
+        rows={[
+          ["Name", "RAVI KUMAR"],
+          ["Valid till", "13-06-2038"],
+          [
+            "Vehicle classes",
+            <span key="c" className="kv-chips">
+              <em>MCWG</em>
+              <em>LMV</em>
+            </span>,
+          ],
+          ["Issued by", "RTO Udupi"],
+        ]}
+      />
+    </KvShell>
+  );
+}
+
+function KycPassport() {
+  return (
+    <KvShell active="e-KYC">
+      <KvTop title="Passport" pill="New member · Ravi Kumar" />
+      <KvQuery label="File no. · Date of birth" value="BN1067123456789 · 14-06-1988" />
+      <KvResult
+        title="Passport record"
+        rows={[
+          ["Name", "RAVI KUMAR"],
+          ["Passport no.", "Z••••512"],
+          ["Date of issue", "22-03-2021"],
+          ["Name match", <em key="m" className="kv-good">Matches PAN</em>],
+        ]}
+      />
+    </KvShell>
+  );
+}
+
+function KycRc() {
+  return (
+    <KvShell active="e-KYC">
+      <KvTop title="Vehicle RC" pill="Vehicle loan · LA-0418" />
+      <KvQuery label="Registration no." value="KA 20 AB 1234" />
+      <KvResult
+        title="Registration record"
+        badge="Active"
+        rows={[
+          ["Owner", "RAVI KUMAR"],
+          ["Vehicle", "Maruti Suzuki Swift · 2022"],
+          ["Hypothecation", "None"],
+          ["Insurance", "Valid till 07-02-2027"],
+        ]}
+      />
+    </KvShell>
+  );
+}
+
+const KYC_DOCS = [
+  ["PAN", "Valid · name matched"],
+  ["Aadhaar", "DigiLocker · signed"],
+  ["Driving licence", "Active till 2038"],
+  ["Passport", "Verified"],
+  ["Vehicle RC", "Owner matched"],
+];
+
+function KycSummary() {
+  return (
+    <KvShell active="Members">
+      <KvTop title="Member KYC · Ravi Kumar" pill="CIF 0021-4471" />
+      <div className="ib-table">
+        {KYC_DOCS.map(([d, s], n) => (
+          <div key={d} className="ib-row kv-doc" style={k(n)}>
+            <span className="kv-tick">
+              <Check />
+            </span>
+            <span>{d}</span>
+            <b>{s}</b>
+          </div>
+        ))}
+      </div>
+      <span className="kv-note">Name, DOB, address and photo filled into the member record</span>
+      <div className="ps-row2">
+        <span className="ps-btn ps-btn--ghost">Send for correction</span>
+        <span className="ps-btn ps-btn--brand ps-press">Authorise</span>
+      </div>
+    </KvShell>
+  );
+}
+
+function CrRequest() {
+  return (
+    <KvShell active="Credit reports">
+      <KvTop title="Fetch credit report" pill="Loan application LA-0418" />
+      <div className="kv-grid2">
+        {[
+          ["Applicant", "Ravi Kumar"],
+          ["PAN", "ABCPK1234F"],
+          ["Mobile", "+91 ••••• 45612"],
+          ["Loan", "Vehicle · ₹4,50,000"],
+        ].map(([l, v], n) => (
+          <div key={l} className="ps-field" style={k(n)}>
+            <small>{l}</small>
+            <b>{v}</b>
+          </div>
+        ))}
+      </div>
+      <div className="kv-consent">
+        <span className="kv-box">
+          <Check />
+        </span>
+        <span>
+          <b>Member consent recorded</b>
+          <small>OTP confirmed by the applicant · 09:38</small>
+        </span>
+      </div>
+      <span className="ps-btn ps-btn--brand ps-press">Fetch CIBIL report</span>
+    </KvShell>
+  );
+}
+
+function CrScore() {
+  return (
+    <KvShell active="Credit reports">
+      <KvTop title="CIBIL report · Ravi Kumar" pill="Pulled 09:41 today" />
+      <div className="ib-cols kv-score">
+        <div className="kv-gauge">
+          <svg viewBox="0 0 120 70" aria-hidden="true">
+            <path d="M10,62 A50,50 0 0 1 110,62" pathLength={100} className="kv-gauge__bg" />
+            <path d="M10,62 A50,50 0 0 1 110,62" pathLength={100} className="kv-gauge__fg" />
+          </svg>
+          <b>762</b>
+          <span>Good · 300–900</span>
+        </div>
+        <div className="kv-tiles">
+          {[
+            ["Active accounts", "3"],
+            ["Overdue", "₹0"],
+            ["Enquiries · 30 days", "1"],
+            ["Credit history", "6 yrs"],
+          ].map(([l, v], n) => (
+            <div key={l} className="ib-acct" style={k(n)}>
+              <small>{l}</small>
+              <b>{v}</b>
+            </div>
+          ))}
+        </div>
+      </div>
+    </KvShell>
+  );
+}
+
+const CR_ACCOUNTS: [string, string, string, number][] = [
+  ["Home loan", "Bank", "₹18,40,000", -1],
+  ["Credit card", "Bank", "₹42,300", 7],
+  ["Gold loan", "Co-op", "₹62,400", -1],
+  ["Two-wheeler", "NBFC", "Closed", -1],
+];
+
+function CrAccounts() {
+  return (
+    <KvShell active="Credit reports">
+      <KvTop title="Accounts & repayment" pill="Last 12 months" />
+      <div className="ib-table">
+        <div className="ib-row ib-row--h kv-acc">
+          <span>Account</span>
+          <span>Lender</span>
+          <span>Balance</span>
+          <span>Payments</span>
+        </div>
+        {CR_ACCOUNTS.map(([t, l, b, late], n) => (
+          <div key={t} className="ib-row kv-acc" style={k(n)}>
+            <span>{t}</span>
+            <span>{l}</span>
+            <b>{b}</b>
+            <span className="kv-dpd">
+              {Array.from({ length: 12 }, (_, m) => (
+                <i key={m} className={m === late ? "is-late" : ""} />
+              ))}
+            </span>
+          </div>
+        ))}
+      </div>
+      <span className="kv-note">One payment 1–30 days late in 12 months · no defaults</span>
+    </KvShell>
+  );
+}
+
+function CrChecks() {
+  return (
+    <KvShell active="Credit reports">
+      <KvTop title="Enquiries & flags" pill="CIBIL report" />
+      <div className="ib-cols">
+        <div className="ib-table">
+          <div className="ib-table__h">
+            <b>Recent enquiries</b>
+          </div>
+          {[
+            ["06 Nov", "Co-op · Vehicle loan"],
+            ["12 Aug", "Bank · Credit card"],
+          ].map(([d, t], n) => (
+            <div key={d} className="ib-row" style={k(n)}>
+              <span>{d}</span>
+              <span>{t}</span>
+              <b />
+            </div>
+          ))}
+        </div>
+        <div className="kv-flags">
+          {["No write-offs", "No settled accounts", "No suit filed", "No wilful default"].map((f, n) => (
+            <span key={f} style={k(n)}>
+              <Check />
+              {f}
+            </span>
+          ))}
+        </div>
+      </div>
+    </KvShell>
+  );
+}
+
+function CrFile() {
+  return (
+    <KvShell active="Loans">
+      <KvTop title="Loan file · LA-0418" pill="Vehicle loan · ₹4,50,000" />
+      <div className="ib-dl">
+        <span className="ps-dl__ico">PDF</span>
+        <span className="ps-dl__txt">
+          <b>CIBIL_Report_RaviKumar_06Nov2026.pdf</b>
+          <span className="ps-dl__bar">
+            <i />
+          </span>
+        </span>
+      </div>
+      <dl className="kv-dl kv-dl--card">
+        {[
+          ["Score", "762 · Good"],
+          ["Overdue", "None"],
+          ["Existing EMIs", "₹21,800 / month"],
+          ["Branch note", "Recommended for sanction"],
+        ].map(([l, v], n) => (
+          <div key={l} style={k(n)}>
+            <dt>{l}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+      </dl>
+      <span className="ps-btn ps-btn--brand ps-press">Send to loan committee</span>
+    </KvShell>
+  );
+}
+
 const SCREENS: Record<string, () => ReactNode> = {
   "mb-login": MbLogin,
   "mb-home": MbHome,
@@ -1911,13 +2284,24 @@ const SCREENS: Record<string, () => ReactNode> = {
   "ac-admin": AcAdmin,
   "ac-logs": AcLogs,
   "ac-local": AcLocal,
+  "kyc-pan": KycPan,
+  "kyc-aadhaar": KycAadhaar,
+  "kyc-dl": KycDl,
+  "kyc-passport": KycPassport,
+  "kyc-rc": KycRc,
+  "kyc-summary": KycSummary,
+  "cr-request": CrRequest,
+  "cr-score": CrScore,
+  "cr-accounts": CrAccounts,
+  "cr-checks": CrChecks,
+  "cr-file": CrFile,
 };
 
 const DARK_STATUS = ["sg-login", "sg-dashboard", "sg-download", "sg-finish", "gs-login", "gs-home", "gs-sync", "ac-open", "ac-local"];
 
 export function Screen({ id, on }: { id: string; on: boolean }) {
   const S = SCREENS[id];
-  const web = id.startsWith("ib-");
+  const web = /^(ib|kyc|cr)-/.test(id);
   return (
     <div className={`ps ps--${id}${web ? " ps--web" : ""}${on ? " is-on" : ""}`} aria-hidden={!on}>
       {!web && <Status dark={DARK_STATUS.includes(id)} />}
@@ -1950,14 +2334,16 @@ export function Device({
   children,
   accent,
   accent2,
+  url = "netbanking.yoursociety.in",
 }: {
   device?: "phone" | "browser";
   children: ReactNode;
   accent: string;
   accent2: string;
+  url?: string;
 }) {
   return device === "browser" ? (
-    <Browser accent={accent} accent2={accent2} url="netbanking.yoursociety.in">
+    <Browser accent={accent} accent2={accent2} url={url}>
       {children}
     </Browser>
   ) : (

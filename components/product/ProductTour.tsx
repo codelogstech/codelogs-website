@@ -14,11 +14,13 @@ export default function ProductTour({
   accent,
   accent2,
   device,
+  url,
 }: {
   steps: TourStep[];
   accent: string;
   accent2: string;
   device?: "phone" | "browser";
+  url?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, 0.35);
@@ -63,7 +65,7 @@ export default function ProductTour({
       </ol>
       <div className="pp-tour__stage">
         <div className="pp-tour__glow" aria-hidden="true" />
-        <Device device={device} accent={accent} accent2={accent2}>
+        <Device device={device} accent={accent} accent2={accent2} url={url}>
           {steps.map((s, n) => (
             <Screen key={s.screen} id={s.screen} on={n === i} />
           ))}
