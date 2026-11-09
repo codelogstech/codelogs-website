@@ -1,25 +1,12 @@
 import type { Metadata } from "next";
-import { Fraunces, Noto_Sans_Kannada, Sora } from "next/font/google";
+import { Noto_Sans_Kannada } from "next/font/google";
 import DiwaliCard from "@/components/diwali/DiwaliCard";
 import { SITE_URL } from "@/lib/seo";
 import "./diwali.css";
 
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  style: ["normal"],
-  variable: "--dw-serif",
-  display: "swap",
-});
-const sora = Sora({
-  subsets: ["latin"],
-  weight: ["300", "400", "600"],
-  variable: "--dw-sans",
-  display: "swap",
-});
 const kannada = Noto_Sans_Kannada({
   subsets: ["kannada"],
-  weight: ["400", "500"],
+  weight: ["300", "400"],
   variable: "--dw-kn",
   display: "swap",
 });
@@ -49,7 +36,7 @@ export const metadata: Metadata = {
 
 export default function DiwaliPage() {
   return (
-    <main className={`${fraunces.variable} ${sora.variable} ${kannada.variable}`}>
+    <main className={kannada.variable}>
       <DiwaliCard />
     </main>
   );

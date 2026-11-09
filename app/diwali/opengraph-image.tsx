@@ -20,8 +20,9 @@ export default function Image() {
           alignItems: "center",
           padding: "0 90px",
           gap: 80,
-          color: "#fbf3e4",
-          background: "linear-gradient(160deg, #07061a 0%, #16205b 60%, #2a1230 100%)",
+          color: "#f4f6fb",
+          background: "radial-gradient(circle at 26% 50%, rgba(240,88,40,0.22), transparent 45%), radial-gradient(circle at 100% 0%, rgba(3,115,254,0.35), transparent 50%)",
+          backgroundColor: "#07080d",
         }}
       >
         <div style={{ position: "relative", width: MARK, height: MARK, display: "flex" }}>
@@ -45,13 +46,13 @@ export default function Image() {
           })}
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 24, letterSpacing: 6, color: "#ffd27a" }}>CODELOGS TECHNOLOGIES WISHES YOU</div>
-          <div style={{ display: "flex", marginTop: 18, fontSize: 112, lineHeight: 1, fontWeight: 700 }}>
+          <div style={{ fontSize: 22, letterSpacing: 5, color: "#31d1fe" }}>— FESTIVAL OF LIGHTS</div>
+          <div style={{ display: "flex", marginTop: 18, fontSize: 124, lineHeight: 0.95, fontWeight: 600, letterSpacing: -5 }}>
             Happy
           </div>
-          <div style={{ display: "flex", fontSize: 112, lineHeight: 1.05, fontWeight: 700, color: "#ffb547" }}>Diwali</div>
-          <div style={{ marginTop: 26, fontSize: 28, color: "rgba(251, 243, 228, 0.78)" }}>
-            Health, prosperity and bright new beginnings.
+          <div style={{ display: "flex", fontSize: 124, lineHeight: 1, fontWeight: 300, letterSpacing: -5, color: "#ffb547" }}>Diwali.</div>
+          <div style={{ marginTop: 28, fontSize: 28, color: "rgba(244, 246, 251, 0.7)" }}>
+            From all of us at CodeLogs Technologies.
           </div>
         </div>
       </div>
