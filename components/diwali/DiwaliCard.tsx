@@ -70,10 +70,6 @@ export default function DiwaliCard() {
 
       <div key={run} className={`dw${on ? " is-on" : ""}`}>
         <div className="dw__art">
-          <span className="dw__ring" aria-hidden="true" />
-          <span className="dw__ring dw__ring--outer" aria-hidden="true">
-            <i />
-          </span>
           <div className="dw__mark" role="img" aria-label="The CodeLogs C, lit with twenty lamps">
             {LAMPS.map((d) => (
               <span
