@@ -20,12 +20,9 @@ const LAMPS = CODELOGS_DOTS.map((d, i) => ({ ...d, i }))
   .sort((a, b) => sweep(a) - sweep(b))
   .map((d, order) => ({ ...d, order }));
 
-const SHARE_TEXT = "Happy Diwali from all of us at CodeLogs Technologies!";
-
 export default function DiwaliCard() {
   const [on, setOn] = useState(false);
   const [run, setRun] = useState(0);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const t = requestAnimationFrame(() => setOn(true));
@@ -36,27 +33,6 @@ export default function DiwaliCard() {
     setOn(false);
     setRun((r) => r + 1);
   };
-
-  const share = async () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "Happy Diwali", text: SHARE_TEXT, url });
-        return;
-      } catch {
-        // Cancelled or unavailable: fall through to copying the link.
-      }
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard blocked; nothing else to do.
-    }
-  };
-
-  const wa = `https://wa.me/?text=${encodeURIComponent(`${SHARE_TEXT} https://codelogstech.com/diwali`)}`;
 
   return (
     <div className="dw-page">
@@ -103,13 +79,6 @@ export default function DiwaliCard() {
       </div>
 
       <div className="dw-bar">
-        <a className="dw-btn dw-btn--primary" href={wa} target="_blank" rel="noopener noreferrer">
-          <i className="dw-btn__dot" aria-hidden="true" />
-          Share on WhatsApp
-        </a>
-        <button type="button" className="dw-btn" onClick={share}>
-          {copied ? "Link copied" : "Share link"}
-        </button>
         <button type="button" className="dw-btn dw-btn--icon" onClick={replay} aria-label="Replay the animation" title="Replay">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
             <path d="M2.5 8a5.5 5.5 0 1 0 1.7-4" />

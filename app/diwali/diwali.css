@@ -6,7 +6,8 @@
 /* The greeting is its own page: no site nav, footer or starfield. */
 body:has(.dw-page) .nav,
 body:has(.dw-page) .foot,
-body:has(.dw-page) #ambient { display: none; }
+body:has(.dw-page) #ambient,
+body:has(.dw-page) .scroll-progress { display: none; }
 body:has(.dw-page) { background: #07080d; }
 
 .dw-page {
@@ -68,7 +69,13 @@ body:has(.dw-page) { background: #07080d; }
   box-shadow: 0 0 12px 2px rgba(255, 181, 71, 0.7), 0 0 36px 10px rgba(240, 88, 40, 0.3);
   opacity: 0;
 }
-.dw.is-on .dw__lamp { animation: dwDot .35s calc(.15s + var(--o) * .04s) cubic-bezier(.3,1.5,.5,1) forwards; }
+/* Once lit, the blue base warms too, so flickers never show blue through. */
+.dw.is-on .dw__lamp {
+  animation:
+    dwDot .35s calc(.15s + var(--o) * .04s) cubic-bezier(.3,1.5,.5,1) forwards,
+    dwBase .3s calc(.9s + var(--o) * .08s) forwards;
+}
+@keyframes dwBase { to { background: #b8461c; } }
 .dw.is-on .dw__lamp i {
   animation:
     dwLight .3s calc(.9s + var(--o) * .08s) forwards,
@@ -136,9 +143,6 @@ body:has(.dw-page) { background: #07080d; }
   transition: background .2s, border-color .2s;
 }
 .dw-btn:hover { border-color: rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.06); }
-.dw-btn--primary { background: #0373fe; border-color: #0373fe; color: #fff; }
-.dw-btn--primary:hover { background: #2a8bff; border-color: #2a8bff; }
-.dw-btn__dot { width: 8px; height: 8px; border-radius: 50%; background: #31d1fe; box-shadow: 0 0 10px #31d1fe; }
 .dw-btn--icon { width: 46px; padding: 0; }
 
 @media (max-width: 860px) {
