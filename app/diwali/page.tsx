@@ -1,15 +1,7 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Kannada } from "next/font/google";
 import DiwaliCard from "@/components/diwali/DiwaliCard";
 import { SITE_URL } from "@/lib/seo";
 import "./diwali.css";
-
-const kannada = Noto_Sans_Kannada({
-  subsets: ["kannada"],
-  weight: ["300", "400"],
-  variable: "--dw-kn",
-  display: "swap",
-});
 
 const TITLE = "Happy Diwali · CodeLogs Technologies";
 const DESCRIPTION =
@@ -36,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function DiwaliPage() {
   return (
-    <main className={kannada.variable}>
+    <main>
       <DiwaliCard />
     </main>
   );

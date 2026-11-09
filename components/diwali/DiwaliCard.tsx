@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import LogoMark from "@/components/LogoMark";
 import { CODELOGS_DOTS } from "@/lib/logoDots";
 
 // Diwali greeting (/diwali). The 20 dots of the CodeLogs "C" are lit one
-// by one like diyas while a counter ticks up, then fireworks in the brand
-// colours open behind. Entrances are CSS keyed off `.dw.is-on` (see
-// diwali.css); the fireworks are a canvas.
+// by one like diyas, then the words arrive. Entrances are CSS keyed off
+// `.dw.is-on` (see diwali.css).
 
 const v = (o: Record<string, string | number>) => o as CSSProperties;
 
@@ -22,89 +21,6 @@ const LAMPS = CODELOGS_DOTS.map((d, i) => ({ ...d, i }))
   .map((d, order) => ({ ...d, order }));
 
 const SHARE_TEXT = "Happy Diwali from all of us at CodeLogs Technologies!";
-const FIREWORK_COLORS = ["#0373fe", "#31d1fe", "#f05828", "#a3a8f4", "#ffc24a", "#ffffff"];
-
-type Spark = { x: number; y: number; vx: number; vy: number; life: number; max: number; c: string; r: number };
-
-function Fireworks({ run }: { run: number }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const cv = ref.current;
-    if (!cv || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const ctx = cv.getContext("2d");
-    if (!ctx) return;
-    let w = 0;
-    let h = 0;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const size = () => {
-      w = cv.clientWidth;
-      h = cv.clientHeight;
-      cv.width = w * dpr;
-      cv.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    size();
-    window.addEventListener("resize", size);
-
-    const sparks: Spark[] = [];
-    const burst = () => {
-      const x = w * (0.12 + Math.random() * 0.76);
-      const y = h * (0.1 + Math.random() * 0.35);
-      const c = FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)];
-      const n = 46 + Math.floor(Math.random() * 30);
-      const speed = 1.6 + Math.random() * 1.6;
-      for (let i = 0; i < n; i++) {
-        const a = (i / n) * Math.PI * 2;
-        const s = speed * (0.6 + Math.random() * 0.5);
-        const max = 60 + Math.random() * 40;
-        sparks.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: max, max, c, r: 1.3 + Math.random() * 1.2 });
-      }
-    };
-
-    let raf = 0;
-    let next = performance.now() + 2600;
-    const tick = (t: number) => {
-      raf = requestAnimationFrame(tick);
-      if (document.hidden) return;
-      if (t > next) {
-        burst();
-        if (Math.random() < 0.35) burst();
-        next = t + 900 + Math.random() * 1300;
-      }
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.fillStyle = "rgba(0,0,0,0.3)";
-      ctx.fillRect(0, 0, w, h);
-      ctx.globalCompositeOperation = "lighter";
-      for (let i = sparks.length - 1; i >= 0; i--) {
-        const p = sparks[i];
-        p.vx *= 0.985;
-        p.vy = p.vy * 0.985 + 0.035;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= 1;
-        if (p.life <= 0) {
-          sparks.splice(i, 1);
-          continue;
-        }
-        ctx.globalAlpha = Math.min(1, (p.life / p.max) * 1.4);
-        ctx.fillStyle = p.c;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    };
-    raf = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", size);
-      ctx.clearRect(0, 0, w, h);
-    };
-  }, [run]);
-
-  return <canvas ref={ref} className="dw-fx" aria-hidden="true" />;
-}
 
 export default function DiwaliCard() {
   const [on, setOn] = useState(false);
@@ -144,7 +60,6 @@ export default function DiwaliCard() {
 
   return (
     <div className="dw-page">
-      <Fireworks run={run} />
       <header className="dw-top">
         <a href="/" className="dw-top__brand" aria-label="CodeLogs home">
           <LogoMark fill="#0373fe" />
@@ -185,24 +100,9 @@ export default function DiwaliCard() {
             <br />
             <span>Diwali.</span>
           </h1>
-          <p className="dw__kn" lang="kn">
-            ದೀಪಾವಳಿ ಹಬ್ಬದ ಶುಭಾಶಯಗಳು
-          </p>
           <p className="dw__msg">
             May the festival of lights bring health, prosperity and bright new beginnings to you and everyone you love.
           </p>
-          <dl className="dw__stats">
-            <div>
-              <dt>Lamps lit</dt>
-              <dd className="dw__count" aria-label="20 of 20">
-                <span>/20</span>
-              </dd>
-            </div>
-            <div>
-              <dt>From</dt>
-              <dd>Team CodeLogs</dd>
-            </div>
-          </dl>
         </div>
       </div>
 
