@@ -1,0 +1,162 @@
+/* =========================================================
+   /diwali — animated greeting. Lamps light around the C, then the
+   words arrive. Every entrance is keyed off `.dw.is-on`.
+   ========================================================= */
+
+/* The greeting is its own page: no site nav, footer or starfield. */
+body:has(.dw-page) .nav,
+body:has(.dw-page) .foot,
+body:has(.dw-page) #ambient { display: none; }
+body:has(.dw-page) { background: #07080d; }
+
+.dw-page {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px clamp(16px, 4vw, 56px) 32px;
+  overflow: hidden;
+  color: #f4f6fb;
+  font-family: var(--f);
+  background:
+    radial-gradient(38% 46% at 30% 50%, rgba(240, 88, 40, 0.16), transparent 70%),
+    radial-gradient(40% 50% at 100% 0%, rgba(3, 115, 254, 0.22), transparent 70%),
+    radial-gradient(36% 44% at 90% 100%, rgba(49, 209, 254, 0.12), transparent 70%),
+    radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px) 0 0 / 28px 28px,
+    #07080d;
+}
+
+/* ---------- Top strip ---------- */
+.dw-top { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; }
+.dw-top__brand { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 500; letter-spacing: -0.02em; color: #f4f6fb; }
+.dw-top__brand svg { width: 26px; height: 26px; }
+.dw-top__meta { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(244, 246, 251, 0.55); }
+
+/* ---------- Layout ---------- */
+.dw {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+  padding: 40px 0;
+}
+
+/* ---------- The C, lit lamp by lamp ---------- */
+.dw__art { position: relative; width: min(100%, 440px); aspect-ratio: 1; justify-self: center; display: grid; place-items: center; }
+.dw__ring { position: absolute; inset: 4%; border-radius: 50%; border: 1px solid rgba(3, 115, 254, 0.28); opacity: 0; scale: .9; }
+.dw__ring--outer { inset: -6%; border: 1px dashed rgba(49, 209, 254, 0.22); }
+.dw__ring--outer i { position: absolute; left: 50%; top: -4px; width: 7px; height: 7px; margin-left: -3.5px; border-radius: 50%; background: #31d1fe; box-shadow: 0 0 12px 2px rgba(49, 209, 254, 0.7); }
+.dw.is-on .dw__ring { animation: dwRing 1s .2s cubic-bezier(.2,.7,.2,1) forwards; }
+.dw.is-on .dw__ring--outer { animation: dwRing 1s .35s cubic-bezier(.2,.7,.2,1) forwards, dwOrbit 24s 1.3s linear infinite; }
+@keyframes dwRing { to { opacity: 1; scale: 1; } }
+@keyframes dwOrbit { to { rotate: 360deg; } }
+
+.dw__mark { position: relative; width: 78%; aspect-ratio: 1; }
+.dw__lamp {
+  position: absolute;
+  width: calc(var(--s) * 1%);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: #0373fe;
+  opacity: 0;
+  scale: .4;
+}
+.dw__lamp i {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #fffaf0 0 18%, #ffd27a 40%, #ffb547 62%, #f05828 100%);
+  box-shadow: 0 0 12px 2px rgba(255, 181, 71, 0.7), 0 0 36px 10px rgba(240, 88, 40, 0.3);
+  opacity: 0;
+}
+.dw.is-on .dw__lamp { animation: dwDot .35s calc(.15s + var(--o) * .04s) cubic-bezier(.3,1.5,.5,1) forwards; }
+.dw.is-on .dw__lamp i {
+  animation:
+    dwLight .3s calc(.9s + var(--o) * .08s) forwards,
+    dwFlicker 2.4s calc(2.6s + var(--f) * 1s) ease-in-out infinite;
+}
+@keyframes dwDot { to { opacity: 1; scale: 1; } }
+@keyframes dwLight { from { opacity: 0; scale: 1.8; } to { opacity: 1; scale: 1; } }
+@keyframes dwFlicker {
+  0%, 100% { opacity: 1; scale: 1; }
+  30% { opacity: .82; scale: .94; }
+  55% { opacity: 1; scale: 1.06; }
+  75% { opacity: .9; scale: .98; }
+}
+
+/* ---------- Words ---------- */
+.dw__copy { display: flex; flex-direction: column; align-items: flex-start; }
+.dw__tag, .dw__title, .dw__msg { opacity: 0; }
+.dw.is-on .dw__tag { animation: dwRise .7s 1s cubic-bezier(.2,.7,.2,1) forwards; }
+.dw.is-on .dw__title { animation: dwRise .9s 1.2s cubic-bezier(.2,.7,.2,1) forwards; }
+.dw.is-on .dw__msg { animation: dwRise .7s 2.4s cubic-bezier(.2,.7,.2,1) forwards; }
+@keyframes dwRise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+
+.dw__tag { display: inline-flex; align-items: center; gap: 10px; font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #31d1fe; }
+.dw__tag::before { content: ""; width: 24px; height: 1px; background: currentColor; }
+.dw__title {
+  margin-top: 18px;
+  font-size: clamp(64px, 10vw, 148px);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+}
+.dw__title span {
+  display: inline-block;
+  padding: 0.02em 0.04em 0.08em 0;
+  font-weight: 300;
+  background: linear-gradient(100deg, #f05828 0%, #ffb547 45%, #ffd27a 60%, #f05828 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: dwShine 7s 3s ease-in-out infinite;
+}
+@keyframes dwShine { 50% { background-position: 100% 0; } }
+.dw__msg { margin-top: 28px; max-width: 440px; font-size: clamp(15px, 1.5vw, 17px); line-height: 1.6; color: rgba(244, 246, 251, 0.66); }
+
+
+/* ---------- Action bar ---------- */
+.dw-bar { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.dw-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(7, 8, 13, 0.5);
+  color: #f4f6fb;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: background .2s, border-color .2s;
+}
+.dw-btn:hover { border-color: rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.06); }
+.dw-btn--primary { background: #0373fe; border-color: #0373fe; color: #fff; }
+.dw-btn--primary:hover { background: #2a8bff; border-color: #2a8bff; }
+.dw-btn__dot { width: 8px; height: 8px; border-radius: 50%; background: #31d1fe; box-shadow: 0 0 10px #31d1fe; }
+.dw-btn--icon { width: 46px; padding: 0; }
+
+@media (max-width: 860px) {
+  .dw { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 24px 0 32px; text-align: center; }
+  .dw__art { width: min(78vw, 320px); }
+  .dw__copy { align-items: center; }
+  .dw__msg { margin-inline: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dw__lamp, .dw__lamp i, .dw__ring, .dw__tag, .dw__title, .dw__msg { opacity: 1; scale: 1; translate: none; }
+  .dw__lamp { translate: -50% -50%; }
+  .dw.is-on *, .dw__title span { animation: none !important; }
+}
