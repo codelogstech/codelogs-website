@@ -1,7 +1,35 @@
 {
   "redirects": [
-    { "source": "/probank-2", "destination": "/probank", "permanent": true },
-    { "source": "/logistics", "destination": "/", "permanent": true },
-    { "source": "/privacy", "destination": "/", "permanent": true }
+    {
+      "source": "/probank-2",
+      "destination": "/probank",
+      "permanent": true
+    },
+    {
+      "source": "/logistics",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/privacy",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/inauguration-invite",
+      "destination": "/diwali",
+      "permanent": false
+    }
+  ],
+  "headers": [
+    {
+      "source": "/diwali/opengraph-image",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "image/png"
+        }
+      ]
+    }
   ]
 }

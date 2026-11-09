@@ -1,0 +1,164 @@
+/* =========================================================
+   /diwali — animated greeting. Lamps light around the C, then the
+   words arrive, then the diyas; fireworks run on a canvas behind.
+   Every entrance is keyed off `.dw.is-on`.
+   ========================================================= */
+
+/* The greeting is its own page: no site nav, footer or starfield. */
+body:has(.dw-page) .nav,
+body:has(.dw-page) .foot,
+body:has(.dw-page) #ambient { display: none; }
+body:has(.dw-page) { background: #07061a; }
+
+.dw-page {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 48px 16px 32px;
+  overflow: hidden;
+  color: #fbf3e4;
+  font-family: var(--dw-sans), "Sora", sans-serif;
+  background:
+    radial-gradient(60% 45% at 50% 38%, rgba(240, 88, 40, 0.16), transparent 70%),
+    radial-gradient(80% 60% at 50% 110%, rgba(255, 181, 71, 0.14), transparent 70%),
+    linear-gradient(180deg, #07061a 0%, #16205b 55%, #2a1230 100%);
+}
+.dw-fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+.dw {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 620px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ---------- The C, lit lamp by lamp ---------- */
+.dw__mark { position: relative; width: clamp(180px, 42vw, 270px); aspect-ratio: 1; margin-bottom: 24px; }
+.dw__lamp {
+  position: absolute;
+  width: calc(var(--s) * 1%);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: rgba(3, 115, 254, 0.55);
+  opacity: 0;
+  scale: .4;
+}
+.dw__lamp i {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #fffaf0 0 18%, #ffd27a 40%, #ffb547 62%, #f05828 100%);
+  box-shadow: 0 0 10px 2px rgba(255, 181, 71, 0.75), 0 0 32px 8px rgba(240, 88, 40, 0.35);
+  opacity: 0;
+}
+.dw.is-on .dw__lamp { animation: dwDot .35s calc(.15s + var(--o) * .04s) cubic-bezier(.3,1.5,.5,1) forwards; }
+.dw.is-on .dw__lamp i {
+  animation:
+    dwLight .3s calc(.7s + var(--o) * .08s) forwards,
+    dwFlicker 2.4s calc(2.4s + var(--f) * 1s) ease-in-out infinite;
+}
+@keyframes dwDot { to { opacity: 1; scale: 1; } }
+@keyframes dwLight { from { opacity: 0; scale: 1.8; } to { opacity: 1; scale: 1; } }
+@keyframes dwFlicker {
+  0%, 100% { opacity: 1; scale: 1; }
+  30% { opacity: .82; scale: .94; }
+  55% { opacity: 1; scale: 1.06; }
+  75% { opacity: .9; scale: .98; }
+}
+
+/* ---------- Words ---------- */
+.dw__eyebrow, .dw__title, .dw__kn, .dw__msg, .dw__sign { opacity: 0; }
+.dw.is-on .dw__eyebrow { animation: dwRise .7s 2.3s cubic-bezier(.2,.7,.2,1) forwards; }
+.dw.is-on .dw__title { animation: dwRise .9s 2.5s cubic-bezier(.2,.7,.2,1) forwards; }
+.dw.is-on .dw__kn { animation: dwRise .7s 2.9s cubic-bezier(.2,.7,.2,1) forwards; }
+.dw.is-on .dw__msg { animation: dwRise .7s 3.1s cubic-bezier(.2,.7,.2,1) forwards; }
+.dw.is-on .dw__sign { animation: dwRise .7s 3.9s cubic-bezier(.2,.7,.2,1) forwards; }
+@keyframes dwRise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+
+.dw__eyebrow { font-size: 12px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase; color: #ffd27a; }
+.dw__title {
+  margin-top: 10px;
+  font-family: var(--dw-serif), Georgia, serif;
+  font-size: clamp(48px, 11vw, 96px);
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.dw__title span {
+  font-weight: 600;
+  background: linear-gradient(100deg, #ffd27a 0%, #fff4d9 30%, #ffb547 55%, #f05828 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: dwShine 6s 3.4s ease-in-out infinite;
+}
+@keyframes dwShine { 50% { background-position: 100% 0; } }
+.dw__kn { margin-top: 14px; font-family: var(--dw-kn), sans-serif; font-size: clamp(17px, 3.6vw, 22px); font-weight: 500; color: #ffd27a; }
+.dw__msg { margin-top: 18px; max-width: 460px; font-size: clamp(15px, 2.6vw, 17px); font-weight: 300; line-height: 1.65; color: rgba(251, 243, 228, 0.82); }
+
+/* ---------- Diyas ---------- */
+.dw__diyas { display: flex; align-items: flex-end; gap: clamp(8px, 3vw, 22px); margin-top: 30px; }
+.dw-diya { width: clamp(44px, 11vw, 64px); height: auto; overflow: visible; opacity: 0; translate: 0 16px; }
+.dw-diya:nth-child(2), .dw-diya:nth-child(4) { width: clamp(52px, 13vw, 74px); }
+.dw-diya:nth-child(3) { width: clamp(60px, 15vw, 86px); }
+.dw.is-on .dw-diya { animation: dwRise .6s calc(3.3s + var(--i) * .12s) cubic-bezier(.2,.7,.2,1) forwards; }
+.dw-diya__flame { transform-box: fill-box; transform-origin: 50% 100%; scale: 0; }
+.dw-diya__halo { fill: rgba(255, 181, 71, 0.22); filter: blur(6px); opacity: 0; }
+.dw.is-on .dw-diya__flame {
+  animation:
+    dwFlame .4s calc(3.7s + var(--i) * .15s) cubic-bezier(.3,1.6,.5,1) forwards,
+    dwSway 1.8s calc(4.2s + var(--i) * .27s) ease-in-out infinite;
+}
+.dw.is-on .dw-diya__halo { animation: dwHalo 2.4s calc(3.8s + var(--i) * .15s) ease-in-out infinite; }
+@keyframes dwFlame { to { scale: 1; } }
+@keyframes dwSway {
+  0%, 100% { scale: 1; rotate: 0deg; }
+  25% { scale: .94 1.05; rotate: -3deg; }
+  60% { scale: 1.04 .96; rotate: 2deg; }
+}
+@keyframes dwHalo { 0%, 100% { opacity: .9; } 50% { opacity: .55; } }
+
+.dw__sign { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 300; color: rgba(251, 243, 228, 0.7); }
+.dw__sign b { font-family: var(--dw-serif), Georgia, serif; font-size: 22px; font-weight: 600; color: #fbf3e4; }
+
+/* ---------- Action bar ---------- */
+.dw-bar { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.dw-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 210, 122, 0.35);
+  background: rgba(7, 6, 26, 0.4);
+  color: #fbf3e4;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background .2s, border-color .2s;
+}
+.dw-btn:hover { background: rgba(255, 210, 122, 0.12); border-color: rgba(255, 210, 122, 0.6); }
+.dw-btn--primary { background: linear-gradient(110deg, #ffb547, #f05828); border-color: transparent; color: #1a0d05; font-weight: 600; }
+.dw-btn--primary:hover { background: linear-gradient(110deg, #ffc568, #f36a3e); border-color: transparent; }
+.dw-btn--icon { width: 44px; padding: 0; }
+.dw-btn--ghost { border-color: transparent; background: none; color: rgba(251, 243, 228, 0.65); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dw__lamp, .dw__lamp i, .dw__eyebrow, .dw__title, .dw__kn, .dw__msg, .dw__sign, .dw-diya, .dw-diya__halo { opacity: 1; scale: 1; translate: none; }
+  .dw__lamp { translate: -50% -50%; }
+  .dw-diya__flame { scale: 1; }
+  .dw.is-on *, .dw__title span { animation: none !important; }
+}
