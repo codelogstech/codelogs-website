@@ -104,10 +104,12 @@ body:has(.dw-page) { background: #07080d; }
   margin-top: 18px;
   font-size: clamp(64px, 10vw, 148px);
   font-weight: 500;
-  line-height: 0.9;
+  line-height: 1.04;
   letter-spacing: -0.05em;
 }
 .dw__title span {
+  display: inline-block;
+  padding: 0.02em 0.04em 0.08em 0;
   font-weight: 300;
   background: linear-gradient(100deg, #f05828 0%, #ffb547 45%, #ffd27a 60%, #f05828 100%);
   background-size: 220% 100%;
