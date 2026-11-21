@@ -12,11 +12,12 @@ export const DEFAULT_DESCRIPTION =
 export const CONTACT = {
   email: "enquire@codelogstech.com",
   phone: "+91-97317-77495",
-  street: "2nd Floor, Christha Jyothi Complex, K M Marg",
+  street: "Mukunda, Convent Road",
   locality: "Udupi",
   region: "Karnataka",
   postalCode: "576101",
   country: "IN",
+  mapUrl: "https://maps.app.goo.gl/Wy3bKRtLY63wCULN6",
   linkedin: "https://www.linkedin.com/company/codelogs/",
   instagram: "https://www.instagram.com/codelogs_tech/",
 };
@@ -94,6 +95,7 @@ export const ORGANIZATION_JSON_LD = {
         postalCode: CONTACT.postalCode,
         addressCountry: CONTACT.country,
       },
+      hasMap: CONTACT.mapUrl,
       contactPoint: [
         {
           "@type": "ContactPoint",

@@ -1,3 +1,5 @@
+import { CONTACT } from "@/lib/seo";
+
 export default function Contact() {
   return (
     <section id="contact" className="contact" aria-label="Contact">
@@ -17,12 +19,19 @@ export default function Contact() {
         <div data-reveal="rise">
           <span className="k">Visit</span>
           <p>
-            2nd Floor, Christha Jyothi Complex
+            &ldquo;Mukunda&rdquo;, Convent Road
             <br />
-            K M Marg, Udupi District
+            Udupi, Karnataka 576101
             <br />
-            Karnataka 576101, India
+            India
           </p>
+          <ul className="social contact__map">
+            <li>
+              <a href={CONTACT.mapUrl} target="_blank" rel="noopener noreferrer">
+                Get directions <i>↗</i>
+              </a>
+            </li>
+          </ul>
         </div>
         <div data-reveal="rise">
           <span className="k">Follow</span>
